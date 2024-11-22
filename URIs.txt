@@ -1,20 +1,32 @@
+ACCOUNT:
 Create account: 
-POST /NeflixForBill/Accounts/id
-
-Activation Code: 
-GET /NeflixForBill/Accounts/email
+POST Users/Accounts/register
 
 Activate account:
-PUT /NeflixForBill/Accounts/activationCode
+PUT Users/Accounts/activate
 
 Login
-GET /NeflixForBill/Accounts/id
+GET Users/Accounts/login
 
 reset Password
-PATCH /NeflixForBill/Accounts/id
+PATCH Users/Accounts/reset-password
 
+cancel membership
+DELETE Users/Accounts/id
+
+
+PROFILE:
 create profile
-POST /NeflixForBill/Profiles/id
+POST Users/Accounts/Profiles
+
+update profile
+PUT Users/Accounts/Profiles/id
+
+change profile images
+PATCH Users/Accounts/Profiles/profile_photo
+
+delete profile
+DELETE Users/Accounts/Profiles/id
 
 
 
