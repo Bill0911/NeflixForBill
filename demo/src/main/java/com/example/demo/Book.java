@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.example.demo;
 
 import jakarta.persistence.*;
 
@@ -21,7 +21,7 @@ public class Book {
 
     // Getters and Setters
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Long id) {
@@ -29,7 +29,7 @@ public class Book {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -37,7 +37,7 @@ public class Book {
     }
 
     public Author getAuthor() {
-        return author;
+        return this.author;
     }
 
     public void setAuthor(Author author) {
@@ -45,7 +45,7 @@ public class Book {
     }
 
     public Double getPrice() {
-        return price;
+        return this.price;
     }
 
     public void setPrice(Double price) {

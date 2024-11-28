@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.example.demo;
 
 import java.util.List;
 import jakarta.persistence.*;
@@ -18,7 +18,7 @@ public class Author {
 
     // Getters and Setters
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Long id) {
@@ -26,7 +26,7 @@ public class Author {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -34,7 +34,7 @@ public class Author {
     }
 
     public List<Book> getBooks() {
-        return books;
+        return this.books;
     }
 
     public void setBooks(List<Book> books) {
