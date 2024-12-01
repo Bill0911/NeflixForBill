@@ -35,4 +35,8 @@ public class BookService {
             throw new RuntimeException("Author not found");
         }
     }
+
+    public Book getBookById(Long id) {
+        return bookRepository.findById(id).orElse(null);
+    }
 }

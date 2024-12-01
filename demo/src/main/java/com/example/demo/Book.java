@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,6 +15,7 @@ public class Book {
 
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
+    @JsonManagedReference
     private Author author;
 
     @Column(nullable = false)
