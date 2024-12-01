@@ -1,38 +1,44 @@
 package com.example.netflix.id;
 
+import com.example.netflix.entity.Movie;
+import com.example.netflix.entity.User;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Embeddable
 public class MovieViewCountId implements Serializable {
-    private Integer accountId;
-    private Integer movieId;
+
+    private User user;
+    private Movie movie;
 
     // Default constructor
     public MovieViewCountId() {}
 
     // Constructor with fields
-    public MovieViewCountId(Integer accountId, Integer movieId) {
-        this.accountId = accountId;
-        this.movieId = movieId;
+
+
+    public MovieViewCountId(User user, Movie movie) {
+        this.user = user;
+        this.movie = movie;
     }
 
     // Getters and Setters
-    public Integer getAccountId() {
-        return accountId;
+
+
+    public User getUser() {
+        return user;
     }
 
-    public void setAccountId(Integer accountId) {
-        this.accountId = accountId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Integer getMovieId() {
-        return movieId;
+    public Movie getMovie() {
+        return movie;
     }
 
-    public void setMovieId(Integer movieId) {
-        this.movieId = movieId;
+    public void setMovie(Movie movie) {
+        this.movie = movie;
     }
 
     @Override
@@ -40,11 +46,13 @@ public class MovieViewCountId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MovieViewCountId that = (MovieViewCountId) o;
-        return Objects.equals(accountId, that.accountId) && Objects.equals(movieId, that.movieId);
+        return Objects.equals(user.getAccountId(), that.user.getAccountId()) &&
+                Objects.equals(movie.getMovieId(), that.movie.getMovieId());
     }
 
+    // hashCode() method: generate hash code based on accountId and movieId
     @Override
     public int hashCode() {
-        return Objects.hash(accountId, movieId);
+        return Objects.hash(user.getAccountId(), movie.getMovieId());
     }
 }

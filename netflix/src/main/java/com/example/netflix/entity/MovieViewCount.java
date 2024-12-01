@@ -4,21 +4,24 @@ import com.example.netflix.id.MovieViewCountId;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="movieviewcount")
+@Table(name = "movieviewcount")
+@IdClass(MovieViewCountId.class)  // Use the composite key class
 public class MovieViewCount {
-    
 
+    @Id
     @ManyToOne
-    @JoinColumn(name = "account_id", insertable = false, updatable = false, nullable = false)
+    @JoinColumn(name = "account_id", nullable = false)
     private User user;
 
+    @Id
     @ManyToOne
-    @JoinColumn(name = "movie_id", insertable = false, updatable = false, nullable = false)
+    @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
 
     @Column(nullable = false)
     private int number;
 
+    // Getters and Setters
     public User getUser() {
         return user;
     }
@@ -46,12 +49,6 @@ public class MovieViewCount {
     public void incrementViewCount() {
         this.number++;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }
+
+
