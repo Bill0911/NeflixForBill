@@ -39,6 +39,12 @@ public class User {
     @JoinColumn(name = "language_id", nullable = false)  // Foreign key to Language table
     private Language language;
 
+    @Column(name = "failed_attempts", nullable = false)
+    private int failedAttempts = 0;
+
+    @Column(name = "lock_time")
+    private LocalDateTime lockTime = null;
+
     public Integer getAccountId() {
         return accountId;
     }
@@ -109,5 +115,25 @@ public class User {
 
     public void setLanguage(Language language) {
         this.language = language;
+    }
+
+    public int getFailedAttempts() {
+        return failedAttempts;
+    }
+
+    public void setFailedAttempts(int failedAttempts) {
+        this.failedAttempts = failedAttempts;
+    }
+
+    public LocalDateTime getLockTime() {
+        return lockTime;
+    }
+
+    public void setLockTime(LocalDateTime lockTime) {
+        this.lockTime = lockTime;
+    }
+
+    public void incrementFailedAttempts () {
+        this.failedAttempts++;
     }
 }
