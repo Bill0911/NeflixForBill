@@ -6,6 +6,7 @@ import com.example.netflix.security.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -26,12 +27,39 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public String loginUser(String email, String password) {
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
-            return jwtUtil.generateToken(user.get().getAccountId());
+    public Integer loginUser(String email, String password) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found");
         }
-        throw new RuntimeException("Invalid credentials");
+
+        User user = userOptional.get();
+
+        // Check if account is blocked
+        if (user.isBlocked()) {
+            throw new RuntimeException("Account is blocked due to too many failed login attempts.");
+        }
+
+        // Verify password
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            // Increment failed attempts
+            int failedAttempts = user.getFailedAttempts() + 1;
+            user.setFailedAttempts(failedAttempts);
+
+            if (failedAttempts >= 3) {
+                user.setBlocked(true);
+            }
+
+            userRepository.save(user);
+            throw new RuntimeException("Invalid credentials");
+        }
+
+
+        // Reset failed attempts on successful login
+        user.setFailedAttempts(0);
+        userRepository.save(user);
+        return user.getAccountId();
     }
 
     public String getLanguageName(Integer accountId) {
