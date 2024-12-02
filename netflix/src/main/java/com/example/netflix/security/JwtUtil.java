@@ -8,35 +8,41 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.security.Key;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 @Component
 public class JwtUtil {
     private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public String generateToken(String email, Enum<?> role) {
+    public String generateToken(int accountId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("account_id", accountId); // Add account ID as a claim
+        return createToken(claims);
+    }
+
+    private String createToken(Map<String, Object> claims) {
         return Jwts.builder()
-                .setSubject(email)
-                .claim("role", role.name())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour expiry
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis())) // Current time
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // Expiry (10 hours)
+                .signWith(SignatureAlgorithm.HS256, secretKey) // Signing key
                 .compact();
     }
 
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+
+    // Extract account_id from the token
+    public int extractId(String token) {
+        Claims claims = extractAllClaims(token);
+        return (int) claims.get("account_id");
     }
 
-
-    // General method to extract a claim using a resolver function
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
-    }
-
-    // Extract all claims from the JWT token
+    // Extract all claims from the token
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

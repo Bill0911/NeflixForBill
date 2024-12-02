@@ -28,9 +28,9 @@ public class MovieViewCountController {
     public ResponseEntity<String> addToViewCount(@RequestParam Integer movieId, @RequestHeader("Authorization") String token) {
         // Extract the JWT token without "Bearer "
         String jwt = token.substring(7);
-        String username = jwtUtil.extractUsername(jwt);
+        int id = jwtUtil.extractId(jwt);
 
-        movieViewCountService.addMovieToViewCount(username, movieId);
+        movieViewCountService.addMovieToViewCount(id, movieId);
         return ResponseEntity.ok("Movie added to view count successfully!");
     }
 }

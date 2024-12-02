@@ -1,0 +1,183 @@
+{
+	"info": {
+		"_postman_id": "6727d8eb-7b4c-464c-bf8f-80e26beca4ea",
+		"name": "New Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40052295"
+	},
+	"item": [
+		{
+			"name": "/api/users/register",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"testuser@example.com\",\r\n  \"password\": \"pass123\",\r\n  \"paymentMethod\": \"Credit Card\",\r\n  \"language\": {\r\n    \"languageId\": 1\r\n  }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "/api/users/register",
+					"path": [
+						"api",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/api/users/login/",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"testuser@example.com\",\r\n  \"password\": \"pass123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/users/login/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"login",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/api/movies/increment-view-count?accountId=3&movieId=2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/movies/increment-view-count?accountId=3&movieId=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"movies",
+						"increment-view-count"
+					],
+					"query": [
+						{
+							"key": "accountId",
+							"value": "3"
+						},
+						{
+							"key": "movieId",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/api/movies/add-to-viewcount?movieId=2",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmam9kb3JzbUBnbWFpbC5jb20iLCJyb2xlIjoiVklFV0VSIiwiaWF0IjoxNzMzMTUwNTk5LCJleHAiOjE3MzMxNTQxOTl9.ExhnqZTY8oH9AHlj6subaeEbuCbHQWWHeW8Cv_tTW_E",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/movies/add-to-viewcount?movieId=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"movies",
+						"add-to-viewcount"
+					],
+					"query": [
+						{
+							"key": "movieId",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/api/users/lang",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50X2lkIjozLCJpYXQiOjE3MzMxNTU4MzAsImV4cCI6MTczMzE5MTgzMH0.5smNFAWdUmxGoaAhuc09H_GOchCLOrV0xtfS9AYV1m4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/users/lang",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"users",
+						"lang"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

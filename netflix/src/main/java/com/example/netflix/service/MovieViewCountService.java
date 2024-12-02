@@ -40,9 +40,9 @@ public class MovieViewCountService {
         }
     }
 
-    public void addMovieToViewCount(String username, Integer movieId) {
+    public void addMovieToViewCount(Integer id, Integer movieId) {
         // Fetch the user from the username
-        Optional<User> userOpt = userRepository.findByEmail(username);
+        Optional<User> userOpt = userRepository.findByAccountId(id);
         if (userOpt.isEmpty()) {
             throw new RuntimeException("User not found");
         }
