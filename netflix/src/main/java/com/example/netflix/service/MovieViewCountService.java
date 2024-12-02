@@ -34,8 +34,36 @@ public class MovieViewCountService {
             System.out.println("The movie / account exist");
             movieViewCount.setUser(user.get());
             movieViewCount.setMovie(movie.get());
+            movieViewCount.incrementViewCount();
             System.out.println("The movie id = " + movieViewCount.getMovie().getMovieId() + " and the account id = " + movieViewCount.getUser().getAccountId() + ", views: " + movieViewCount.getNumber());
             movieViewCountRepository.save(movieViewCount);
         }
+    }
+
+    public void addMovieToViewCount(String username, Integer movieId) {
+        // Fetch the user from the username
+        Optional<User> userOpt = userRepository.findByEmail(username);
+        if (userOpt.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        User user = userOpt.get();
+
+        // Fetch the movie
+        Optional<Movie> movieOpt = movieRepository.findById(movieId);
+        if (movieOpt.isEmpty()) {
+            throw new RuntimeException("Movie not found");
+        }
+
+        Movie movie = movieOpt.get();
+
+        // Check if the MovieViewCount entry already exists
+        MovieViewCount movieViewCount = movieViewCountRepository.findByUser_AccountIdAndMovie_MovieId(user.getAccountId(), movie.getMovieId())
+                .orElse(new MovieViewCount());
+
+        movieViewCount.setUser(user);
+        movieViewCount.setMovie(movie);
+        movieViewCount.incrementViewCount(); // Increment view count
+        movieViewCountRepository.save(movieViewCount);
     }
 }
