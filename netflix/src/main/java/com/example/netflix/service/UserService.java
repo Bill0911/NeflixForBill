@@ -29,9 +29,17 @@ public class UserService {
     public String loginUser(String email, String password) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
-            return jwtUtil.generateToken(user.get().getEmail(), user.get().getRole());
+            return jwtUtil.generateToken(user.get().getAccountId());
         }
         throw new RuntimeException("Invalid credentials");
+    }
+
+    public String getLanguageName(Integer accountId) {
+        Optional<User> user = userRepository.findByAccountId(accountId);
+        if (user.isPresent()) {
+            return user.get().getLanguage().getName();
+        }
+        throw new RuntimeException("Invalid id");
     }
 }
 
