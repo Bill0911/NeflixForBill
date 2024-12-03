@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 03, 2024 at 02:53 PM
+-- Generation Time: Dec 03, 2024 at 03:11 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -98,7 +98,7 @@ CREATE TABLE `language` (
 CREATE TABLE `movie` (
   `movie_id` int(11) NOT NULL,
   `title` varchar(255) DEFAULT NULL,
-  `duration` time DEFAULT '00:00:00',
+  `duration` varchar(255) NOT NULL,
   `sd_available` bit(1) DEFAULT NULL,
   `hd_available` bit(1) DEFAULT NULL,
   `uhd_available` bit(1) DEFAULT NULL
@@ -125,6 +125,18 @@ CREATE TABLE `movieviewcount` (
   `account_id` int(11) NOT NULL,
   `movie_id` int(11) NOT NULL,
   `number` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `movie_view_count`
+--
+
+CREATE TABLE `movie_view_count` (
+  `number` int(11) NOT NULL,
+  `account_id` int(11) NOT NULL,
+  `movie_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -212,7 +224,7 @@ CREATE TABLE `user` (
   `subscription` enum('SD','HD','UHD') DEFAULT 'SD',
   `trial_start_date` datetime DEFAULT current_timestamp(),
   `language_id` int(11) DEFAULT NULL,
-  `role` enum('Viewer','Junior','Medior','Senior') DEFAULT 'Viewer',
+  `role` enum('VIEWER','JUNIOR','MEDIOR','SENIOR') DEFAULT 'VIEWER',
   `failed_attempts` int(11) DEFAULT 0,
   `lock_time` datetime DEFAULT NULL,
   `discount` bit(1) DEFAULT b'0'
@@ -274,7 +286,15 @@ ALTER TABLE `moviesprofilewatchlist`
 -- Indexes for table `movieviewcount`
 --
 ALTER TABLE `movieviewcount`
-  ADD PRIMARY KEY (`account_id`,`movie_id`);
+  ADD PRIMARY KEY (`account_id`,`movie_id`),
+  ADD KEY `FK960o3778b43sfm6eh63p8yaaj` (`movie_id`);
+
+--
+-- Indexes for table `movie_view_count`
+--
+ALTER TABLE `movie_view_count`
+  ADD PRIMARY KEY (`movie_id`,`account_id`),
+  ADD KEY `FKeuppqu23hf24imh2ijutas38v` (`account_id`);
 
 --
 -- Indexes for table `profile`
@@ -316,7 +336,8 @@ ALTER TABLE `subtitleforseries`
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
-  ADD PRIMARY KEY (`account_id`);
+  ADD PRIMARY KEY (`account_id`),
+  ADD KEY `FKj9k2portqypgs993xn20pywtr` (`language_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -363,6 +384,30 @@ ALTER TABLE `series`
 --
 ALTER TABLE `user`
   MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `movieviewcount`
+--
+ALTER TABLE `movieviewcount`
+  ADD CONSTRAINT `FK960o3778b43sfm6eh63p8yaaj` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`),
+  ADD CONSTRAINT `FKcpuurwpcxsr5pqfikypjvl3qn` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`);
+
+--
+-- Constraints for table `movie_view_count`
+--
+ALTER TABLE `movie_view_count`
+  ADD CONSTRAINT `FKeuppqu23hf24imh2ijutas38v` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`),
+  ADD CONSTRAINT `FKqe3n17lnq55qyrw79fjk77wln` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`);
+
+--
+-- Constraints for table `user`
+--
+ALTER TABLE `user`
+  ADD CONSTRAINT `FKj9k2portqypgs993xn20pywtr` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

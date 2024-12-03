@@ -20,7 +20,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Subscription subscription = Subscription.HD; // Default subscription
+    private Subscription subscription = Subscription.SD; // Default subscription
 
     @Column(name = "trial_start_date", nullable = false)
     private LocalDateTime trialStartDate = LocalDateTime.now(); // Default to current time
