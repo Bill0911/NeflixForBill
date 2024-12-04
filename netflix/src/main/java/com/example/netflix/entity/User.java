@@ -1,7 +1,9 @@
 package com.example.netflix.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -31,6 +33,10 @@ public class User {
 
     @Column(nullable = false)
     private boolean blocked = false;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Profile> profiles;
 
     @Column(name = "payment_method", nullable = false)
     private String paymentMethod;
@@ -135,5 +141,17 @@ public class User {
 
     public void incrementFailedAttempts () {
         this.failedAttempts++;
+    }
+
+    public List<Profile> getProfiles() {
+        return profiles;
+    }
+
+    public void setProfiles(List<Profile> profiles) {
+        this.profiles = profiles;
+    }
+
+    public void addProfile(Profile profile) {
+        this.profiles.add(profile);
     }
 }
