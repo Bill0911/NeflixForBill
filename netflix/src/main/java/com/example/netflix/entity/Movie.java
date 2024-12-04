@@ -2,6 +2,8 @@ package com.example.netflix.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalTime;
+
 @Entity
 @Table(name = "movie")
 public class Movie {
@@ -14,8 +16,11 @@ public class Movie {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    private String duration;
+    @Column(name = "duration", columnDefinition = "TIME DEFAULT '00:00:00'")
+    private LocalTime duration = LocalTime.of(0, 0, 0); // Default value
+
+    @Column(name="minimum_age", nullable = false)
+    private Integer minimumAge;
 
     // Getters and Setters
     public Integer getMovieId() {
@@ -34,11 +39,19 @@ public class Movie {
         this.title = title;
     }
 
-    public String getDuration() {
+    public LocalTime getDuration() {
         return duration;
     }
 
-    public void setDuration(String duration) {
+    public void setDuration(LocalTime duration) {
         this.duration = duration;
+    }
+
+    public Integer getMinimumAge() {
+        return minimumAge;
+    }
+
+    public void setMinimumAge(Integer minimumAge) {
+        this.minimumAge = minimumAge;
     }
 }
