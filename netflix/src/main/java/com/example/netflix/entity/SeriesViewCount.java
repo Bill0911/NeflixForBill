@@ -48,6 +48,4 @@ public class SeriesViewCount {
     {
         this.number++;
     }
-
-    
 }
