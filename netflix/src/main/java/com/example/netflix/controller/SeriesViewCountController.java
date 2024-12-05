@@ -1,7 +1,6 @@
 package com.example.netflix.controller;
 
 import com.example.netflix.security.JwtUtil;
-import com.example.netflix.service.MovieViewCountService;
 import com.example.netflix.service.SeriesViewCountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -12,7 +12,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id", nullable = false)
-    private Integer accountId;
+    public Integer accountId;
 
     @Column(nullable = false, unique = true)
     private String email;
