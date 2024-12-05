@@ -1,4 +1,7 @@
 package com.example.netflix.repository;
 
-public interface SeriesRepository {
+import com.example.netflix.entity.Series;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface SeriesRepository extends JpaRepository<Series, Integer> {
 }
