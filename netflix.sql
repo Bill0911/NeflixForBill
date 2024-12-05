@@ -3,6 +3,8 @@
 -- Структура таблицы `episode`
 --
 
+USE `netflix`;
+
 CREATE TABLE `episode` (
   `episode_id` int(11) NOT NULL,
   `title` varchar(255) DEFAULT NULL,
