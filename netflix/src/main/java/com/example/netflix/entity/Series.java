@@ -1,8 +1,6 @@
 package com.example.netflix.entity;
 import jakarta.persistence.*;
 
-import java.time.LocalTime;
-
 @Entity
 @Table(name="series")
 public class Series
@@ -16,9 +14,8 @@ public class Series
     @Column(nullable = false)
     private String title;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "age_range")
-    private Integer ageRange;
+    @Column(name = "minimum_age", nullable = false)
+    private Integer minimum_age;
 
     public Integer getSeriesId()
     {
@@ -40,13 +37,13 @@ public class Series
         this.title = title;
     }
 
-    public Integer getAgeRange()
+    public Integer getMinimum_age()
     {
-        return ageRange;
+        return minimum_age;
     }
 
-    public void setAgeRange(Integer ageRange)
+    public void setMinimum_age(Integer ageRange)
     {
-        this.ageRange = ageRange;
+        this.minimum_age = ageRange;
     }
 }

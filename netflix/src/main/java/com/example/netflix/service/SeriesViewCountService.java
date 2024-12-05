@@ -29,8 +29,8 @@ public class SeriesViewCountService
         Optional<Series> series = seriesRepository.findById(seriesId);
 
         if (user.isPresent() && series.isPresent()){
-            System.out.println("\"The series and the account exist with a\" + accountId + \", m\" + seriesId");
-            SeriesViewCount seriesViewCount = seriesViewCountRepository.findByUser_AccountID_And_SeriesID(account_id, seriesId)
+            System.out.println("\"The series and the account exist with a\"" + account_id + "\", m\""+ seriesId);
+            SeriesViewCount seriesViewCount = seriesViewCountRepository.findByUser_AccountIdAndSeries_SeriesId(account_id, seriesId)
                     .orElse(new SeriesViewCount());
             System.out.println("The series / account exist");
             seriesViewCount.setUser(user.get());
@@ -59,7 +59,7 @@ public class SeriesViewCountService
 
         Series series = seriesOpt.get();
 
-        SeriesViewCount seriesViewCount = seriesViewCountRepository.findByUser_AccountID_And_SeriesID(user.getAccountId(), series.getSeriesId())
+        SeriesViewCount seriesViewCount = seriesViewCountRepository.findByUser_AccountIdAndSeries_SeriesId(user.getAccountId(), series.getSeriesId())
                 .orElse(new SeriesViewCount());
 
         seriesViewCount.setUser(user);

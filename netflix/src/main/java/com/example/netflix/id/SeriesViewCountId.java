@@ -1,21 +1,33 @@
 package com.example.netflix.id;
 
-import com.example.netflix.entity.Movie;
 import com.example.netflix.entity.Series;
 import com.example.netflix.entity.User;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@Embeddable
 public class SeriesViewCountId implements Serializable
 {
+    @ManyToOne
+    @JoinColumn(name="account_id")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name="series_id")
     private Series series;
 
     public SeriesViewCountId(User user, Series series)
     {
         this.user = user;
         this.series = series;
+    }
+
+    public SeriesViewCountId() {
+
     }
 
     public User getUser()
