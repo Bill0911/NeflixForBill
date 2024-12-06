@@ -2,7 +2,7 @@ package com.example.netflix.entity;
 
 public enum AgeGroup
 {
-   SIX("6"),
+    SIX("6"),
     NINE("9"),
     TWELVE("12"),
     SIXTEEN("16"),
