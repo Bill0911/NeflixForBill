@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "/api/users/register",
+			"name": "http://localhost:8081/api/users/register",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -38,7 +38,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:8080/api/users/login/",
+			"name": "http://localhost:8081/api/users/login",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -58,12 +58,12 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/users/login/",
+					"raw": "http://localhost:8081/api/users/login",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "8081",
 					"path": [
 						"api",
 						"users",
@@ -75,44 +75,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:8080/api/movies/increment-view-count?accountId=3&movieId=2",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:8080/api/movies/increment-view-count?accountId=3&movieId=2",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"movies",
-						"increment-view-count"
-					],
-					"query": [
-						{
-							"key": "accountId",
-							"value": "3"
-						},
-						{
-							"key": "movieId",
-							"value": "2"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:8080/api/movies/add-to-viewcount?movieId=2",
+			"name": "http://localhost:8081/api/movies/add-to-viewcount?movieId=2",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -127,12 +90,12 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/movies/add-to-viewcount?movieId=2",
+					"raw": "http://localhost:8081/api/movies/add-to-viewcount?movieId=2",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "8081",
 					"path": [
 						"api",
 						"movies",
@@ -149,7 +112,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:8080/api/users/lang",
+			"name": "http://localhost:8081/api/users/lang",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -164,12 +127,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/users/lang",
+					"raw": "http://localhost:8081/api/users/lang",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "8081",
 					"path": [
 						"api",
 						"users",
