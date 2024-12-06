@@ -417,3 +417,5 @@ ALTER TABLE `profile`
 --
 ALTER TABLE `user`
   ADD CONSTRAINT `FKj9k2portqypgs993xn20pywtr` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`);
+
+ALTER TABLE user ADD COLUMN is_activated BOOLEAN NOT NULL DEFAULT FALSE;
