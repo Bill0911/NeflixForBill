@@ -1,92 +1,91 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: mysql
+-- Generation Time: Dec 06, 2024 at 01:19 PM
+-- Server version: 11.1.2-MariaDB-1:11.1.2+maria~ubu2204
+-- PHP Version: 8.2.10
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
--- Структура таблицы `episode`
+-- Database: `netflix`
 --
 
-USE `netflix`;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `episode`
+--
 
 CREATE TABLE `episode` (
-  `episode_id` int(11) NOT NULL,
+  `episode_id` int(11) UNSIGNED NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `duration` time DEFAULT '00:00:00',
-  `series_id` int(11) DEFAULT NULL
+  `series_id` int(11) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `genre`
+-- Table structure for table `genre`
 --
 
 CREATE TABLE `genre` (
-  `genre_id` int(11) NOT NULL,
+  `genre_id` int(11) UNSIGNED NOT NULL,
   `name` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `genreaccount`
---
-
-CREATE TABLE `genreaccount` (
-  `account_id` int(11) NOT NULL,
-  `genre_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `genreformovie`
+-- Table structure for table `genreformovie`
 --
 
 CREATE TABLE `genreformovie` (
-  `genre_id` int(11) NOT NULL,
-  `movie_id` int(11) NOT NULL
+  `genre_id` int(11) UNSIGNED NOT NULL,
+  `movie_id` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `genreforseries`
+-- Table structure for table `genreforseries`
 --
 
 CREATE TABLE `genreforseries` (
-  `genre_id` int(11) NOT NULL,
-  `series_id` int(11) NOT NULL
+  `genre_id` int(11) UNSIGNED NOT NULL,
+  `series_id` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `language`
+-- Table structure for table `language`
 --
 
 CREATE TABLE `language` (
-  `language_id` int(11) NOT NULL,
+  `language_id` int(11) UNSIGNED NOT NULL,
   `name` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Дамп данных таблицы `language`
---
-
-INSERT INTO `language` (`language_id`, `name`) VALUES
-(1, 'en'),
-(2, 'nl'),
-(3, 'lv'),
-(4, 'ru'),
-(5, 'es'),
-(6, 'ua');
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `movie`
+-- Table structure for table `movie`
 --
 
 CREATE TABLE `movie` (
-  `movie_id` int(11) NOT NULL,
+  `movie_id` int(11) UNSIGNED NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `duration` time NOT NULL DEFAULT '00:00:00',
   `sd_available` bit(1) DEFAULT b'1',
@@ -95,78 +94,40 @@ CREATE TABLE `movie` (
   `minimum_age` int(3) NOT NULL DEFAULT 12
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Дамп данных таблицы `movie`
---
-
-INSERT INTO `movie` (`movie_id`, `title`, `duration`, `sd_available`, `hd_available`, `uhd_available`, `minimum_age`) VALUES
-(1, 'Perdyaschiy malchik', '01:30:25', b'1', b'0', b'0', 6),
-(2, 'Porn', '01:12:05', b'1', b'0', b'0', 18),
-(3, 'Chtoto neponyatnoe', '02:23:05', b'1', b'0', b'0', 15);
-
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `moviesprofilewatchlist`
---
-
-CREATE TABLE `moviesprofilewatchlist` (
-  `profile_id` int(11) NOT NULL,
-  `movie_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `movieviewcount`
+-- Table structure for table `movieviewcount`
 --
 
 CREATE TABLE `movieviewcount` (
-  `account_id` int(11) NOT NULL,
-  `movie_id` int(11) NOT NULL,
+  `account_id` int(11) UNSIGNED NOT NULL,
+  `movie_id` int(11) UNSIGNED NOT NULL,
   `number` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Дамп данных таблицы `movieviewcount`
---
-
-INSERT INTO `movieviewcount` (`account_id`, `movie_id`, `number`) VALUES
-(5, 1, 2),
-(5, 3, 1);
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `profile`
+-- Table structure for table `profile`
 --
 
 CREATE TABLE `profile` (
-  `profile_id` int(11) NOT NULL,
-  `account_id` int(11) DEFAULT NULL,
+  `profile_id` int(11) UNSIGNED NOT NULL,
+  `account_id` int(11) UNSIGNED DEFAULT NULL,
   `profile_image` varchar(255) DEFAULT NULL,
   `age` int(3) NOT NULL DEFAULT 0,
   `name` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Дамп данных таблицы `profile`
---
-
-INSERT INTO `profile` (`profile_id`, `account_id`, `profile_image`, `age`, `name`) VALUES
-(17, 4, 'lublyu_srat\'.png', 6, NULL),
-(18, 4, 'dyadya_zhopa\'.png', 6, 'abcdefgqwerty'),
-(19, 5, 'qwerty\'.png', 13, 'stupidboy'),
-(20, 5, 'pizdiec\'.png', 17, 'krutoy huyesos');
-
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `series`
+-- Table structure for table `series`
 --
 
 CREATE TABLE `series` (
-  `series_id` int(11) NOT NULL,
+  `series_id` int(11) UNSIGNED NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `minimum_age` int(3) NOT NULL DEFAULT 12
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -174,63 +135,29 @@ CREATE TABLE `series` (
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `seriesprofilewatchlist`
+-- Table structure for table `seriesprofilewatchlist`
 --
 
 CREATE TABLE `seriesprofilewatchlist` (
-  `account_id` int(11) NOT NULL,
-  `series_id` int(11) NOT NULL
+  `profile_id` int(11) UNSIGNED NOT NULL,
+  `series_id` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Структура таблицы `seriesviewcount`
---
-
-CREATE TABLE `seriesviewcount` (
-  `account_id` int(11) NOT NULL,
-  `series_id` int(11) NOT NULL,
-  `number` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `subtitleformovie`
---
-
-CREATE TABLE `subtitleformovie` (
-  `language_id` int(11) NOT NULL,
-  `movie_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `subtitleforseries`
---
-
-CREATE TABLE `subtitleforseries` (
-  `language_id` int(11) NOT NULL,
-  `series_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `user`
+-- Table structure for table `user`
 --
 
 CREATE TABLE `user` (
-  `account_id` int(11) NOT NULL,
+  `account_id` int(11) UNSIGNED NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `payment_method` varchar(255) DEFAULT 'Credit Card',
   `blocked` bit(1) DEFAULT b'0',
   `subscription` enum('SD','HD','UHD') DEFAULT 'SD',
   `trial_start_date` datetime DEFAULT current_timestamp(),
-  `language_id` int(11) DEFAULT NULL,
+  `language_id` int(11) UNSIGNED DEFAULT NULL,
   `role` enum('VIEWER','JUNIOR','MEDIOR','SENIOR') DEFAULT 'VIEWER',
   `failed_attempts` int(11) DEFAULT 0,
   `lock_time` datetime DEFAULT NULL,
@@ -238,184 +165,179 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Дамп данных таблицы `user`
---
-
-INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `blocked`, `subscription`, `trial_start_date`, `language_id`, `role`, `failed_attempts`, `lock_time`, `discount`) VALUES
-(3, 'fjodor.smorodins@gg.com', '$2a$10$58JKWr8f48delHpsHW/DSece6c3N5ZyjXdsnRwJnVTJ3iu.SfdTB2', 'CC', b'0', 'SD', '2024-12-03 15:25:53', 1, 'VIEWER', 0, NULL, b'0'),
-(4, 'zhi.nasral.v.shtani@gmail.com', '$2a$10$E0hWca4/I7i2LaL4A34lvu40/g.9rsVM/nqti2v/DMrVZFFrPNw.a', 'abc', b'0', 'HD', '2024-12-03 18:55:44', 4, 'VIEWER', 0, NULL, b'0'),
-(5, 'fjodor.smorodins@gmail.com', '$2a$10$xCXwS/hWMI0qiTub3jC4VOUkgY5OkMo/rx/SxsGBIRiTOayXYZ5y2', 'abc', b'0', 'HD', '2024-12-04 15:33:43', 1, 'VIEWER', 0, NULL, b'0');
-
---
--- Индексы сохранённых таблиц
+-- Indexes for dumped tables
 --
 
 --
--- Индексы таблицы `episode`
+-- Indexes for table `episode`
 --
 ALTER TABLE `episode`
-  ADD PRIMARY KEY (`episode_id`);
+  ADD PRIMARY KEY (`episode_id`),
+  ADD KEY `FK_episode_series` (`series_id`);
 
 --
--- Индексы таблицы `genre`
+-- Indexes for table `genre`
 --
 ALTER TABLE `genre`
   ADD PRIMARY KEY (`genre_id`);
 
 --
--- Индексы таблицы `genreaccount`
---
-ALTER TABLE `genreaccount`
-  ADD PRIMARY KEY (`account_id`,`genre_id`);
-
---
--- Индексы таблицы `genreformovie`
+-- Indexes for table `genreformovie`
 --
 ALTER TABLE `genreformovie`
-  ADD PRIMARY KEY (`genre_id`,`movie_id`);
+  ADD PRIMARY KEY (`genre_id`,`movie_id`),
+  ADD KEY `movie_id` (`movie_id`);
 
 --
--- Индексы таблицы `genreforseries`
+-- Indexes for table `genreforseries`
 --
 ALTER TABLE `genreforseries`
-  ADD PRIMARY KEY (`genre_id`,`series_id`);
+  ADD PRIMARY KEY (`genre_id`,`series_id`),
+  ADD KEY `series_id` (`series_id`);
 
 --
--- Индексы таблицы `language`
+-- Indexes for table `language`
 --
 ALTER TABLE `language`
   ADD PRIMARY KEY (`language_id`);
 
 --
--- Индексы таблицы `movie`
+-- Indexes for table `movie`
 --
 ALTER TABLE `movie`
   ADD PRIMARY KEY (`movie_id`);
 
 --
--- Индексы таблицы `moviesprofilewatchlist`
---
-ALTER TABLE `moviesprofilewatchlist`
-  ADD PRIMARY KEY (`profile_id`,`movie_id`);
-
---
--- Индексы таблицы `movieviewcount`
+-- Indexes for table `movieviewcount`
 --
 ALTER TABLE `movieviewcount`
   ADD PRIMARY KEY (`account_id`,`movie_id`),
-  ADD KEY `FK960o3778b43sfm6eh63p8yaaj` (`movie_id`);
+  ADD KEY `movie_id` (`movie_id`);
 
 --
--- Индексы таблицы `profile`
+-- Indexes for table `profile`
 --
 ALTER TABLE `profile`
   ADD PRIMARY KEY (`profile_id`),
-  ADD KEY `FKorsmm7ow2nvslj85y0bs2xii4` (`account_id`);
+  ADD KEY `account_id` (`account_id`);
 
 --
--- Индексы таблицы `series`
+-- Indexes for table `series`
 --
 ALTER TABLE `series`
   ADD PRIMARY KEY (`series_id`);
 
 --
--- Индексы таблицы `seriesprofilewatchlist`
+-- Indexes for table `seriesprofilewatchlist`
 --
 ALTER TABLE `seriesprofilewatchlist`
-  ADD PRIMARY KEY (`account_id`,`series_id`);
+  ADD PRIMARY KEY (`profile_id`,`series_id`),
+  ADD KEY `series_id` (`series_id`);
 
 --
--- Индексы таблицы `seriesviewcount`
---
-ALTER TABLE `seriesviewcount`
-  ADD PRIMARY KEY (`account_id`,`series_id`);
-
---
--- Индексы таблицы `subtitleformovie`
---
-ALTER TABLE `subtitleformovie`
-  ADD PRIMARY KEY (`language_id`,`movie_id`);
-
---
--- Индексы таблицы `subtitleforseries`
---
-ALTER TABLE `subtitleforseries`
-  ADD PRIMARY KEY (`language_id`,`series_id`);
-
---
--- Индексы таблицы `user`
+-- Indexes for table `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`account_id`),
-  ADD KEY `FKj9k2portqypgs993xn20pywtr` (`language_id`);
+  ADD KEY `language_id` (`language_id`);
 
 --
--- AUTO_INCREMENT для сохранённых таблиц
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT для таблицы `episode`
+-- AUTO_INCREMENT for table `episode`
 --
 ALTER TABLE `episode`
-  MODIFY `episode_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `episode_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT для таблицы `genre`
+-- AUTO_INCREMENT for table `genre`
 --
 ALTER TABLE `genre`
-  MODIFY `genre_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `genre_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT для таблицы `language`
+-- AUTO_INCREMENT for table `language`
 --
 ALTER TABLE `language`
-  MODIFY `language_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `language_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT для таблицы `movie`
+-- AUTO_INCREMENT for table `movie`
 --
 ALTER TABLE `movie`
-  MODIFY `movie_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `movie_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT для таблицы `profile`
+-- AUTO_INCREMENT for table `profile`
 --
 ALTER TABLE `profile`
-  MODIFY `profile_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `profile_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT для таблицы `series`
+-- AUTO_INCREMENT for table `series`
 --
 ALTER TABLE `series`
-  MODIFY `series_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `series_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT для таблицы `user`
+-- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `account_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- Ограничения внешнего ключа сохраненных таблиц
+-- Constraints for dumped tables
 --
 
 --
--- Ограничения внешнего ключа таблицы `movieviewcount`
+-- Constraints for table `episode`
+--
+ALTER TABLE `episode`
+  ADD CONSTRAINT `FK_episode_series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `genreformovie`
+--
+ALTER TABLE `genreformovie`
+  ADD CONSTRAINT `genreformovie_ibfk_1` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `genreformovie_ibfk_2` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `genreforseries`
+--
+ALTER TABLE `genreforseries`
+  ADD CONSTRAINT `genreforseries_ibfk_1` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `genreforseries_ibfk_2` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `movieviewcount`
 --
 ALTER TABLE `movieviewcount`
-  ADD CONSTRAINT `FK_MovieViewCount_Account` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_MovieViewCount_Movie` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `movieviewcount_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `movieviewcount_ibfk_2` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Ограничения внешнего ключа таблицы `profile`
+-- Constraints for table `profile`
 --
 ALTER TABLE `profile`
-  ADD CONSTRAINT `FKorsmm7ow2nvslj85y0bs2xii4` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`);
+  ADD CONSTRAINT `profile_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Ограничения внешнего ключа таблицы `user`
+-- Constraints for table `seriesprofilewatchlist`
+--
+ALTER TABLE `seriesprofilewatchlist`
+  ADD CONSTRAINT `seriesprofilewatchlist_ibfk_1` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`profile_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `seriesprofilewatchlist_ibfk_2` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `user`
 --
 ALTER TABLE `user`
-  ADD CONSTRAINT `FKj9k2portqypgs993xn20pywtr` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`);
+  ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`) ON DELETE SET NULL ON UPDATE CASCADE;
+COMMIT;
 
-ALTER TABLE user ADD COLUMN is_activated BOOLEAN NOT NULL DEFAULT FALSE;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
