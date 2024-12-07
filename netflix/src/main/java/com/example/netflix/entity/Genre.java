@@ -9,7 +9,6 @@ import jakarta.persistence.Table;
 public class Genre {
 
     @Id
-    @
 
     private String genreName;
 
