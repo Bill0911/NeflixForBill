@@ -99,7 +99,7 @@ public class UserService {
         profile.setAge(profileRequest.getAge());
         profile.setName(profileRequest.getName());
 
-        if (userOptional.isPresent()) {
+        if (userOptional.isPresent() && userOptional.get().getProfiles().size() <= 3) {
             profile.setUser(userOptional.get());
 
             System.out.println("Image: " + profile.getProfileImage() + " ,Age: " + profile.getAge());
