@@ -22,6 +22,16 @@ CREATE TABLE `genre` (
 --
 
 --
+CREATE TABLE `genreforuser` (
+  `genre_id` int(11) UNSIGNED NOT NULL,
+  `account_id` int(11) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+
+--
 
 CREATE TABLE `genreformovie` (
   `genre_id` int(11) UNSIGNED NOT NULL,
@@ -189,6 +199,11 @@ ALTER TABLE `episode`
 ALTER TABLE `genre`
   ADD PRIMARY KEY (`genre_id`);
 
+
+ALTER TABLE `genreforuser`
+  ADD PRIMARY KEY (`genre_id`,`account_id`),
+  ADD KEY `account_id` (`account_id`);
+
 --
 -- Индексы таблицы `genreformovie`
 --
@@ -320,8 +335,17 @@ ALTER TABLE `episode`
   ADD CONSTRAINT `FK_episode_series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
+-- Ограничения внешнего ключа таблицы `genreforuser`
+--
+
+ALTER TABLE `genreforuser`
+  ADD CONSTRAINT `genreforuser_genreid` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `genreforuser_accountid` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Ограничения внешнего ключа таблицы `genreformovie`
 --
+
 ALTER TABLE `genreformovie`
   ADD CONSTRAINT `genreformovie_ibfk_1` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `genreformovie_ibfk_2` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE;
