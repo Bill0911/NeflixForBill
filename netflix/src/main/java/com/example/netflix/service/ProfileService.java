@@ -33,7 +33,7 @@ public class ProfileService {
         Optional<Profile> profileOptional = profileRepository.findByProfileId(profileId);
 
         if(userOptional.isEmpty() || profileOptional.isEmpty()) {
-            methodResponse.setMessage("No such profile or user");
+            methodResponse.setMessage("No such profile");
             return methodResponse;
         }
 
@@ -64,12 +64,12 @@ public class ProfileService {
 
         if (profileOptional.get().getAge() >= movieOptional.get().getMinimumAge())
         {
-            methodResponse.setMessage("Profile fits movie's age restrictions!");
+            methodResponse.setMessage("You fits movie's age restrictions!");
             methodResponse.setSuccess(true);
             return methodResponse;
         }
 
-        methodResponse.setMessage("Profile cannot watch movie due to age restrictions");
+        methodResponse.setMessage("You cannot watch movie due to age restrictions");
 
         return methodResponse;
     }
