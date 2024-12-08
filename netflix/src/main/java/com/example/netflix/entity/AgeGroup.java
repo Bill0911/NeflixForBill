@@ -31,6 +31,6 @@ public enum AgeGroup
                 return ageRange;
             }
         }
-        throw new IllegalArgumentException("Unknown enum value: " + value);
+        throw new IllegalArgumentException("Unknown age: " + value);
     }
 }

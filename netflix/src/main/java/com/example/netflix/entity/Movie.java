@@ -22,7 +22,6 @@ public class Movie {
     @Column(name="minimum_age", nullable = false)
     private Integer minimumAge;
 
-    // Getters and Setters
     public Integer getMovieId() {
         return movieId;
     }
