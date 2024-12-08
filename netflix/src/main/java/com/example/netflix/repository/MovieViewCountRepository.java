@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MovieViewCountRepository extends JpaRepository<MovieViewCount, Integer> {
-
+public interface MovieViewCountRepository extends JpaRepository<MovieViewCount, Integer>
+{
     Optional<MovieViewCount> findByUser_AccountIdAndMovie_MovieId(Integer accountId, Integer movieId);
 }

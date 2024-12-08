@@ -14,20 +14,29 @@ public class Language {
     @Column(nullable = false)
     private String name;
 
-    // Getters and Setters
-    public Integer getLanguageId() {
-        return languageId;
+    public Language(Integer languageId, String name)
+    {
+        this.languageId = languageId;
+        this.name = name;
     }
 
-    public void setLanguageId(Integer languageId) {
+    public Integer getLanguageId()
+    {
+        return this.languageId;
+    }
+
+    public void setLanguageId(Integer languageId)
+    {
         this.languageId = languageId;
     }
 
-    public String getName() {
-        return name;
+    public String getName()
+    {
+        return this.name;
     }
 
-    public void setName(String name) {
+    public void setName(String name)
+    {
         this.name = name;
     }
 }
