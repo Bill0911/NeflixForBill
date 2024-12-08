@@ -16,6 +16,11 @@ public class LanguageService
     @Autowired
     private LanguageRepository languageRepository;
 
+    public LanguageService(LanguageRepository languageRepository)
+    {
+        this.languageRepository = languageRepository;
+    }
+
     public List<Language> getAllGenres() {
         return languageRepository.findAll();
     }

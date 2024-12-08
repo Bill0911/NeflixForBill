@@ -16,28 +16,38 @@ public class GenreController
     @Autowired
     private GenreService genreService;
 
+    public GenreController(GenreService genreService)
+    {
+        this.genreService = genreService;
+    }
+
     @GetMapping
-    public ResponseEntity<List<Genre>> getAllGenres() {
+    public ResponseEntity<List<Genre>> getAllGenres()
+    {
         return ResponseEntity.ok(genreService.getAllGenres());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Genre> getGenreById(@PathVariable Integer id) {
+    public ResponseEntity<Genre> getGenreById(@PathVariable Integer id)
+    {
         return ResponseEntity.ok(genreService.getGenreById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Genre> createGenre(@RequestBody Genre genre) {
+    public ResponseEntity<Genre> createGenre(@RequestBody Genre genre)
+    {
         return ResponseEntity.ok(genreService.createGenre(genre));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Genre> updateGenre(@PathVariable Integer id, @RequestBody Genre genre) {
+    public ResponseEntity<Genre> updateGenre(@PathVariable Integer id, @RequestBody Genre genre)
+    {
         return ResponseEntity.ok(genreService.updateGenre(id, genre));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteGenre(@PathVariable Integer id) {
+    public ResponseEntity<String> deleteGenre(@PathVariable Integer id)
+    {
         genreService.deleteGenre(id);
         return ResponseEntity.ok("Genre deleted successfully.");
     }
