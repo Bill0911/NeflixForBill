@@ -17,20 +17,29 @@ public class GenreService
     @Autowired
     private GenreRepository genreRepository;
 
-    public List<Genre> getAllGenres() {
+    public GenreService(GenreRepository genreRepository)
+    {
+        this.genreRepository = genreRepository;
+    }
+
+    public List<Genre> getAllGenres()
+    {
         return genreRepository.findAll();
     }
 
-    public Genre getGenreById(Integer id) {
+    public Genre getGenreById(Integer id)
+    {
         Optional<Genre> genre = genreRepository.findById(id);
         return genre.orElseThrow(() -> new RuntimeException("Genre not found with ID: " + id));
     }
 
-    public Genre createGenre(Genre genre) {
+    public Genre createGenre(Genre genre)
+    {
         return genreRepository.save(genre);
     }
 
-    public Genre updateGenre(Integer id, Genre genreDetails) {
+    public Genre updateGenre(Integer id, Genre genreDetails)
+    {
         Genre genre = getGenreById(id);
         genre.setName(genreDetails.getName());
         genre.setGenreName(genreDetails.getGenreName());
