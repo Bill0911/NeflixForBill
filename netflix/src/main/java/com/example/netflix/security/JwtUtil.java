@@ -30,7 +30,6 @@ public class JwtUtil {
                 .compact();
     }
 
-
     // Extract account_id from the token
     public int extractId(String token) {
         Claims claims = extractAllClaims(token);
