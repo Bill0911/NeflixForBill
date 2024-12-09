@@ -1,9 +1,7 @@
 package com.example.netflix.controller;
 
 import com.example.netflix.entity.Movie;
-import com.example.netflix.security.JwtUtil;
 import com.example.netflix.service.MovieService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +9,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/movies")
-public class MovieController {
+public class MovieController
+{
 
-    @Autowired
     private final MovieService movieService;
 
     public MovieController(MovieService movieService)
@@ -21,30 +19,39 @@ public class MovieController {
         this.movieService = movieService;
     }
 
+    // GET: Retrieve all movies
     @GetMapping
     public ResponseEntity<List<Movie>> getAllMovies()
     {
-        return ResponseEntity.ok(movieService.getAllMovies());
+        List<Movie> movies = movieService.getAllMovies();
+        return ResponseEntity.ok(movies);
     }
 
+    // GET: Retrieve a movie by ID
     @GetMapping("/{id}")
     public ResponseEntity<Movie> getMovieById(@PathVariable Integer id)
     {
-        return ResponseEntity.ok(movieService.getMovieById(id));
+        Movie movie = movieService.getMovieById(id);
+        return ResponseEntity.ok(movie);
     }
 
+    // POST: Create a new movie
     @PostMapping
     public ResponseEntity<Movie> createMovie(@RequestBody Movie movie)
     {
-        return ResponseEntity.ok(movieService.createMovie(movie));
+        Movie createdMovie = movieService.createMovie(movie);
+        return ResponseEntity.ok(createdMovie);
     }
 
+    // PUT: Update an existing movie
     @PutMapping("/{id}")
-    public ResponseEntity<Movie> updateMovie(@PathVariable Integer id, @RequestBody Movie movie)
+    public ResponseEntity<Movie> updateMovie(@PathVariable Integer id, @RequestBody Movie updatedMovie)
     {
-        return ResponseEntity.ok(movieService.updateMovie(id, movie));
+        Movie updated = movieService.updateMovie(id, updatedMovie);
+        return ResponseEntity.ok(updated);
     }
 
+    // DELETE: Delete a movie by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMovie(@PathVariable Integer id)
     {
@@ -52,4 +59,3 @@ public class MovieController {
         return ResponseEntity.ok("Movie deleted successfully.");
     }
 }
-

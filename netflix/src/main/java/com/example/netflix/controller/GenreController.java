@@ -45,7 +45,8 @@ public class GenreController
         try
         {
             return ResponseEntity.ok(genreService.update(id, genre));
-        } catch (IllegalArgumentException e)
+        }
+        catch (IllegalArgumentException e)
         {
             return ResponseEntity.notFound().build();
         }
