@@ -12,9 +12,7 @@ import java.util.List;
 @RequestMapping("/api/genres")
 public class GenreController
 {
-
-    @Autowired
-    private GenreService genreService;
+    private final GenreService genreService;
 
     public GenreController(GenreService genreService)
     {
@@ -24,31 +22,39 @@ public class GenreController
     @GetMapping
     public ResponseEntity<List<Genre>> getAllGenres()
     {
-        return ResponseEntity.ok(genreService.getAllGenres());
+        return ResponseEntity.ok(genreService.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Genre> getGenreById(@PathVariable Integer id)
     {
-        return ResponseEntity.ok(genreService.getGenreById(id));
+        return genreService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public ResponseEntity<Genre> createGenre(@RequestBody Genre genre)
     {
-        return ResponseEntity.ok(genreService.createGenre(genre));
+        return ResponseEntity.ok(genreService.save(genre));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Genre> updateGenre(@PathVariable Integer id, @RequestBody Genre genre)
     {
-        return ResponseEntity.ok(genreService.updateGenre(id, genre));
+        try
+        {
+            return ResponseEntity.ok(genreService.update(id, genre));
+        } catch (IllegalArgumentException e)
+        {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteGenre(@PathVariable Integer id)
     {
-        genreService.deleteGenre(id);
+        genreService.deleteById(id);
         return ResponseEntity.ok("Genre deleted successfully.");
     }
 }
