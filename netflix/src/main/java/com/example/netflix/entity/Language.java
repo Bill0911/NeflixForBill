@@ -4,22 +4,30 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "language")
-public class Language {
+public class Language
+{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "language_id")
     private Integer languageId;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    // Default Constructor (Required by JPA)
+    public Language()
+    {
+    }
+
+    // All-Args Constructor
     public Language(Integer languageId, String name)
     {
         this.languageId = languageId;
         this.name = name;
     }
 
+    // Getters and Setters
     public Integer getLanguageId()
     {
         return this.languageId;

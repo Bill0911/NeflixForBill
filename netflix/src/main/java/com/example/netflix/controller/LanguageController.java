@@ -2,46 +2,59 @@ package com.example.netflix.controller;
 
 import com.example.netflix.entity.Language;
 import com.example.netflix.service.LanguageService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-public class LanguageController
-{
-    @Autowired
-    private LanguageService languageService;
+@RequestMapping("/api/languages")
+public class LanguageController {
+
+    private final LanguageService languageService;
+
+    public LanguageController(LanguageService languageService)
+    {
+        this.languageService = languageService;
+    }
 
     @GetMapping
-    public ResponseEntity<List<Language>> getAllGenres()
+    public ResponseEntity<List<Language>> getAllLanguages()
     {
-        return ResponseEntity.ok(languageService.getAllGenres());
+        return ResponseEntity.ok(languageService.getAllLanguages());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Language> getGenreById(@PathVariable Integer id)
+    public ResponseEntity<Language> getLanguageById(@PathVariable Integer id)
     {
-        return ResponseEntity.ok(languageService.getLanguageById(id));
+        return languageService.getLanguageById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Language> createGenre(@RequestBody Language language)
+    public ResponseEntity<Language> createLanguage(@RequestBody Language language)
     {
         return ResponseEntity.ok(languageService.createLanguage(language));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Language> updateGenre(@PathVariable Integer id, @RequestBody Language language)
+    public ResponseEntity<Language> updateLanguage(@PathVariable Integer id, @RequestBody Language updatedLanguage)
     {
-        return ResponseEntity.ok(languageService.updateLanguage(id, language));
+        try
+        {
+            return ResponseEntity.ok(languageService.updateLanguage(id, updatedLanguage));
+        }
+        catch (RuntimeException e)
+        {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteGenre(@PathVariable Integer id)
+    public ResponseEntity<Void> deleteLanguage(@PathVariable Integer id)
     {
-        languageService.deleteGenre(id);
-        return ResponseEntity.ok("Genre deleted successfully.");
+        languageService.deleteLanguage(id);
+        return ResponseEntity.noContent().build();
     }
 }
