@@ -174,7 +174,7 @@ CREATE TABLE `user` (
   `role` enum('VIEWER','JUNIOR','MEDIOR','SENIOR') DEFAULT 'VIEWER',
   `failed_attempts` int(11) DEFAULT 0,
   `lock_time` datetime DEFAULT NULL,
-  `discount` bit(1) DEFAULT b'0'
+  `invitedUser` BOOLEAN DEFAULT FALSE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
