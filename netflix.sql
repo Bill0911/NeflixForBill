@@ -13,7 +13,6 @@ CREATE TABLE `episode` (
 
 CREATE TABLE `genre` (
   `genre_id` int(11) UNSIGNED NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
   `genre_name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
