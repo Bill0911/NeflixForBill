@@ -278,7 +278,6 @@ ALTER TABLE `user`
   ADD KEY `language_id` (`language_id`);
 
 --
--- AUTO_INCREMENT для сохранённых таблиц
 --
 
 --
@@ -323,9 +322,7 @@ ALTER TABLE `series`
 ALTER TABLE `user`
   MODIFY `account_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
---
--- Ограничения внешнего ключа сохраненных таблиц
---
+
 
 --
 -- Ограничения внешнего ключа таблицы `episode`
@@ -395,3 +392,54 @@ ALTER TABLE `seriesviewcount`
 --
 ALTER TABLE `user`
   ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+
+CREATE VIEW SubscriptionCosts AS
+SELECT 
+    u.account_id AS UserID,
+    u.email AS Email,
+    u.subscription AS SubscriptionType,
+    CASE 
+        WHEN DATEDIFF(CURDATE(), u.trial_start_date) <= 7 THEN 0 -- Free within trial period
+        ELSE 
+            CASE 
+                WHEN u.subscription = 'SD' THEN 10
+                WHEN u.subscription = 'HD' THEN 15
+                WHEN u.subscription = 'UHD' THEN 20
+                ELSE 0 -- Default for invalid subscription type
+            END - 
+            CASE 
+                WHEN u.discount = 1 THEN 2 ELSE 0 -- Apply $2 discount
+            END
+    END AS SubscriptionCost
+FROM 
+    Account u;
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE AddMovieViewCount(
+    IN p_movieId INT,
+    IN p_accountId INT
+)
+BEGIN
+    -- Check if the record exists in the movieviewcount table
+    IF EXISTS (
+        SELECT 1 
+        FROM movieviewcount 
+        WHERE movie_id = p_movieId AND account_id = p_accountId
+    ) THEN
+        -- If it exists, increment the view count
+        UPDATE movieviewcount
+        SET number = number + 1
+        WHERE movie_id = p_movieId AND account_id = p_accountId;
+    ELSE
+        -- If it doesn't exist, create a new entry with initial count = 1
+        INSERT INTO movieviewcount (movie_id, account_id, number)
+        VALUES (p_movieId, p_accountId, 1);
+    END IF;
+END $$
+
+DELIMITER ;
+
