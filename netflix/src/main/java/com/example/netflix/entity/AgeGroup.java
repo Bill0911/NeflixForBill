@@ -2,35 +2,22 @@ package com.example.netflix.entity;
 
 public enum AgeGroup
 {
-    SIX("6"),
-    NINE("9"),
-    TWELVE("12"),
-    SIXTEEN("16"),
-    SIXTEEN_PLUS("16+");
+    SIX(6),
+    NINE(9),
+    TWELVE(12),
+    SIXTEEN(16),
+    SIXTEEN_PLUS(18);
 
-    private final String value;
+    private final int age;
 
-    AgeGroup(String value)
+    AgeGroup(int age)
     {
-        this.value = value;
+        this.age = age;
     }
 
-    public String getValue()
+    public int getAge()
     {
-        return value;
+        return this.age;
     }
 
-    @Override
-    public String toString() {
-        return this.value;
-    }
-
-    public static AgeGroup fromValue(String value) {
-        for (AgeGroup ageRange : AgeGroup.values()) {
-            if (ageRange.value.equals(value)) {
-                return ageRange;
-            }
-        }
-        throw new IllegalArgumentException("Unknown age: " + value);
-    }
 }
