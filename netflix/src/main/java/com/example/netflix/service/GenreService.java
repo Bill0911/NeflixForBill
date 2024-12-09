@@ -14,40 +14,41 @@ import java.util.Optional;
 @Service
 public class GenreService
 {
-    private final GenreRepository genreRepository;
+    @Autowired
+    private GenreRepository genreRepository;
 
     public GenreService(GenreRepository genreRepository)
     {
         this.genreRepository = genreRepository;
     }
 
-    public List<Genre> findAll()
+    public List<Genre> getAllGenres()
     {
         return genreRepository.findAll();
     }
 
-    public Optional<Genre> findById(Integer id)
+    public Genre getGenreById(Integer id)
     {
-        return genreRepository.findById(id);
+        Optional<Genre> genre = genreRepository.findById(id);
+        return genre.orElseThrow(() -> new RuntimeException("Genre not found with ID: " + id));
     }
 
-    public Genre save(Genre genre)
+    public Genre createGenre(Genre genre)
     {
         return genreRepository.save(genre);
     }
 
-    public Genre update(Integer id, Genre genre)
+    public Genre updateGenre(Integer id, Genre genreDetails)
     {
-        if (genreRepository.existsById(id))
-        {
-            genre.setGenreId(id);
-            return genreRepository.save(genre);
-        }
-        throw new IllegalArgumentException("Genre with ID " + id + " not found.");
+        Genre genre = getGenreById(id);
+        genre.setName(genreDetails.getName());
+        genre.setGenreName(genreDetails.getGenreName());
+        return genreRepository.save(genre);
     }
 
-    public void deleteById(Integer id)
+    public void deleteGenre(Integer id)
     {
-        genreRepository.deleteById(id);
+        Genre genre = getGenreById(id);
+        genreRepository.delete(genre);
     }
 }
