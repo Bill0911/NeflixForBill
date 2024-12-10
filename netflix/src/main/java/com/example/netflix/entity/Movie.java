@@ -74,15 +74,4 @@ public class Movie
         this.minimumAge = minimumAge;
     }
 
-    // Optional: toString for debugging/logging
-    @Override
-    public String toString()
-    {
-        return "Movie{" +
-                "movieId=" + movieId +
-                ", title='" + title + '\x'' +
-                ", duration=" + duration +
-                ", minimumAge=" + minimumAge +
-                '}';
-    }
 }
