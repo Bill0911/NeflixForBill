@@ -2,7 +2,7 @@ package com.example.netflix.service;
 
 import com.example.netflix.entity.Language;
 import com.example.netflix.entity.Profile;
-import com.example.netflix.entity.ProfileRequest;
+import com.example.netflix.dto.ProfileRequest;
 import com.example.netflix.entity.User;
 import com.example.netflix.repository.LanguageRepository;
 import com.example.netflix.repository.ProfileRepository;
@@ -10,7 +10,6 @@ import com.example.netflix.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -112,5 +111,9 @@ public class UserService {
 
         return null;
     }
+
+//    public List<SubscriptionOverview> getAllSubscriptions() {
+//        return subscriptionOverviewRepository.findAllSubscriptions();
+//    }
 }
 
