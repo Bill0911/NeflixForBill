@@ -1,3 +1,5 @@
+USE `netflix`;
+
 
 
 CREATE TABLE `episode` (
@@ -414,7 +416,7 @@ BEGIN
     IF EXISTS (
         SELECT 1 
         FROM seriesviewcount
-        WHERE series_id = p_seriesId AND account_id = p_accountId;
+        WHERE series_id = p_seriesId AND account_id = p_accountId
     ) THEN
         -- If it exists, increment the view count
         UPDATE seriesviewcount
@@ -422,10 +424,9 @@ BEGIN
         WHERE series_id = p_seriesId AND account_id = p_accountId;
     ELSE
         -- If it doesn't exist, create a new entry with initial count = 1
-        INSERT INTO seriesviewcount (`series_id`, `account_id`, `number`)
+        INSERT INTO seriesviewcount (account_id, series_id, number)
         VALUES (p_accountId, p_seriesId, 1);
     END IF;
 END $$
 
 DELIMITER ;
-
