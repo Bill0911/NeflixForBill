@@ -1,57 +1,37 @@
 package com.example.netflix.id;
 
-import com.example.netflix.entity.Genre;
-import com.example.netflix.entity.GenreForSeries;
-import com.example.netflix.entity.Series;
-import com.example.netflix.entity.User;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-
 import java.io.Serializable;
 import java.util.Objects;
+import jakarta.persistence.Embeddable;
 
 @Embeddable
-public class GenreForSeriesId implements Serializable
-{
-    @OneToOne
-    @JoinColumn(name = "genre_id")
-    private Genre genre;
+public class GenreForSeriesId implements Serializable {
 
-    @OneToOne
-    @JoinColumn(name = "series_id")
-    private Series series;
+    private Integer genreId;
+    private Integer seriesId;
 
-    public GenreForSeriesId(Genre genre, Series series)
-    {
-        this.genre = genre;
-        this.series = series;
+    public GenreForSeriesId() {
     }
 
-    public GenreForSeriesId ()
-    {
-
+    public GenreForSeriesId(Integer genreId, Integer seriesId) {
+        this.genreId = genreId;
+        this.seriesId = seriesId;
     }
 
-    public Genre getGenre ()
-    {
-        return genre;
+    public Integer getGenreId() {
+        return genreId;
     }
 
-    public void setGenre (Genre genre)
-    {
-        this.genre = genre;
+    public void setGenreId(Integer genreId) {
+        this.genreId = genreId;
     }
 
-    public Series getSeries ()
-    {
-        return series;
+    public Integer getSeriesId() {
+        return seriesId;
     }
 
-    public void setSeries (Series series)
-    {
-        this.series = series;
+    public void setSeriesId(Integer seriesId) {
+        this.seriesId = seriesId;
     }
 
     @Override
@@ -59,13 +39,11 @@ public class GenreForSeriesId implements Serializable
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GenreForSeriesId that = (GenreForSeriesId) o;
-        return Objects.equals(genre.getGenreId(), that.genre.getGenreId()) &&
-                Objects.equals(series.getSeriesId(), that.series.getSeriesId());
+        return Objects.equals(genreId, that.genreId) && Objects.equals(seriesId, that.seriesId);
     }
 
     @Override
-    public int hashCode()
-    {
-        return Objects.hash(genre.getGenreId(), series.getSeriesId());
+    public int hashCode() {
+        return Objects.hash(genreId, seriesId);
     }
 }
