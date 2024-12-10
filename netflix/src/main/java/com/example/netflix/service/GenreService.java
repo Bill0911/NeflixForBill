@@ -2,9 +2,6 @@ package com.example.netflix.service;
 
 import com.example.netflix.entity.Genre;
 import com.example.netflix.repository.GenreRepository;
-import com.example.netflix.repository.MovieRepository;
-import com.example.netflix.repository.ProfileRepository;
-import com.example.netflix.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,4 +35,16 @@ public class GenreService
         return genreRepository.save(genre);
     }
 
+    public Genre updateGenre(Integer id, Genre genreDetails)
+    {
+        Genre genre = getGenreById(id);
+        genre.setGenreName(genreDetails.getGenreName());
+        return genreRepository.save(genre);
+    }
+
+    public void deleteGenre(Integer id)
+    {
+        Genre genre = getGenreById(id);
+        genreRepository.delete(genre);
+    }
 }
