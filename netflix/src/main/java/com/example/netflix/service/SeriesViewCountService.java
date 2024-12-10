@@ -24,20 +24,34 @@ public class SeriesViewCountService
         this.userRepository = userRepository;
     }
 
-    public void incrementViewCount(Integer account_id, Integer seriesId) {
-        Optional<User> user = userRepository.findById(account_id);
-        Optional<Series> series = seriesRepository.findById(seriesId);
+    public void incrementViewCount(Integer account_id, Integer seriesId)
+    {
+        Optional<User> userOpt = userRepository.findById(account_id);
+        Optional<Series> seriesOpt = seriesRepository.findById(seriesId);
 
-        if (user.isPresent() && series.isPresent()){
-            System.out.println("\"The series and the account exist with a\"" + account_id + "\", m\""+ seriesId);
+        if (userOpt.isPresent() && seriesOpt.isPresent())
+        {
+            User user = userOpt.get();
+            Series series = seriesOpt.get();
             SeriesViewCount seriesViewCount = seriesViewCountRepository.findByUser_AccountIdAndSeries_SeriesId(account_id, seriesId)
                     .orElse(new SeriesViewCount());
             System.out.println("The series / account exist");
-            seriesViewCount.setUser(user.get());
-            seriesViewCount.setSeries(series.get());
+            seriesViewCount.setUser(user);
+            seriesViewCount.setSeries(series);
             seriesViewCount.incrementViewCount();
             System.out.println("The series id = " + seriesViewCount.getSeries().getSeriesId() + " and the account id = " + seriesViewCount.getUser().getAccountId() + ", views: " + seriesViewCount.getNumber());
             seriesViewCountRepository.save(seriesViewCount);
+        }
+        else
+        {
+            if (userOpt.isEmpty())
+            {
+                System.out.println("User with ID " + account_id + " does not exist");
+            }
+            if (seriesOpt.isEmpty())
+            {
+                System.out.println("Series with ID " + seriesId + " does not exist");
+            }
         }
     }
 

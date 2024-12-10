@@ -24,19 +24,33 @@ public class MovieViewCountService {
     }
 
     public void incrementViewCount(Integer accountId, Integer movieId) {
-        Optional<User> user = userRepository.findById(accountId);
-        Optional<Movie> movie = movieRepository.findById(movieId);
+        Optional<User> userOpt = userRepository.findById(accountId);
+        Optional<Movie> movieOpt = movieRepository.findById(movieId);
 
-        if (user.isPresent() && movie.isPresent()) {
+        if (userOpt.isPresent() && movieOpt.isPresent())
+        {
+            User user = userOpt.get();
+            Movie movie = movieOpt.get();
             System.out.println("The movie and the account exist with a" + accountId + ", m" + movieId);
             MovieViewCount movieViewCount = movieViewCountRepository.findByUser_AccountIdAndMovie_MovieId(accountId, movieId)
                     .orElse(new MovieViewCount());
-            System.out.println("The movie / account exist");
-            movieViewCount.setUser(user.get());
-            movieViewCount.setMovie(movie.get());
+
+            movieViewCount.setUser(user);
+            movieViewCount.setMovie(movie);
             movieViewCount.incrementViewCount();
             System.out.println("The movie id = " + movieViewCount.getMovie().getMovieId() + " and the account id = " + movieViewCount.getUser().getAccountId() + ", views: " + movieViewCount.getNumber());
             movieViewCountRepository.save(movieViewCount);
+        }
+        else
+        {
+            if (userOpt.isEmpty())
+            {
+                System.out.println("User not found with accountID: " + accountId);
+            }
+            if (movieOpt.isEmpty())
+            {
+                System.out.println("Movie not found movieID: " + movieId);
+            }
         }
     }
 
