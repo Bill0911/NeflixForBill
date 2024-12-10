@@ -19,43 +19,5 @@ public class GenreController
         this.genreService = genreService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Genre>> getAllGenres()
-    {
-        return ResponseEntity.ok(genreService.findAll());
-    }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Genre> getGenreById(@PathVariable Integer id)
-    {
-        return genreService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<Genre> createGenre(@RequestBody Genre genre)
-    {
-        return ResponseEntity.ok(genreService.save(genre));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Genre> updateGenre(@PathVariable Integer id, @RequestBody Genre genre)
-    {
-        try
-        {
-            return ResponseEntity.ok(genreService.update(id, genre));
-        }
-        catch (IllegalArgumentException e)
-        {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteGenre(@PathVariable Integer id)
-    {
-        genreService.deleteById(id);
-        return ResponseEntity.ok("Genre deleted successfully.");
-    }
 }

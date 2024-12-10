@@ -38,17 +38,4 @@ public class GenreService
         return genreRepository.save(genre);
     }
 
-    public Genre updateGenre(Integer id, Genre genreDetails)
-    {
-        Genre genre = getGenreById(id);
-        genre.setName(genreDetails.getName());
-        genre.setGenreName(genreDetails.getGenreName());
-        return genreRepository.save(genre);
-    }
-
-    public void deleteGenre(Integer id)
-    {
-        Genre genre = getGenreById(id);
-        genreRepository.delete(genre);
-    }
 }
