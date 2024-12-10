@@ -1,15 +1,12 @@
 package com.example.netflix.service;
 
+import com.example.netflix.dto.MethodResponse;
 import com.example.netflix.entity.*;
-import com.example.netflix.repository.LanguageRepository;
 import com.example.netflix.repository.MovieRepository;
 import com.example.netflix.repository.ProfileRepository;
 import com.example.netflix.repository.UserRepository;
-import com.example.netflix.security.JwtUtil;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
