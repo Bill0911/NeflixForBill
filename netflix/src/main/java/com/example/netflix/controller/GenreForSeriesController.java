@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/series/genre")
 public class GenreForSeriesController
 {
-    private final
+//    private final
 }

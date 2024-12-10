@@ -66,8 +66,8 @@ public class UserController {
         return ResponseEntity.ok("Nothing has been added");
     }
 
-    @GetMapping("/view/subscription-overview")
-    public List<SubscriptionOverview> getSubscriptionOverview() {
-        return userService.getAllSubscriptions();
-    }
+//    @GetMapping("/view/subscription-overview")
+//    public List<SubscriptionOverview> getSubscriptionOverview() {
+//        return userService.getAllSubscriptions();
+//    }
 }
