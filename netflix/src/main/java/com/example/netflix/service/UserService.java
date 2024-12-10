@@ -1,6 +1,5 @@
 package com.example.netflix.service;
 
-import com.example.netflix.dto.SubscriptionOverview;
 import com.example.netflix.entity.Language;
 import com.example.netflix.entity.Profile;
 import com.example.netflix.dto.ProfileRequest;
@@ -8,11 +7,9 @@ import com.example.netflix.entity.User;
 import com.example.netflix.repository.LanguageRepository;
 import com.example.netflix.repository.ProfileRepository;
 import com.example.netflix.repository.UserRepository;
-import com.example.netflix.repository.crud.SubscriptionOverviewRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,14 +21,12 @@ public class UserService {
 
     private final ProfileRepository profileRepository;
     private final PasswordEncoder passwordEncoder;
-    private final SubscriptionOverviewRepository subscriptionOverviewRepository;
 
-    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, PasswordEncoder passwordEncoder, SubscriptionOverviewRepository subscriptionOverviewRepository) {
+    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.languageRepository = languageRepository;
         this.profileRepository = profileRepository;
         this.passwordEncoder = passwordEncoder;
-        this.subscriptionOverviewRepository = subscriptionOverviewRepository;
     }
 
     public User registerUser(User user) {
@@ -117,8 +112,8 @@ public class UserService {
         return null;
     }
 
-    public List<SubscriptionOverview> getAllSubscriptions() {
-        return subscriptionOverviewRepository.findAllSubscriptions();
-    }
+//    public List<SubscriptionOverview> getAllSubscriptions() {
+//        return subscriptionOverviewRepository.findAllSubscriptions();
+//    }
 }
 
