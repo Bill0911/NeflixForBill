@@ -28,12 +28,11 @@ public class GenreForSeriesController
         GenreForSeries createdGenreForSeries = genreForSeriesService.save(genreForSeries);
         return ResponseEntity.ok(createdGenreForSeries);
     }
-
     @GetMapping("/{genreId}/{seriesId}")
     public ResponseEntity<GenreForSeries> getGenreForSeries(@PathVariable Integer genreId, @PathVariable Integer seriesId)
     {
-        GenreForSeriesId id = new GenreForSeriesId(genreId, seriesId);
-        GenreForSeries genreForSeries = genreForSeriesService.findById(id);
+        GenreForSeriesId targetId = new GenreForSeriesId(genreId, seriesId);
+        GenreForSeries genreForSeries = genreForSeriesService.findById(targetId);
         return ResponseEntity.ok(genreForSeries);
     }
 

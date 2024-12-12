@@ -111,8 +111,8 @@ CREATE TABLE `profile` (
 -- --------------------------------------------------------
 
 INSERT INTO `profile` (`profile_id`, `account_id`, `profile_image`, `age`, `name`) VALUES
-(1, 2, 'pizdiets\'.png', 16, 'krutoy patsan'),
-(2, 2, 'abcdefg\'.png', 12, 'tupoy loshara');
+(1, 2, 'pizdiets\.png', 16, 'krutoy patsan'),
+(2, 2, 'abcdefg\.png', 12, 'tupoy loshara');
 
 -- --------------------------------------------------------
 
