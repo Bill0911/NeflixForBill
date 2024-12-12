@@ -2,42 +2,48 @@ package com.example.netflix.controller;
 
 import com.example.netflix.dto.MethodResponse;
 import com.example.netflix.entity.GenreForSeries;
+import com.example.netflix.entity.Movie;
+import com.example.netflix.entity.Series;
 import com.example.netflix.id.GenreForSeriesId;
 import com.example.netflix.security.JwtUtil;
-import com.example.netflix.service.MovieViewCountService;
-import com.example.netflix.service.ProfileService;
-import com.example.netflix.service.SeriesViewCountService;
-import com.example.netflix.service.UserService;
+import com.example.netflix.service.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/preferences")
 public class PreferenceController {
-    private final UserService userService;
-
-    private final ProfileService profileService;
-
-    private final MovieViewCountService movieViewCountService;
-    private final SeriesViewCountService seriesViewCountService;
+    private final PreferenceService PreferenceService;
     private final JwtUtil jwtUtil;
 
-    public PreferenceController(UserService userService, ProfileService profileService, MovieViewCountService movieViewCountService, SeriesViewCountService seriesViewCountService, JwtUtil jwtUtil) {
-        this.userService = userService;
-        this.profileService = profileService;
-        this.movieViewCountService = movieViewCountService;
-        this.seriesViewCountService = seriesViewCountService;
+    public PreferenceController(com.example.netflix.service.PreferenceService preferenceService, JwtUtil jwtUtil) {
+        PreferenceService = preferenceService;
         this.jwtUtil = jwtUtil;
     }
 
-    @GetMapping("/chosen-genres")
-    public ResponseEntity<GenreForSeries> getByChosenGenres ()
+
+    @GetMapping("/chosen-genres/movies")
+    public ResponseEntity<List<Movie>> getMoviesByChosenGenres ()
     {
         return ResponseEntity.ok(null);
     }
 
-    @GetMapping("/previously-watched")
-    public ResponseEntity<GenreForSeries> getByPreviouslyWatched ()
+    @GetMapping("/chosen-genres/series")
+    public ResponseEntity<List<Series>> getSeriesByChosenGenres ()
+    {
+        return ResponseEntity.ok(null);
+    }
+
+    @GetMapping("/previously-watched/movies")
+    public ResponseEntity<List<Movie>> getMoviesByPreviouslyWatched ()
+    {
+        return ResponseEntity.ok(null);
+    }
+
+    @GetMapping("/previously-watched/series")
+    public ResponseEntity<List<Series>> getSeriesByPreviouslyWatched ()
     {
         return ResponseEntity.ok(null);
     }
