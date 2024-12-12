@@ -9,25 +9,31 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class GenreForSeriesService {
+public class GenreForSeriesService
+{
 
     @Autowired
     private GenreForSeriesRepository genreForSeriesRepository;
 
-    public GenreForSeries save(GenreForSeries genreForSeries) {
+    public GenreForSeries save(GenreForSeries genreForSeries)
+    {
         return genreForSeriesRepository.save(genreForSeries);
     }
 
-    public GenreForSeries findById(GenreForSeriesId id) {
+    public GenreForSeries findById(GenreForSeriesId id)
+    {
         return genreForSeriesRepository.findById(id).orElse(null);
     }
 
-    public List<GenreForSeries> findAll() {
+    public List<GenreForSeries> findAll()
+    {
         return genreForSeriesRepository.findAll();
     }
 
-    public GenreForSeries update(GenreForSeriesId id, GenreForSeries genreForSeries) {
-        if (genreForSeriesRepository.existsById(id)) {
+    public GenreForSeries update(GenreForSeriesId id, GenreForSeries genreForSeries)
+    {
+        if (genreForSeriesRepository.existsById(id))
+        {
             genreForSeries.setGenreId(id.getGenreId());
             genreForSeries.setSeriesId(id.getSeriesId());
             return genreForSeriesRepository.save(genreForSeries);
@@ -35,7 +41,8 @@ public class GenreForSeriesService {
         return null;
     }
 
-    public void delete(GenreForSeriesId id) {
+    public void delete(GenreForSeriesId id)
+    {
         genreForSeriesRepository.deleteById(id);
     }
 }

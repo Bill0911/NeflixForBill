@@ -25,7 +25,6 @@ public class GenreForSeries {
     //I set insertable and updatable to FALSE because
     // These Ids cannot be changed directly in this table,
     // It should be updated in the table Series or Genre,
-
     @ManyToOne
     @JoinColumn(name = "series_id", insertable = false, updatable = false)
     private Series series;
