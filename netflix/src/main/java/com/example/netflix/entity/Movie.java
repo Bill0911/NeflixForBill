@@ -74,6 +74,7 @@ public class Movie
         this.minimumAge = minimumAge;
     }
 
+<<<<<<< HEAD
     // Optional: toString for debugging/logging
     @Override
     public String toString()
@@ -85,4 +86,6 @@ public class Movie
                 ", minimumAge=" + minimumAge +
                 '}';
     }
+=======
+>>>>>>> cb00004fe8d18a534aff00a8c921fb3d00c680ba
 }

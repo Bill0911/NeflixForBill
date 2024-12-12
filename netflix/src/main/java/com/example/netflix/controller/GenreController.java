@@ -2,7 +2,6 @@ package com.example.netflix.controller;
 
 import com.example.netflix.entity.Genre;
 import com.example.netflix.service.GenreService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,21 +21,20 @@ public class GenreController
     @GetMapping
     public ResponseEntity<List<Genre>> getAllGenres()
     {
-        return ResponseEntity.ok(genreService.findAll());
+        return ResponseEntity.ok(genreService.getAllGenres());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Genre> getGenreById(@PathVariable Integer id)
+    public Genre getGenreById(@PathVariable Integer id)
     {
-        return genreService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return genreService.getGenreById(id);
     }
 
     @PostMapping
     public ResponseEntity<Genre> createGenre(@RequestBody Genre genre)
     {
-        return ResponseEntity.ok(genreService.save(genre));
+        genreService.createGenre(genre);
+        return ResponseEntity.ok(genre);
     }
 
     @PutMapping("/{id}")
@@ -44,7 +42,7 @@ public class GenreController
     {
         try
         {
-            return ResponseEntity.ok(genreService.update(id, genre));
+            return ResponseEntity.ok(genreService.updateGenre(id, genre));
         }
         catch (IllegalArgumentException e)
         {
@@ -55,7 +53,7 @@ public class GenreController
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteGenre(@PathVariable Integer id)
     {
-        genreService.deleteById(id);
+        genreService.deleteGenre(id);
         return ResponseEntity.ok("Genre deleted successfully.");
     }
 }

@@ -1,6 +1,6 @@
 package com.example.netflix.controller;
 
-import com.example.netflix.entity.*;
+import com.example.netflix.dto.MethodResponse;
 import com.example.netflix.security.JwtUtil;
 import com.example.netflix.service.MovieViewCountService;
 import com.example.netflix.service.ProfileService;

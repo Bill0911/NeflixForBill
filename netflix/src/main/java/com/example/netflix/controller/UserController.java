@@ -1,15 +1,16 @@
 package com.example.netflix.controller;
 
-import com.example.netflix.entity.LoginRequest;
+import com.example.netflix.dto.LoginRequest;
+import com.example.netflix.dto.SubscriptionOverview;
 import com.example.netflix.entity.Profile;
-import com.example.netflix.entity.ProfileRequest;
+import com.example.netflix.dto.ProfileRequest;
 import com.example.netflix.entity.User;
 import com.example.netflix.security.JwtUtil;
 import com.example.netflix.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -64,4 +65,9 @@ public class UserController {
 
         return ResponseEntity.ok("Nothing has been added");
     }
+
+//    @GetMapping("/view/subscription-overview")
+//    public List<SubscriptionOverview> getSubscriptionOverview() {
+//        return userService.getAllSubscriptions();
+//    }
 }

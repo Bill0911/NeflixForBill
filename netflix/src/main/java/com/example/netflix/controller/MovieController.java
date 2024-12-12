@@ -58,4 +58,6 @@ public class MovieController
         movieService.deleteMovie(id);
         return ResponseEntity.ok("Movie deleted successfully.");
     }
+
+
 }
