@@ -16,14 +16,12 @@ public class MovieViewCountId implements Serializable {
 
     // Constructor with fields
 
-
     public MovieViewCountId(User user, Movie movie) {
         this.user = user;
         this.movie = movie;
     }
 
     // Getters and Setters
-
 
     public User getUser() {
         return user;

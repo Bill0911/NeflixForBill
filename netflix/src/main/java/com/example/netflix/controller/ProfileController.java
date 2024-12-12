@@ -59,6 +59,4 @@ public class ProfileController {
 
         return ResponseEntity.ok("Series has not been watched: " + belongsToUser.getMessage() + " | " + fitsMovieAgeRestrictions.getMessage());
     }
-
-
 }
