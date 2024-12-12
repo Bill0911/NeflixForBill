@@ -33,8 +33,8 @@ public class GenreForSeriesController
     @GetMapping("/{genreId}/{seriesId}")
     public ResponseEntity<GenreForSeries> getGenreForSeries (@PathVariable Integer genreId, @PathVariable Integer seriesId)
     {
-        GenreForSeriesId id = new GenreForSeriesId(genreId, seriesId);
-        GenreForSeries genreForSeries = genreForSeriesService.findById(id);
+        GenreForSeriesId targetId = new GenreForSeriesId(genreId, seriesId);
+        GenreForSeries genreForSeries = genreForSeriesService.findById(targetId);
         return ResponseEntity.ok(genreForSeries);
     }
 
@@ -46,10 +46,10 @@ public class GenreForSeriesController
     }
 
     @PutMapping("/{genreId}/{seriesId}")
-    public ResponseEntity<GenreForSeries> updateGenreForSeries (@PathVariable Integer genreId, @PathVariable Integer seriesId, @RequestBody GenreForSeries genreForSeries)
+    public ResponseEntity<GenreForSeries> updateGenreForSeries (@PathVariable Integer genreId, @PathVariable Integer seriesId, @RequestBody GenreForSeries updatedGFS)
     {
-        GenreForSeriesId id = new GenreForSeriesId(genreId, seriesId);
-        GenreForSeries updatedGenreForSeries = genreForSeriesService.update(id, genreForSeries);
+        GenreForSeriesId targetId = new GenreForSeriesId(genreId, seriesId);
+        GenreForSeries updatedGenreForSeries = genreForSeriesService.update(targetId, updatedGFS);
         return ResponseEntity.ok(updatedGenreForSeries);
     }
 
