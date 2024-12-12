@@ -80,7 +80,7 @@ public class Movie
     {
         return "Movie{" +
                 "movieId=" + movieId +
-                ", title='" + title + '\x'' +
+                ", title='" + title + '\'' +
                 ", duration=" + duration +
                 ", minimumAge=" + minimumAge +
                 '}';
