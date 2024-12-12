@@ -1,7 +1,3 @@
-USE `netflix`;
-
-
-
 CREATE TABLE `episode` (
   `episode_id` int(11) UNSIGNED NOT NULL,
   `title` varchar(255) DEFAULT NULL,
@@ -138,7 +134,9 @@ CREATE TABLE `seriesprofilewatchlist` (
 CREATE TABLE `seriesviewcount` (
   `account_id` int(11) UNSIGNED NOT NULL,
   `series_id` int(11) UNSIGNED NOT NULL,
-  `number` int(11) DEFAULT NULL
+  `episode_id` int(11) UNSIGNED NOT NULL,
+  `number` int(11) DEFAULT NULL,
+  `last_viewed` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
