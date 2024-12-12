@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 public interface SeriesViewCountCrudRepository extends CrudRepository<SeriesViewCount, Integer>
 {
     @Procedure(name = "AddSeriesViewCount")
-    void addSeriesViewCount(Integer seriesId, Integer accountId);
+    void addSeriesViewCount(Integer seriesId, Integer accountId, Integer episodeId);
 }

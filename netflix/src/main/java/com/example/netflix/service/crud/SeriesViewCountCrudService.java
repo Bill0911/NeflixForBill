@@ -11,8 +11,8 @@ public class SeriesViewCountCrudService
         this.seriesViewCountCrudRepository = seriesViewCountCrudRepository;
     }
 
-    public void incrementSeriesViewCount(Integer seriesId, Integer accountId)
+    public void incrementSeriesViewCount(Integer seriesId, Integer accountId, Integer episodeId)
     {
-        seriesViewCountCrudRepository.addSeriesViewCount(seriesId, accountId);
+        seriesViewCountCrudRepository.addSeriesViewCount(seriesId, accountId, episodeId);
     }
 }
