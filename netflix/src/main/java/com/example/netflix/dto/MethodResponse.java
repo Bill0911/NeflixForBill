@@ -1,4 +1,4 @@
-package com.example.netflix.entity;
+package com.example.netflix.dto;
 
 public class MethodResponse {
     private boolean success;

@@ -1,5 +1,3 @@
-
-
 CREATE TABLE `episode` (
   `episode_id` int(11) UNSIGNED NOT NULL,
   `title` varchar(255) DEFAULT NULL,
@@ -39,9 +37,17 @@ CREATE TABLE `genreformovie` (
 
 -- --------------------------------------------------------
 
---
 
---
+CREATE TABLE `Account` (
+  `account_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) NOT NULL,
+  `subscription` varchar(10) NOT NULL,
+  `trial_start_date` date NOT NULL,
+  `discount` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`account_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
 
 CREATE TABLE `genreforseries` (
   `genre_id` int(11) UNSIGNED NOT NULL,
@@ -50,14 +56,12 @@ CREATE TABLE `genreforseries` (
 
 -- --------------------------------------------------------
 
-
-
 CREATE TABLE `language` (
   `language_id` int(11) UNSIGNED NOT NULL,
   `name` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
+-- --------------------------------------------------------
 
 INSERT INTO `language` (`language_id`, `name`) VALUES
 (1, 'english'),
@@ -68,9 +72,6 @@ INSERT INTO `language` (`language_id`, `name`) VALUES
 (6, 'ukranian');
 
 -- --------------------------------------------------------
-
-
---
 
 CREATE TABLE `movie` (
   `movie_id` int(11) UNSIGNED NOT NULL,
@@ -84,18 +85,12 @@ CREATE TABLE `movie` (
 
 -- --------------------------------------------------------
 
---
-
---
-
 CREATE TABLE `moviesprofilewatchlist` (
   `profile_id` int(11) UNSIGNED NOT NULL,
   `movie_id` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
-
-
 
 CREATE TABLE `movieviewcount` (
   `account_id` int(11) UNSIGNED NOT NULL,
@@ -105,10 +100,6 @@ CREATE TABLE `movieviewcount` (
 
 -- --------------------------------------------------------
 
---
-
---
-
 CREATE TABLE `profile` (
   `profile_id` int(11) UNSIGNED NOT NULL,
   `account_id` int(11) UNSIGNED DEFAULT NULL,
@@ -117,17 +108,13 @@ CREATE TABLE `profile` (
   `name` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
---
-
-INSERT INTO `profile` (`profile_id`, `account_id`, `profile_image`, `age`, `name`) VALUES
-(1, 2, 'pizdiets\'.png', 16, 'krutoy patsan'),
-(2, 2, 'abcdefg\'.png', 12, 'tupoy loshara');
-
 -- --------------------------------------------------------
 
+INSERT INTO `profile` (`profile_id`, `account_id`, `profile_image`, `age`, `name`) VALUES
+(1, 2, 'pizdiets\.png', 16, 'krutoy patsan'),
+(2, 2, 'abcdefg\.png', 12, 'tupoy loshara');
 
---
+-- --------------------------------------------------------
 
 CREATE TABLE `series` (
   `series_id` int(11) UNSIGNED NOT NULL,
@@ -137,10 +124,6 @@ CREATE TABLE `series` (
 
 -- --------------------------------------------------------
 
---
-
---
-
 CREATE TABLE `seriesprofilewatchlist` (
   `profile_id` int(11) UNSIGNED NOT NULL,
   `series_id` int(11) UNSIGNED NOT NULL
@@ -148,18 +131,15 @@ CREATE TABLE `seriesprofilewatchlist` (
 
 -- --------------------------------------------------------
 
-
---
-
 CREATE TABLE `seriesviewcount` (
   `account_id` int(11) UNSIGNED NOT NULL,
   `series_id` int(11) UNSIGNED NOT NULL,
-  `number` int(11) DEFAULT NULL
+  `episode_id` int(11) UNSIGNED NOT NULL,
+  `number` int(11) DEFAULT NULL,
+  `last_viewed` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
-
-
 
 CREATE TABLE `user` (
   `account_id` int(11) UNSIGNED NOT NULL,
@@ -173,11 +153,10 @@ CREATE TABLE `user` (
   `role` enum('VIEWER','JUNIOR','MEDIOR','SENIOR') DEFAULT 'VIEWER',
   `failed_attempts` int(11) DEFAULT 0,
   `lock_time` datetime DEFAULT NULL,
-  `invitedUser` BOOLEAN DEFAULT FALSE
+  `discount` BOOLEAN DEFAULT FALSE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
---
+-- --------------------------------------------------------
 
 INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `blocked`, `subscription`, `trial_start_date`, `language_id`, `role`, `failed_attempts`, `lock_time`, `discount`) VALUES
 (1, 'fjodor.smorodins@gmail.com', '$2a$10$hszeHDUNOv4lnd24ZS9sOeOkOJUYo5zSi2H2makEPti1uznr4s5P2', 'abc', b'0', 'SD', '2024-12-07 14:32:59', 4, 'VIEWER', 0, NULL, b'0'),
@@ -185,16 +164,12 @@ INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `blocke
 
 --
 
---
--- Индексы таблицы `episode`
---
 ALTER TABLE `episode`
   ADD PRIMARY KEY (`episode_id`),
   ADD KEY `FK_episode_series` (`series_id`);
 
 --
--- Индексы таблицы `genre`
---
+
 ALTER TABLE `genre`
   ADD PRIMARY KEY (`genre_id`);
 
@@ -204,82 +179,67 @@ ALTER TABLE `genreforuser`
   ADD KEY `account_id` (`account_id`);
 
 --
--- Индексы таблицы `genreformovie`
---
+
 ALTER TABLE `genreformovie`
   ADD PRIMARY KEY (`genre_id`,`movie_id`),
   ADD KEY `movie_id` (`movie_id`);
 
 --
--- Индексы таблицы `genreforseries`
---
+
 ALTER TABLE `genreforseries`
   ADD PRIMARY KEY (`genre_id`,`series_id`),
   ADD KEY `series_id` (`series_id`);
 
 --
--- Индексы таблицы `language`
---
+
 ALTER TABLE `language`
   ADD PRIMARY KEY (`language_id`);
 
 --
--- Индексы таблицы `movie`
---
+
 ALTER TABLE `movie`
   ADD PRIMARY KEY (`movie_id`);
 
 --
--- Индексы таблицы `moviesprofilewatchlist`
---
+
 ALTER TABLE `moviesprofilewatchlist`
   ADD PRIMARY KEY (`profile_id`,`movie_id`),
   ADD KEY `FK_MoviesProfileWatchlist_Movie` (`movie_id`);
 
 --
--- Индексы таблицы `movieviewcount`
---
+
 ALTER TABLE `movieviewcount`
   ADD PRIMARY KEY (`account_id`,`movie_id`),
   ADD KEY `movie_id` (`movie_id`);
 
 --
--- Индексы таблицы `profile`
---
+
 ALTER TABLE `profile`
   ADD PRIMARY KEY (`profile_id`),
   ADD KEY `account_id` (`account_id`);
 
 --
--- Индексы таблицы `series`
---
+
 ALTER TABLE `series`
   ADD PRIMARY KEY (`series_id`);
 
 --
--- Индексы таблицы `seriesprofilewatchlist`
---
+
 ALTER TABLE `seriesprofilewatchlist`
   ADD PRIMARY KEY (`profile_id`,`series_id`),
   ADD KEY `series_id` (`series_id`);
 
 --
--- Индексы таблицы `seriesviewcount`
---
+
 ALTER TABLE `seriesviewcount`
   ADD PRIMARY KEY (`account_id`,`series_id`),
   ADD KEY `FK_SeriesViewCount_Series` (`series_id`);
 
 --
--- Индексы таблицы `user`
---
+
 ALTER TABLE `user`
   ADD PRIMARY KEY (`account_id`),
   ADD KEY `language_id` (`language_id`);
-
---
--- AUTO_INCREMENT для сохранённых таблиц
---
 
 --
 -- AUTO_INCREMENT для таблицы `episode`
@@ -323,9 +283,6 @@ ALTER TABLE `series`
 ALTER TABLE `user`
   MODIFY `account_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
---
--- Ограничения внешнего ключа сохраненных таблиц
---
 
 --
 -- Ограничения внешнего ключа таблицы `episode`
@@ -336,7 +293,6 @@ ALTER TABLE `episode`
 --
 -- Ограничения внешнего ключа таблицы `genreforuser`
 --
-
 ALTER TABLE `genreforuser`
   ADD CONSTRAINT `genreforuser_genreid` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `genreforuser_accountid` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -344,7 +300,6 @@ ALTER TABLE `genreforuser`
 --
 -- Ограничения внешнего ключа таблицы `genreformovie`
 --
-
 ALTER TABLE `genreformovie`
   ADD CONSTRAINT `genreformovie_ibfk_1` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `genreformovie_ibfk_2` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -395,3 +350,81 @@ ALTER TABLE `seriesviewcount`
 --
 ALTER TABLE `user`
   ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+
+CREATE VIEW SubscriptionCosts AS
+SELECT 
+    u.account_id AS UserID,
+    u.email AS Email,
+    u.subscription AS SubscriptionType,
+    CASE 
+        WHEN DATEDIFF(CURDATE(), u.trial_start_date) <= 7 THEN 0 -- Free within trial period
+        ELSE 
+            CASE 
+                WHEN u.subscription = 'SD' THEN 10
+                WHEN u.subscription = 'HD' THEN 15
+                WHEN u.subscription = 'UHD' THEN 20
+                ELSE 0 -- Default for invalid subscription type
+            END - 
+            CASE 
+                WHEN u.discount = TRUE THEN 2 ELSE 0 -- Apply $2 discount
+            END
+    END AS SubscriptionCost
+FROM 
+    `user` u;
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE AddMovieViewCount(
+    IN p_movieId INT,
+    IN p_accountId INT
+)
+BEGIN
+    -- Check if the record exists in the movieviewcount table
+    IF EXISTS (
+        SELECT 1 
+        FROM movieviewcount 
+        WHERE account_id = p_accountId AND movie_id = p_movieId
+    ) THEN
+        -- If it exists, increment the view count
+        UPDATE movieviewcount
+        SET number = number + 1
+        WHERE account_id = p_accountId AND movie_id = p_movieId;
+    ELSE
+        -- If it doesn't exist, create a new entry with initial count = 1
+        INSERT INTO movieviewcount (`account_id`, `movie_id`, `number`)
+        VALUES (p_accountId, p_movieId, 1);
+    END IF;
+END $$
+
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+DELIMITER $$
+
+CREATE PROCEDURE AddSeriesViewCount(
+    IN p_seriesId INT,
+    IN p_accountId INT
+)
+BEGIN
+    -- Check if the record exists in the seriesviewcount table
+    IF EXISTS (
+        SELECT 1 
+        FROM seriesviewcount
+        WHERE series_id = p_seriesId AND account_id = p_accountId
+    ) THEN
+        -- If it exists, increment the view count
+        UPDATE seriesviewcount
+        SET number = number + 1
+        WHERE series_id = p_seriesId AND account_id = p_accountId;
+    ELSE
+        -- If it doesn't exist, create a new entry with initial count = 1
+        INSERT INTO seriesviewcount (account_id, series_id, number)
+        VALUES (p_accountId, p_seriesId, 1);
+    END IF;
+END $$
+
+DELIMITER ;
