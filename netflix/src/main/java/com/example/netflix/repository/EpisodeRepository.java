@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface EpisodeRepository extends JpaRepository<Episode, Integer>
-{
-    Optional<Episode> findNextEpisode(Integer seriesId, Integer currentEpisodeId);
+public interface EpisodeRepository extends JpaRepository<Episode, Integer> {
+    Optional<Episode> findFirstBySeries_SeriesIdOrderByEpisodeIdAsc(Integer seriesId);
 }

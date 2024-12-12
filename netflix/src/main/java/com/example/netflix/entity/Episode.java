@@ -5,8 +5,8 @@ import java.time.LocalTime;
 
 @Entity
 @Table(name = "episode")
-public class Episode
-{
+public class Episode {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "episode_id")
@@ -22,14 +22,44 @@ public class Episode
     @JoinColumn(name = "series_id", insertable = false, updatable = false)
     private Series series;
 
-    public Episode ()
-    {
-        this.duration = LocalTime.of(0,0,0);
+    public Episode() {
+        this.duration = LocalTime.of(0, 0, 0);
     }
 
-    public Episode (String title, LocalTime duration)
-    {
+    public Episode(String title, LocalTime duration) {
         this.title = title;
         this.duration = duration != null ? duration : LocalTime.of(0, 0, 0);
+    }
+
+    public Integer getEpisodeId() {
+        return episodeId;
+    }
+
+    public void setEpisodeId(Integer episodeId) {
+        this.episodeId = episodeId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public LocalTime getDuration() {
+        return duration;
+    }
+
+    public void setDuration(LocalTime duration) {
+        this.duration = duration;
+    }
+
+    public Series getSeries() {
+        return series;
+    }
+
+    public void setSeries(Series series) {
+        this.series = series;
     }
 }
