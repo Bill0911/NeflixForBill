@@ -38,10 +38,7 @@ public class GenreService
     public Genre updateGenre(Integer id, Genre genreDetails)
     {
         Genre genre = getGenreById(id);
-<<<<<<< HEAD
         genre.setGenreName(genreDetails.getGenreName());
-=======
->>>>>>> cb00004fe8d18a534aff00a8c921fb3d00c680ba
         genre.setGenreName(genreDetails.getGenreName());
         return genreRepository.save(genre);
     }
