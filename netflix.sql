@@ -16,9 +16,15 @@ CREATE TABLE `genre` (
 
 -- --------------------------------------------------------
 
---
+INSERT INTO `genre` (`genre_id`, `genre_name`) VALUES
+(1, 'Horror'),
+(2, 'Comedy'),
+(3, 'Romance'),
+(4, 'Melodrama'),
+(5, 'Tearjerker'),
+(6, 'Pg-13');
 
---
+-- --------------------------------------------------------
 CREATE TABLE `genreforuser` (
   `genre_id` int(11) UNSIGNED NOT NULL,
   `account_id` int(11) UNSIGNED NOT NULL
