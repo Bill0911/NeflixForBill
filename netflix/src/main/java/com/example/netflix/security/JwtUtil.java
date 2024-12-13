@@ -15,10 +15,14 @@ import java.util.Map;
 public class JwtUtil {
     private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public String generateToken(int accountId) {
+    public String generateToken(int accountId)
+    {
+        System.out.println("Generating token for account ID: " + accountId);
         Map<String, Object> claims = new HashMap<>();
         claims.put("account_id", accountId); // Add account ID as a claim
-        return createToken(claims);
+        String token = createToken(claims);
+        System.out.println("Token generated successfully for account ID: " + accountId);
+        return token;
     }
 
     private String createToken(Map<String, Object> claims) {
@@ -31,13 +35,18 @@ public class JwtUtil {
     }
 
     // Extract account_id from the token
-    public int extractId(String token) {
+    public int extractId(String token)
+    {
+        System.out.println("Extracting account ID from token");
         Claims claims = extractAllClaims(token);
-        return (int) claims.get("account_id");
+        int accountID = (int) claims.get("account_id");
+        System.out.println("Extracted account ID: " + accountID);
+        return accountID;
     }
 
     // Extract all claims from the token
     private Claims extractAllClaims(String token) {
+        System.out.println("Extracting all claims from token");
         return Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
