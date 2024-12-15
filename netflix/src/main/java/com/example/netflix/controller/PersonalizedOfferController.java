@@ -1,5 +1,6 @@
 package com.example.netflix.controller;
 
+import com.example.netflix.dto.GenreCountDTO;
 import com.example.netflix.entity.Movie;
 import com.example.netflix.entity.Series;
 import com.example.netflix.security.JwtUtil;
@@ -12,11 +13,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/preferences")
 public class PersonalizedOfferController {
-    private final PreferenceService PreferenceService;
+    private final PreferenceService preferenceService;
     private final JwtUtil jwtUtil;
 
-    public PersonalizedOfferController(com.example.netflix.service.PreferenceService preferenceService, JwtUtil jwtUtil) {
-        PreferenceService = preferenceService;
+    public PersonalizedOfferController(PreferenceService preferenceService, JwtUtil jwtUtil) {
+        this.preferenceService = preferenceService;
         this.jwtUtil = jwtUtil;
     }
 
@@ -43,5 +44,11 @@ public class PersonalizedOfferController {
     public ResponseEntity<List<Series>> getSeriesByPreviouslyWatched ()
     {
         return ResponseEntity.ok(null);
+    }
+
+    @GetMapping("/user-genre-counts")
+    public List<GenreCountDTO> getGenreCounts(@RequestHeader("Authorization") String token) {
+        Integer userId = jwtUtil.extractId(token.substring(7));
+        return preferenceService.getGenreCountsByUser(userId);
     }
 }
