@@ -33,11 +33,11 @@ public class GenreForUserService
         return genreForUserRepository.findAll();
     }
 
-    public GenreForUser update(GenreForUserId targetGFU, GenreForUser newGFU) {
+    public GenreForUserId update(GenreForUserId targetGFU, GenreForUser newGFU) {
         if (genreForUserRepository.existsById(targetGFU)) {
-            newGFU.setGenre(targetGFU.getGenre());
-            newGFU.setUser(targetGFU.getUser());
-            return genreForUserRepository.save(newGFU);
+            targetGFU.setGenre(newGFU.getGenre());
+            targetGFU.setUser(newGFU.getUser());
+            return targetGFU;
         }
         return null;
     }
