@@ -7,6 +7,7 @@ import com.example.netflix.dto.ProfileRequest;
 import com.example.netflix.entity.User;
 import com.example.netflix.security.JwtUtil;
 import com.example.netflix.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,9 +32,17 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
-        String token = jwtUtil.generateToken(userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword()));
-        return ResponseEntity.ok(token);
+    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest)
+    {
+        try {
+            Integer userId = userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
+            String token = jwtUtil.generateToken(userId);
+            System.out.println("Token generated successfully for user with email: " + loginRequest.getEmail());
+            return ResponseEntity.ok(token);
+        } catch (RuntimeException e) {
+            System.out.println("Login failed for email: " + loginRequest.getEmail() + " - " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login failed: " + e.getMessage());
+        }
     }
 
     @GetMapping("/lang")
