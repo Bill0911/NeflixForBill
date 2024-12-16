@@ -1,0 +1,89 @@
+package com.example.netflix.xml;
+<Netflix>
+    <Users>
+        <Registration>
+            <Method>Email address and password</Method>
+            <Activation>Account must be activated via email</Activation>
+        </Registration>
+        <Login>
+            <Attempts>3</Attempts>
+            <Action>Account temporarily blocked</Action>
+        </Login>
+        <PasswordReset>
+            <Method>Email with a link to change password</Method>
+        </PasswordReset>
+    </Users>
+    <Personal>
+        <Profile>
+            <Creation>First successful login</Creation>
+            <MaxProfiles>4</MaxProfiles>
+            <Details>
+                <Name>Required</Name>
+                <ProfilePhoto>Optional</ProfilePhoto>
+                <Age>Linked to profile</Age>
+                <Language>Automatically set, can be changed</Language>
+            </Details>
+            <Preferences>
+                <Interest>Series or films</Interest>
+                <Genres>Certain genres</Genres>
+                <MinAge>Minimum age</MinAge>
+                <ViewingClassification>
+                    <Classification>All ages</Classification>
+                    <Classification>6/9/12/16 years and over</Classification>
+                    <Classification>Violence</Classification>
+                    <Classification>Sex</Classification>
+                    <Classification>Terror</Classification>
+                    <Classification>Discrimination</Classification>
+                    <Classification>Drug and alcohol abuse</Classification>
+                    <Classification>Coarse language</Classification>
+                </ViewingClassification>
+            </Preferences>
+        </Profile>
+    </Personal>
+    <View>
+        <Film>
+            <Action>Watch</Action>
+            <Resume>Pause or close screen</Resume>
+            <PersonalizedOffer>Based on viewed films</PersonalizedOffer>
+            <Subtitles>Displayed in user's language</Subtitles>
+            <Tracking>Discover when and how many times a film is watched</Tracking>
+        </Film>
+        <Series>
+            <Action>Watch</Action>
+            <NextEpisode>Broadcast immediately after current episode</NextEpisode>
+        </Series>
+        <Credits>
+            <Display>Not full-screen</Display>
+            <Option>Watch similar or popular film</Option>
+        </Credits>
+        <WatchList>
+            <Profile>Own watch list</Profile>
+            <Action>Store films or series to watch later</Action>
+            <Removal>Remove watched films from list</Removal>
+        </WatchList>
+    </View>
+    <Subscription>
+        <TrialPeriod>7-day free trial</TrialPeriod>
+        <Types>
+            <Type>
+                <Name>SD</Name>
+                <Cost>€ 7.99</Cost>
+            </Type>
+            <Type>
+                <Name>HD</Name>
+                <Cost>€ 10.99</Cost>
+            </Type>
+            <Type>
+                <Name>UHD</Name>
+                <Cost>€ 13.99</Cost>
+            </Type>
+        </Types>
+        <Quality>Varies per film</Quality>
+        <Discount>
+            <Invite>Invite another user</Invite>
+            <Benefit>2 euro discount for both users</Benefit>
+            <Condition>Both users must have a paid account</Condition>
+            <Limit>No multiple discounts</Limit>
+        </Discount>
+    </Subscription>
+</Netflix>
