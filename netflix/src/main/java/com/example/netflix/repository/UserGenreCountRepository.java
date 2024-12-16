@@ -1,5 +1,6 @@
 package com.example.netflix.repository;
 
+import com.example.netflix.entity.Genre;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,8 +10,8 @@ import java.util.List;
 
 
 @Repository
-public interface UserGenreCountRepository extends JpaRepository<Object, Long> {
+public interface UserGenreCountRepository extends JpaRepository<Genre, Long> {
 
     @Query(value = "SELECT genre_name, total_views FROM user_genre_count WHERE user_id = :userId", nativeQuery = true)
-    List<Object[]> findGenreCountsByUser(@Param("userId") Integer userId);
+    List<Genre[]> findGenreCountsByUser(@Param("userId") Integer userId);
 }

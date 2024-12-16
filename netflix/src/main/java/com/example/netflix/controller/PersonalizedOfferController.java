@@ -46,9 +46,9 @@ public class PersonalizedOfferController {
         return ResponseEntity.ok(null);
     }
 
-    @GetMapping("/user-genre-counts")
-    public List<GenreCountDTO> getGenreCounts(@RequestHeader("Authorization") String token) {
-        Integer userId = jwtUtil.extractId(token.substring(7));
-        return preferenceService.getGenreCountsByUser(userId);
-    }
+//    @GetMapping("/user-genre-counts")
+//    public List<GenreCountDTO> getGenreCounts(@RequestHeader("Authorization") String token) {
+//        Integer userId = jwtUtil.extractId(token.substring(7));
+//        return preferenceService.getGenreCountsByUser(userId);
+//    }
 }

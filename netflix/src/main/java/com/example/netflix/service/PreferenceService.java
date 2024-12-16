@@ -26,20 +26,20 @@ public class PreferenceService
         this.userGenreCountRepository = userGenreCountRepository;
     }
 
-    public User getMoviesByWatchedBefore(Integer accountId) {
-        Optional<User> user = userRepository.findByAccountId(accountId);
-
-        if (user.isPresent()) {
-
-        }
-
-        return null;
-    }
-
-    public List<GenreCountDTO> getGenreCountsByUser(Integer userId) {
-        List<Object[]> results = userGenreCountRepository.findGenreCountsByUser(userId);
-        return results.stream()
-                .map(result -> new GenreCountDTO((String) result[0], (Long) result[1]))
-                .collect(Collectors.toList());
-    }
+//    public User getMoviesByWatchedBefore(Integer accountId) {
+//        Optional<User> user = userRepository.findByAccountId(accountId);
+//
+//        if (user.isPresent()) {
+//
+//        }
+//
+//        return null;
+//    }
+//
+//    public List<GenreCountDTO> getGenreCountsByUser(Integer userId) {
+//        List<Object[]> results = userGenreCountRepository.findGenreCountsByUser(userId);
+//        return results.stream()
+//                .map(result -> new GenreCountDTO((String) result[0], (Long) result[1]))
+//                .collect(Collectors.toList());
+//    }
 }
