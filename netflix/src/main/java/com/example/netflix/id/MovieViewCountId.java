@@ -11,10 +11,8 @@ public class MovieViewCountId implements Serializable {
     private User user;
     private Movie movie;
 
-    // Default constructor
     public MovieViewCountId() {}
 
-    // Constructor with fields
 
     public MovieViewCountId(User user, Movie movie) {
         this.user = user;
