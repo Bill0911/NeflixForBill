@@ -21,7 +21,6 @@ public class MovieViewCount {
     @Column(nullable = false)
     private int number;
 
-    // Getters and Setters
     public User getUser() {
         return user;
     }
