@@ -2,6 +2,7 @@ package com.example.netflix.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "movie")
@@ -21,6 +22,9 @@ public class Movie
 
     @Column(name = "minimum_age", nullable = false)
     private Integer minimumAge;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
+    private Set<GenreForMovie> genreForMovies;
 
     public Movie()
     {
@@ -74,14 +78,13 @@ public class Movie
         this.minimumAge = minimumAge;
     }
 
-    @Override
-    public String toString()
+    public Set<GenreForMovie> getGenreForMovies ()
     {
-        return "Movie{" +
-                "movieId=" + movieId +
-                ", title='" + title + '\'' +
-                ", duration=" + duration +
-                ", minimumAge=" + minimumAge +
-                '}';
+        return genreForMovies;
+    }
+
+    public void setGenreForMovies (Set<GenreForMovie> genreForMovies)
+    {
+        this.genreForMovies = genreForMovies;
     }
 }

@@ -2,6 +2,8 @@ package com.example.netflix.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "genre")
 public class Genre {
@@ -13,6 +15,9 @@ public class Genre {
 
     @Column(name = "genre_name", nullable = false, unique = true)
     private String genreName;
+
+    @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL)
+    private Set<GenreForMovie> genreForMovies;
 
     public Genre(Integer genreId, String genreName)
     {
@@ -43,5 +48,15 @@ public class Genre {
     public void setGenreName(String genreName)
     {
         this.genreName = genreName;
+    }
+
+    public Set<GenreForMovie> getGenreForMovies ()
+    {
+        return genreForMovies;
+    }
+
+    public void setGenreForMovies (Set<GenreForMovie> genreForMovies)
+    {
+        this.genreForMovies = genreForMovies;
     }
 }
