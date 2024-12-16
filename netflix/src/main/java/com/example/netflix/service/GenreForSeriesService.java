@@ -30,10 +30,11 @@ public class GenreForSeriesService
         return genreForSeriesRepository.findAll();
     }
 
-    public GenreForSeries update(GenreForSeriesId targetGFS, GenreForSeries newGFS) {
-        if (genreForSeriesRepository.existsById(targetGFS)) {
-            newGFS.setGenreId(targetGFS.getGenreId());
-            newGFS.setSeriesId(targetGFS.getSeriesId());
+    public GenreForSeries update(GenreForSeriesId id, GenreForSeries newGFS) {
+        if (genreForSeriesRepository.existsById(id)) {
+            id.setGenreId(newGFS.getGenreId());
+            id.setSeriesId(newGFS.getSeriesId());
+
             return genreForSeriesRepository.save(newGFS);
         }
         return null;
