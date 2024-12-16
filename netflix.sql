@@ -379,6 +379,26 @@ SELECT
 FROM 
     `user` u;
 
+CREATE VIEW UserLoginView AS
+SELECT 
+    u.account_id AS UserID,
+    u.email AS Email,
+    u.failed_attempts AS FailedAttempts,
+    u.lock_time AS LockTime
+FROM 
+    user;
+
+CREATE VIEW UserContentView AS 
+SELECT 
+    u.account_id AS UserID,
+    u.email AS Email,
+    p.profile_id AS ProfileID,
+    p.name AS ProfileName,
+    p.age AS ProfileAge,
+    p.profile_image AS ProfileImage,
+    m.title AS MovieTitle,
+    s.title AS SeriesTitle,
+    e.title AS EpisodeTitle
 
 
 DELIMITER $$
