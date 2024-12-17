@@ -38,4 +38,10 @@ public class PersonalizedOfferController {
         Integer userId = jwtUtil.extractId(token.substring(7));
         return ResponseEntity.ok(personalizedOfferService.getUserGenreCounts(userId));
     }
+
+    @GetMapping("/personalized-offer")
+    public List<Movie> getPersonalizedOffer(@RequestHeader("Authorization") String token) {
+        Integer userId = jwtUtil.extractId(token.substring(7));
+        return personalizedOfferService.getPersonalizedMovies(userId);
+    }
 }
