@@ -23,23 +23,6 @@ public class MovieViewCountService {
         this.userRepository = userRepository;
     }
 
-    public void incrementViewCount(Integer accountId, Integer movieId) {
-        Optional<User> userOpt = userRepository.findById(accountId);
-        Optional<Movie> movieOpt = movieRepository.findById(movieId);
-
-        if (userOpt.isPresent() && movieOpt.isPresent())
-        {
-            User user = userOpt.get();
-            Movie movie = movieOpt.get();
-            MovieViewCount movieViewCount = initializeMovieViewCountAndIncrement(user, movie);
-            movieViewCountRepository.save(movieViewCount);
-        }
-        else
-        {
-            messageIfMovieAndUserEmpty(userOpt, movieOpt);
-        }
-    }
-
     public void addMovieToViewCount(Integer id, Integer movieId) {
         // Fetch the user from the username
         Optional<User> userOpt = userRepository.findByAccountId(id);
@@ -55,30 +38,19 @@ public class MovieViewCountService {
             throw new RuntimeException("Movie not found");
         }
 
-        Movie movie = movieOpt.get();
-        MovieViewCount movieViewCount = initializeMovieViewCountAndIncrement(user, movie);
-        movieViewCountRepository.save(movieViewCount);
-    }
 
-    public MovieViewCount initializeMovieViewCountAndIncrement(User user, Movie movie)
-    {
+        Movie movie = movieOpt.get();
+
+        System.out.println("Account - " + user.getAccountId() + "Movie - " + movie.getMovieId());
+
         MovieViewCount movieViewCount = movieViewCountRepository.findByUser_AccountIdAndMovie_MovieId(user.getAccountId(), movie.getMovieId())
                 .orElse(new MovieViewCount());
+
+        System.out.println("MovieViewCount user - " + movieViewCount.getUser() + ", MovieViewCount movie - " + movieViewCount.getMovie());
+
         movieViewCount.setUser(user);
         movieViewCount.setMovie(movie);
         movieViewCount.incrementViewCount();
-        return movieViewCount;
-    }
-
-    public void messageIfMovieAndUserEmpty(Optional<User> userOpt, Optional<Movie> movieOpt)
-    {
-        if (userOpt.isEmpty())
-        {
-            System.out.println("User not found with");
-        }
-        if (movieOpt.isEmpty())
-        {
-            System.out.println("Movie not found");
-        }
+        movieViewCountRepository.save(movieViewCount);
     }
 }
