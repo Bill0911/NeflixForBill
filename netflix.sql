@@ -358,6 +358,18 @@ ALTER TABLE `user`
   ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 
+CREATE TABLE content_history (
+    account_id INT(11) UNSIGNED NOT NULL,
+    content_id INT(11) UNSIGNED NOT NULL,
+    viewed_at DATETIME DEFAULT NULL,
+    paused_at DATETIME DEFAULT NULL,
+    resumed_at DATETIME DEFAULT NULL,
+    PRIMARY KEY (account_id, content_id),
+    FOREIGN KEY (account_id) REFERENCES user(account_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (content_id) REFERENCES content(content_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
 CREATE VIEW SubscriptionCosts AS
 SELECT 
     u.account_id AS UserID,
@@ -379,26 +391,51 @@ SELECT
 FROM 
     `user` u;
 
+
 CREATE VIEW UserLoginView AS
 SELECT 
     u.account_id AS UserID,
     u.email AS Email,
     u.failed_attempts AS FailedAttempts,
-    u.lock_time AS LockTime
+    blocked,
+    CASE 
+        WHEN FailedAttempts >= 3 THEN 'Account is locked'
+        ELSE 'Account is not locked'
+    END AS AccountStatus
 FROM 
     user;
 
-CREATE VIEW UserContentView AS 
+
+CREATE VIEW UserProfileView AS 
 SELECT 
     u.account_id AS UserID,
     u.email AS Email,
     p.profile_id AS ProfileID,
-    p.name AS ProfileName,
     p.age AS ProfileAge,
-    p.profile_image AS ProfileImage,
-    m.title AS MovieTitle,
-    s.title AS SeriesTitle,
-    e.title AS EpisodeTitle
+    p.profile_image AS ProfileImage
+FROM 
+    user u
+JOIN
+    profile p ON u.account_id = p.account_id;
+
+
+
+CREATE VIEW UserContentView AS 
+SELECT 
+    u.account_id,
+    c.conent_id,
+    c.title,
+    c.type,
+    c.quality,
+    h.viewed_at,
+    h.paused_at,
+    h.resumed_at
+  FROM 
+    user u
+  JOIN 
+   content_history h ON u.account_id = h.account_id
+  JOIN 
+    content c ON h.content_id = c.content_id;
 
 
 DELIMITER $$
