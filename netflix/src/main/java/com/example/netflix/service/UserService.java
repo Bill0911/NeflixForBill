@@ -48,14 +48,9 @@ public class UserService {
         return "none";
     }
 
-    public Integer loginUser(String email, String password) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
-
-        if (userOptional.isEmpty()) {
-            throw new RuntimeException("User not found");
-        }
-
-        User user = userOptional.get();
+    public User loginUser(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Check if account is blocked
         if (user.isBlocked()) {
@@ -64,7 +59,7 @@ public class UserService {
 
         // Verify password
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            // Increment failed attempts
+            // Increment failed attempts and block account if necessary
             int failedAttempts = user.getFailedAttempts() + 1;
             user.setFailedAttempts(failedAttempts);
 
@@ -76,11 +71,13 @@ public class UserService {
             throw new RuntimeException("Invalid credentials");
         }
 
-
+        // Reset failed attempts on successful login
         user.setFailedAttempts(0);
         userRepository.save(user);
-        return user.getAccountId();
+
+        return user; // Return full User object
     }
+
 
     public String getLanguageName(Integer accountId) {
         Optional<User> user = userRepository.findByAccountId(accountId);

@@ -93,7 +93,7 @@
 			<artifactId>jakarta.persistence-api</artifactId>
 			<version>3.1.0</version> <!-- Latest compatible version -->
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>

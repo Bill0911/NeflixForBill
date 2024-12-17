@@ -51,6 +51,12 @@ public class User {
     @Column(name = "lock_time")
     private LocalDateTime lockTime = null;
 
+    public User(String email, String password)
+    {
+        this.email = email;
+        this.password = password;
+    }
+
     public Integer getAccountId() {
         return accountId;
     }
