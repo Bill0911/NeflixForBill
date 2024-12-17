@@ -629,14 +629,13 @@ SELECT
     u.account_id AS UserID,
     u.email AS Email,
     u.failed_attempts AS FailedAttempts,
-    blocked,
+    u.blocked,
     CASE 
-        WHEN FailedAttempts >= 3 THEN 'Account is locked'
+        WHEN u.failed_attempts >= 3 THEN 'Account is locked'
         ELSE 'Account is not locked'
     END AS AccountStatus
 FROM 
-    user;
-
+    user u;
 
 CREATE VIEW UserProfileView AS 
 SELECT 
@@ -650,8 +649,6 @@ FROM
 JOIN
     profile p ON u.account_id = p.account_id;
 
-
-
 CREATE VIEW UserContentView AS 
 SELECT 
     u.account_id,
@@ -662,13 +659,12 @@ SELECT
     h.viewed_at,
     h.paused_at,
     h.resumed_at
-  FROM 
+FROM 
     user u
-  JOIN 
-   content_history h ON u.account_id = h.account_id
-  JOIN 
+JOIN 
+    content_history h ON u.account_id = h.account_id
+JOIN 
     content c ON h.content_id = c.content_id;
-
 
 DELIMITER $$
 
@@ -677,13 +673,13 @@ CREATE PROCEDURE AddMovieViewCount(
     IN p_accountId INT
 )
 BEGIN
-    -- Check the record exists in the movieviewcount table
+    -- Check if the record exists in the movieviewcount table
     IF EXISTS (
         SELECT 1 
         FROM movieviewcount 
         WHERE account_id = p_accountId AND movie_id = p_movieId
     ) THEN
-        --increment the view count
+        -- If it exists, increment the view count
         UPDATE movieviewcount
         SET number = number + 1
         WHERE account_id = p_accountId AND movie_id = p_movieId;
@@ -723,5 +719,4 @@ BEGIN
 END $$
 
 DELIMITER ;
-
 
