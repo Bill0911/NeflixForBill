@@ -307,7 +307,9 @@ CREATE TABLE `user` (
   `role` enum('VIEWER','JUNIOR','MEDIOR','SENIOR') DEFAULT 'VIEWER',
   `failed_attempts` int(11) DEFAULT 0,
   `lock_time` datetime DEFAULT NULL,
-  `discount` tinyint(1) DEFAULT 0
+  `discount` tinyint(1) DEFAULT 0,
+  PRIMARY KEY (`account_id`),
+  KEY `language_id` (`language_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -331,11 +333,31 @@ CREATE TABLE `user_genre_count` (
 ,`total_views` decimal(32,0)
 );
 
+--- ----------------------------------------------------
+
+CREATE TABLE content (
+    content_id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    type ENUM('MOVIE', 'SERIES') NOT NULL,
+    quality ENUM('SD', 'HD', 'UHD') NOT NULL,
+    PRIMARY KEY (content_id)
+);
+
 -- --------------------------------------------------------
 
---
--- Структура для представления `subscriptioncosts`
---
+CREATE TABLE content_history (
+    account_id INT(11) UNSIGNED NOT NULL,
+    content_id INT(11) UNSIGNED NOT NULL,
+    viewed_at DATETIME DEFAULT NULL,
+    paused_at DATETIME DEFAULT NULL,
+    resumed_at DATETIME DEFAULT NULL,
+    PRIMARY KEY (account_id, content_id),
+    FOREIGN KEY (account_id) REFERENCES user(account_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (content_id) REFERENCES content(content_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- --------------------------------------------------------
+
 DROP TABLE IF EXISTS `subscriptioncosts`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `subscriptioncosts`  AS SELECT `u`.`account_id` AS `UserID`, `u`.`email` AS `Email`, `u`.`subscription` AS `SubscriptionType`, CASE WHEN to_days(curdate()) - to_days(`u`.`trial_start_date`) <= 7 THEN 0 ELSE CASE WHEN `u`.`subscription` = 'SD' THEN 10 WHEN `u`.`subscription` = 'HD' THEN 15 WHEN `u`.`subscription` = 'UHD' THEN 20 ELSE 0 END- CASE WHEN `u`.`discount` = 1 THEN 2 ELSE 0 END END AS `SubscriptionCost` FROM `user` AS `u` ;
@@ -448,13 +470,6 @@ ALTER TABLE `seriesviewcount`
   ADD KEY `FKeh1b2xgu8esqripye7l4o90rq` (`episode_id`);
 
 --
--- Индексы таблицы `user`
---
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`account_id`),
-  ADD KEY `language_id` (`language_id`);
-
---
 -- AUTO_INCREMENT для сохранённых таблиц
 --
 
@@ -500,11 +515,15 @@ ALTER TABLE `profile`
 ALTER TABLE `series`
   MODIFY `series_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT для таблицы `user`
---
-ALTER TABLE `user`
-  MODIFY `account_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+-- Drop the foreign key constraint from the content_history table
+ALTER TABLE `content_history` DROP FOREIGN KEY `content_history_ibfk_1`;
+
+-- Modify the account_id column in the user table
+ALTER TABLE `user` MODIFY `account_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+-- Re-add the foreign key constraint to the content_history table
+ALTER TABLE `content_history` ADD CONSTRAINT `content_history_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
@@ -579,18 +598,9 @@ ALTER TABLE `user`
   ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`) ON DELETE SET NULL ON UPDATE CASCADE;
 COMMIT;
 
-
-CREATE TABLE content_history (
-    account_id INT(11) UNSIGNED NOT NULL,
-    content_id INT(11) UNSIGNED NOT NULL,
-    viewed_at DATETIME DEFAULT NULL,
-    paused_at DATETIME DEFAULT NULL,
-    resumed_at DATETIME DEFAULT NULL,
-    PRIMARY KEY (account_id, content_id),
-    FOREIGN KEY (account_id) REFERENCES user(account_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (content_id) REFERENCES content(content_id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
+--
+--
+--
 
 CREATE VIEW SubscriptionCosts AS
 SELECT 
@@ -645,7 +655,7 @@ JOIN
 CREATE VIEW UserContentView AS 
 SELECT 
     u.account_id,
-    c.conent_id,
+    c.content_id,
     c.title,
     c.type,
     c.quality,
@@ -667,13 +677,13 @@ CREATE PROCEDURE AddMovieViewCount(
     IN p_accountId INT
 )
 BEGIN
-    -- Check if the record exists in the movieviewcount table
+    -- Check the record exists in the movieviewcount table
     IF EXISTS (
         SELECT 1 
         FROM movieviewcount 
         WHERE account_id = p_accountId AND movie_id = p_movieId
     ) THEN
-        -- If it exists, increment the view count
+        --increment the view count
         UPDATE movieviewcount
         SET number = number + 1
         WHERE account_id = p_accountId AND movie_id = p_movieId;
@@ -707,7 +717,7 @@ BEGIN
         WHERE series_id = p_seriesId AND account_id = p_accountId;
     ELSE
         -- If it doesn't exist, create a new entry with initial count = 1
-        INSERT INTO seriesviewcount (account_id, series_id, number)
+        INSERT INTO seriesviewcount (`account_id`, `series_id`, `number`)
         VALUES (p_accountId, p_seriesId, 1);
     END IF;
 END $$
