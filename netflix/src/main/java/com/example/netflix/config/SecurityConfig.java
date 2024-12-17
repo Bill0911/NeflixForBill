@@ -3,7 +3,9 @@ package com.example.netflix.config;
 import com.example.netflix.security.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,11 +21,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http
+                .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF for stateless APIs
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/login", "/api/users/register").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("SENIOR") // Only SENIOR can access admin endpoints
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/users/login", "/api/genres", "/api/languages", "api/users/register", "/api/movies/**", "/api/series/**", "/api/users/lang", "/api/users/add-profile", "/api/profiles/watch-movie", "/api/profiles/watch-series" ,"/api/genre-for-series/**").permitAll()// Public APIs
+                        .requestMatchers("/api/admin/**").hasRole("SENIOR")
+                        .anyRequest().authenticated()  // Protect all other endpoints
                 )
                 .addFilterBefore(jwtFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
         return http.build();

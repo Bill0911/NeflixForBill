@@ -1,17 +1,14 @@
 package com.example.netflix.repository;
 
 import com.example.netflix.entity.Genre;
+import com.example.netflix.entity.UserGenreCount;
+import com.example.netflix.id.UserGenreCountId;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-
 @Repository
-public interface UserGenreCountRepository extends JpaRepository<Genre, Long> {
-
-    @Query(value = "SELECT genre_name, total_views FROM user_genre_count WHERE user_id = :userId", nativeQuery = true)
-    List<Genre[]> findGenreCountsByUser(@Param("userId") Integer userId);
+public interface UserGenreCountRepository extends JpaRepository<UserGenreCount, UserGenreCountId> {
+    List<UserGenreCount> findByUserId(Integer userId);
 }

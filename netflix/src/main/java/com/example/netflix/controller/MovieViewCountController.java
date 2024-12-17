@@ -17,9 +17,9 @@ public class MovieViewCountController {
         this.jwtUtil = jwtUtil;
     }
 
-    @PostMapping("/increment-view-count")
-    public ResponseEntity<String> incrementViewCount(@RequestParam Integer accountId, @RequestParam Integer movieId) {
-        movieViewCountService.incrementViewCount(accountId, movieId);
+    @PostMapping("/increment-movie-account")
+    public ResponseEntity<String> incrementMovieAccount(@RequestParam Integer accountId, @RequestParam Integer movieId) {
+        movieViewCountService.addMovieToViewCount(accountId, movieId);
         return ResponseEntity.ok("View count updated successfully");
     }
 
@@ -37,7 +37,7 @@ public class MovieViewCountController {
     public ResponseEntity<String> incrementViewCountProcedure(@RequestParam Integer movieId, @RequestHeader("Authorization") String token) {
         // Extract user ID from JWT (for example)
         Integer accountId = jwtUtil.extractId(token.substring(7));
-        movieViewCountService.incrementViewCount(movieId, accountId);
+        movieViewCountService.addMovieToViewCount(movieId, accountId);
         return ResponseEntity.ok("View count updated successfully");
     }
 }
