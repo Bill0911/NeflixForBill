@@ -1,18 +1,4 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Хост: 127.0.0.1
--- Время создания: Дек 17 2024 г., 00:00
--- Версия сервера: 10.4.32-MariaDB
--- Версия PHP: 8.2.12
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
---
 -- База данных: `netflix`
 --
 
@@ -596,7 +582,6 @@ ALTER TABLE `seriesviewcount`
 --
 ALTER TABLE `user`
   ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-COMMIT;
 
 --
 --
@@ -720,3 +705,74 @@ END $$
 
 DELIMITER ;
 
+-----Personalized offer procedure (for the respective API method in the app)-----
+
+DELIMITER $$
+
+CREATE PROCEDURE GetPersonalizedOffer(IN userId INT, IN maxMovies INT)
+BEGIN
+    
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE genreId INT;
+    DECLARE genreViews INT;
+    DECLARE genreLimit INT;
+    DECLARE totalUserViews INT;
+
+    DECLARE cur CURSOR FOR
+    SELECT genre_id, total_views
+    FROM user_genre_count
+    WHERE user_id = userId;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    -- Step 1: Calculate total views across all genres for the user
+  
+    SELECT SUM(total_views) INTO totalUserViews
+    FROM user_genre_count
+    WHERE user_id = userId;
+
+    -- Temporary table to store proportional movies for the user
+    CREATE TEMPORARY TABLE TempPersonalizedOffer (
+        movie_id INT,
+        title VARCHAR(255),
+        genre_id INT
+    );
+
+    -- Cursor to iterate through genres and their counts
+
+
+
+    OPEN cur;
+
+    -- Step 2: Loop through each genre
+    read_loop: LOOP
+        FETCH cur INTO genreId, genreViews;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        -- Calculate the proportional number of movies for this genre
+        SET genreLimit = CEIL((genreViews * maxMovies) / totalUserViews);
+
+        -- Fetch random movies for this genre up to the calculated limit
+        INSERT INTO TempPersonalizedOffer (movie_id, title, genre_id)
+        SELECT m.movie_id, m.title, gfm.genre_id
+        FROM movie m
+        JOIN genreformovie gfm ON m.movie_id = gfm.movie_id
+        WHERE gfm.genre_id = genreId
+        ORDER BY RAND()
+        LIMIT genreLimit;
+    END LOOP;
+
+    CLOSE cur;
+
+    -- Step 3: Limit the final result to maxMovies and return
+    SELECT *
+    FROM TempPersonalizedOffer
+    LIMIT maxMovies;
+
+    -- Drop the temporary table
+    DROP TEMPORARY TABLE TempPersonalizedOffer;
+END$$
+
+DELIMITER ;
