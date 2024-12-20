@@ -1,5 +1,6 @@
 package com.example.netflix.controller;
 
+import com.example.netflix.dto.MovieInPersonalizedOffer;
 import com.example.netflix.entity.Movie;
 import com.example.netflix.entity.Series;
 import com.example.netflix.entity.UserGenreCount;
@@ -21,18 +22,6 @@ public class PersonalizedOfferController {
         this.jwtUtil = jwtUtil;
     }
 
-    @GetMapping("/previously-watched/movies")
-    public ResponseEntity<List<Movie>> getMoviesByPreviouslyWatched ()
-    {
-        return ResponseEntity.ok(null);
-    }
-
-    @GetMapping("/previously-watched/series")
-    public ResponseEntity<List<Series>> getSeriesByPreviouslyWatched ()
-    {
-        return ResponseEntity.ok(null);
-    }
-
     @GetMapping("/genres-watched-count")
     public ResponseEntity<List<UserGenreCount>> getUserGenreWatchCounts(@RequestHeader("Authorization") String token) {
         Integer userId = jwtUtil.extractId(token.substring(7));
@@ -40,8 +29,8 @@ public class PersonalizedOfferController {
     }
 
     @GetMapping("/personalized-offer")
-    public List<Movie> getPersonalizedOffer(@RequestHeader("Authorization") String token) {
+    public List<MovieInPersonalizedOffer> getPersonalizedOffer(@RequestHeader("Authorization") String token) {
         Integer userId = jwtUtil.extractId(token.substring(7));
-        return personalizedOfferService.getPersonalizedMovies(userId);
+        return personalizedOfferService.getPersonalizedOffer(userId, 24);
     }
 }
