@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 20, 2024 at 09:53 AM
+-- Generation Time: Dec 20, 2024 at 10:26 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -429,7 +429,8 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `blocked`, `subscription`, `trial_start_date`, `language_id`, `role`, `failed_attempts`, `lock_time`, `discount`) VALUES
 (1, 'fjodor.smorodins@gmail.com', '$2a$10$hszeHDUNOv4lnd24ZS9sOeOkOJUYo5zSi2H2makEPti1uznr4s5P2', 'abc', b'0', 'SD', '2024-12-07 14:32:59', 4, 'VIEWER', 0, NULL, 0),
 (2, 'fjodorsm@gmail.com', '$2a$10$2QlecdJ25ELwT/avANQAUelbxtS9tysiRO5LSE0omLATaWhdAPfZC', 'Credit Card', b'0', 'SD', '2024-12-07 14:33:33', 1, 'VIEWER', 0, NULL, 0),
-(3, 'smorodins@gmail.com', '$2a$10$KhhGnFeK2q32DYG7/fMhNe/GEzf1dDJVkQqq5isK1vwuIO9h0zor.', 'CrC', b'0', 'SD', '2024-12-16 18:54:30', 3, 'VIEWER', 0, NULL, 0);
+(3, 'smorodins@gmail.com', '$2a$10$KhhGnFeK2q32DYG7/fMhNe/GEzf1dDJVkQqq5isK1vwuIO9h0zor.', 'CrC', b'0', 'SD', '2024-12-16 18:54:30', 3, 'VIEWER', 0, NULL, 0),
+(4, 'fjodor@gg.com', '$2a$10$2a1DrTOPXSoPBp7fmVBSx.EfUawn.8oW1oondBTX6idrvmtXzMe7W', 'cash', b'0', 'SD', '2024-12-20 11:13:32', 1, 'VIEWER', 0, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -627,6 +628,12 @@ ALTER TABLE `profile`
   MODIFY `profile_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `user`
+--
+ALTER TABLE `user`
+  MODIFY `account_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- Constraints for dumped tables
 --
 
@@ -636,6 +643,60 @@ ALTER TABLE `profile`
 ALTER TABLE `content_history`
   ADD CONSTRAINT `content_history_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `content_history_ibfk_2` FOREIGN KEY (`content_id`) REFERENCES `content` (`content_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `episode`
+--
+ALTER TABLE `episode`
+  ADD CONSTRAINT `FK6hj3n90dblxp7xd9fc1urj8ko` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`);
+
+--
+-- Constraints for table `genreformovie`
+--
+ALTER TABLE `genreformovie`
+  ADD CONSTRAINT `FK9k0bup58wyigpu52ap88luwm3` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`),
+  ADD CONSTRAINT `FKcooxhml1jwh4bnp2o9n63ka3k` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`);
+
+--
+-- Constraints for table `genreforseries`
+--
+ALTER TABLE `genreforseries`
+  ADD CONSTRAINT `FK46gf3ps13sggr3a79227kltsn` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`),
+  ADD CONSTRAINT `FKn3exg02r09uca4mdojqte8dly` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`);
+
+--
+-- Constraints for table `genreforuser`
+--
+ALTER TABLE `genreforuser`
+  ADD CONSTRAINT `FK1aj6m4bg610vtat73mcux6y8c` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`),
+  ADD CONSTRAINT `FKrh2w4n7xtka8f2svniqwoghq1` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`);
+
+--
+-- Constraints for table `movieviewcount`
+--
+ALTER TABLE `movieviewcount`
+  ADD CONSTRAINT `FK960o3778b43sfm6eh63p8yaaj` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`),
+  ADD CONSTRAINT `FKcpuurwpcxsr5pqfikypjvl3qn` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`);
+
+--
+-- Constraints for table `profile`
+--
+ALTER TABLE `profile`
+  ADD CONSTRAINT `FKorsmm7ow2nvslj85y0bs2xii4` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`);
+
+--
+-- Constraints for table `seriesviewcount`
+--
+ALTER TABLE `seriesviewcount`
+  ADD CONSTRAINT `FK4c7s48mkp8ns6sgu7f6tb2jxo` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`),
+  ADD CONSTRAINT `FKeh1b2xgu8esqripye7l4o90rq` FOREIGN KEY (`episode_id`) REFERENCES `episode` (`episode_id`),
+  ADD CONSTRAINT `FKmqydqyoqjwehbedxfhl2htgxk` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`);
+
+--
+-- Constraints for table `user`
+--
+ALTER TABLE `user`
+  ADD CONSTRAINT `FKj9k2portqypgs993xn20pywtr` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
