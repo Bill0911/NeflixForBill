@@ -19,6 +19,8 @@ public class UserGenreCount {
 
     private Long totalViews;
 
+    private String genreName;
+
     // Getters and setters
     public Integer getUserId() {
         return userId;
@@ -42,5 +44,15 @@ public class UserGenreCount {
 
     public void setTotalViews(Long totalViews) {
         this.totalViews = totalViews;
+    }
+
+    public String getGenreName()
+    {
+        return genreName;
+    }
+
+    public void setGenreName(String genreName)
+    {
+        this.genreName = genreName;
     }
 }
