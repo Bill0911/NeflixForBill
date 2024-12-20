@@ -1,5 +1,6 @@
 package com.example.netflix.service;
 
+import com.example.netflix.dto.MovieInPersonalizedOffer;
 import com.example.netflix.entity.Movie;
 import com.example.netflix.entity.UserGenreCount;
 import com.example.netflix.repository.*;
@@ -16,12 +17,14 @@ public class PersonalizedOfferService
     private GenreForUserRepository genreForUserRepository;
 
     private final UserGenreCountRepository userGenreCountRepository;
+    private final PersonalizedOfferRepository personalizedOfferRepository;
     private final MovieRepository movieRepository;
     private GenreForSeriesRepository genreForSeriesRepository;
     private GenreForMovieRepository genreForMovieRepository;
 
-    public PersonalizedOfferService(UserGenreCountRepository userGenreCountRepository, MovieRepository movieRepository) {
+    public PersonalizedOfferService(UserGenreCountRepository userGenreCountRepository, PersonalizedOfferRepository personalizedOfferRepository, MovieRepository movieRepository) {
         this.userGenreCountRepository = userGenreCountRepository;
+        this.personalizedOfferRepository = personalizedOfferRepository;
         this.movieRepository = movieRepository;
     }
 
@@ -29,25 +32,19 @@ public class PersonalizedOfferService
         return userGenreCountRepository.findByUserId(userId);
     }
 
-    public List<Movie> getPersonalizedMovies(Integer userId) {
-        // Step 1: Fetch user's genre preferences
-        List<UserGenreCount> genreCounts = userGenreCountRepository.findByUserId(userId);
+    public List<MovieInPersonalizedOffer> getPersonalizedOffer(int userId, int maxMovies) {
+        // Call the repository method
+        List<Object[]> results = personalizedOfferRepository.getPersonalizedOffer(userId, maxMovies);
 
-        // Step 2: Build a weighted list of movies
-        List<Movie> weightedMovies = new ArrayList<>();
-        for (UserGenreCount genreCount : genreCounts) {
-            List<Movie> moviesByGenre = movieRepository.findByGenreForMovies_Genre_GenreId(genreCount.getGenreId());
-
-            // Add movies to the weighted list based on total_views
-            for (int i = 0; i < genreCount.getTotalViews(); i++) {
-                weightedMovies.addAll(moviesByGenre);
-            }
+        // Convert the results into Movie objects
+        List<MovieInPersonalizedOffer> personalizedMovies = new ArrayList<>();
+        for (Object[] result : results) {
+            MovieInPersonalizedOffer movie = new MovieInPersonalizedOffer();
+            movie.setMovieId((Integer) result[0]);  // Assuming column 0 is movie_id
+            movie.setTitle((String) result[1]);    // Assuming column 1 is title
+            personalizedMovies.add(movie);
         }
 
-        // Step 3: Randomize the result
-        Collections.shuffle(weightedMovies);
-
-        // Step 4: Limit the number of results (e.g., top 20 movies)
-        return weightedMovies.stream().distinct().limit(20).toList();
+        return personalizedMovies;
     }
 }
