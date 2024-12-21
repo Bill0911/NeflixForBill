@@ -1,8 +1,8 @@
 package com.example.netflix.id;
 
+import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
-import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class GenreForSeriesId implements Serializable {
@@ -10,14 +10,17 @@ public class GenreForSeriesId implements Serializable {
     private Integer genreId;
     private Integer seriesId;
 
+    // Default constructor
     public GenreForSeriesId() {
     }
 
+    // Parameterized constructor
     public GenreForSeriesId(Integer genreId, Integer seriesId) {
         this.genreId = genreId;
         this.seriesId = seriesId;
     }
 
+    // Getters and setters
     public Integer getGenreId() {
         return genreId;
     }
@@ -34,6 +37,7 @@ public class GenreForSeriesId implements Serializable {
         this.seriesId = seriesId;
     }
 
+    // equals() method for comparing instances
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,6 +46,7 @@ public class GenreForSeriesId implements Serializable {
         return Objects.equals(genreId, that.genreId) && Objects.equals(seriesId, that.seriesId);
     }
 
+    // hashCode() method for proper hash-based collections
     @Override
     public int hashCode() {
         return Objects.hash(genreId, seriesId);

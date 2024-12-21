@@ -1,49 +1,50 @@
 package com.example.netflix.service;
 
-import com.example.netflix.entity.GenreForSeries;
 import com.example.netflix.entity.GenreForUser;
-import com.example.netflix.id.GenreForSeriesId;
 import com.example.netflix.id.GenreForUserId;
-import com.example.netflix.repository.GenreForSeriesRepository;
 import com.example.netflix.repository.GenreForUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class GenreForUserService
-{
+public class GenreForUserService {
 
-    @Autowired
-    private GenreForUserRepository genreForUserRepository;
+    private final GenreForUserRepository genreForUserRepository;
 
-    public GenreForUser save(GenreForUser genreForUser)
-    {
-        return genreForUserRepository.save(genreForUser);
+    public GenreForUserService(GenreForUserRepository genreForUserRepository) {
+        this.genreForUserRepository = genreForUserRepository;
     }
 
-    public GenreForUser findById(GenreForUserId id)
-    {
-        return genreForUserRepository.findById(id).orElse(null);
-    }
-
-    public List<GenreForUser> findAll()
-    {
+    public List<GenreForUser> getAllGenreForUsers() {
         return genreForUserRepository.findAll();
     }
 
-    public GenreForUserId update(GenreForUserId targetGFU, GenreForUser newGFU) {
-        if (genreForUserRepository.existsById(targetGFU)) {
-            targetGFU.setGenre(newGFU.getGenre());
-            targetGFU.setUser(newGFU.getUser());
-            return targetGFU;
-        }
-        return null;
+    public GenreForUser getGenreForUserById(Integer accountId, Integer genreId) {
+        return genreForUserRepository.findById(new GenreForUserId(accountId, genreId))
+                .orElseThrow(() -> new RuntimeException("GenreForUser not found"));
     }
 
-    public void delete(GenreForUserId id)
-    {
-        genreForUserRepository.deleteById(id);
+    public GenreForUser addGenreForUser(GenreForUser genreForUser) {
+        return genreForUserRepository.save(genreForUser);
+    }
+
+    public GenreForUser updateGenreForUser(GenreForUser genreForUser) {
+        return genreForUserRepository.save(genreForUser);
+    }
+
+    public void deleteGenreForUser(Integer accountId, Integer genreId) {
+        genreForUserRepository.deleteById(new GenreForUserId(accountId, genreId));
+    }
+
+    public GenreForUser patchGenreForUser(Integer accountId, Integer genreId, GenreForUser patchData) {
+        GenreForUser genreForUser = genreForUserRepository.findById(new GenreForUserId(accountId, genreId))
+                .orElseThrow(() -> new RuntimeException("GenreForUser not found"));
+
+        if (patchData.getGenre() != null) {
+            genreForUser.setGenre(patchData.getGenre());
+        }
+
+        return genreForUserRepository.save(genreForUser);
     }
 }

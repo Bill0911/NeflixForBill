@@ -1,39 +1,33 @@
 package com.example.netflix.id;
 
-import com.example.netflix.entity.Movie;
-import com.example.netflix.entity.User;
-import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
 public class MovieViewCountId implements Serializable {
 
-    private User user;
-    private Movie movie;
+    private Integer user; // Referencing account_id from User
+    private Integer movie; // Referencing movie_id from Movie
 
     public MovieViewCountId() {}
 
-
-    public MovieViewCountId(User user, Movie movie) {
+    public MovieViewCountId(Integer user, Integer movie) {
         this.user = user;
         this.movie = movie;
     }
 
-    // Getters and Setters
-
-    public User getUser() {
+    public Integer getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Integer user) {
         this.user = user;
     }
 
-    public Movie getMovie() {
+    public Integer getMovie() {
         return movie;
     }
 
-    public void setMovie(Movie movie) {
+    public void setMovie(Integer movie) {
         this.movie = movie;
     }
 
@@ -42,13 +36,12 @@ public class MovieViewCountId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MovieViewCountId that = (MovieViewCountId) o;
-        return Objects.equals(user.getAccountId(), that.user.getAccountId()) &&
-                Objects.equals(movie.getMovieId(), that.movie.getMovieId());
+        return Objects.equals(user, that.user) &&
+                Objects.equals(movie, that.movie);
     }
 
-    // hashCode() method: generate hash code based on accountId and movieId
     @Override
     public int hashCode() {
-        return Objects.hash(user.getAccountId(), movie.getMovieId());
+        return Objects.hash(user, movie);
     }
 }

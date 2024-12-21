@@ -5,53 +5,56 @@ import com.example.netflix.repository.MovieRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
-public class MovieService
-{
+public class MovieService {
 
     private final MovieRepository movieRepository;
 
-    public MovieService(MovieRepository movieRepository)
-    {
+    public MovieService(MovieRepository movieRepository) {
         this.movieRepository = movieRepository;
     }
 
-    public List<Movie> getAllMovies()
-    {
+    public List<Movie> getAllMovies() {
         return movieRepository.findAll();
     }
 
-    public Movie getMovieById(Integer id)
-    {
-        return movieRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Movie not found with ID: " + id));
+    public Movie getMovieById(Integer movieId) {
+        return movieRepository.findById(movieId)
+                .orElseThrow(() -> new RuntimeException("Movie not found with ID: " + movieId));
     }
 
-    public Movie createMovie(Movie movie)
-    {
+    public Movie addMovie(Movie movie) {
         return movieRepository.save(movie);
     }
 
-    public Movie updateMovie(Integer id, Movie updatedMovie)
-    {
-        return movieRepository.findById(id)
-                .map(existingMovie -> {
-                    existingMovie.setTitle(updatedMovie.getTitle());
-                    existingMovie.setDuration(updatedMovie.getDuration());
-                    existingMovie.setMinimumAge(updatedMovie.getMinimumAge());
-                    return movieRepository.save(existingMovie);
-                })
-                .orElseThrow(() -> new RuntimeException("Movie not found with ID: " + id));
+    public Movie updateMovie(Integer movieId, Movie updatedMovie) {
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new RuntimeException("Movie not found with ID: " + movieId));
+        movie.setTitle(updatedMovie.getTitle());
+        movie.setDuration(updatedMovie.getDuration());
+        movie.setMinimumAge(updatedMovie.getMinimumAge());
+        return movieRepository.save(movie);
     }
 
-    public void deleteMovie(Integer id)
-    {
-        if (!movieRepository.existsById(id))
-        {
-            throw new RuntimeException("Movie not found with ID: " + id);
+    public void deleteMovie(Integer movieId) {
+        movieRepository.deleteById(movieId);
+    }
+
+    public Movie patchMovie(Integer movieId, Movie patchData) {
+        Movie movie = movieRepository.findById(movieId)
+                .orElseThrow(() -> new RuntimeException("Movie not found with ID: " + movieId));
+
+        if (patchData.getTitle() != null) {
+            movie.setTitle(patchData.getTitle());
         }
-        movieRepository.deleteById(id);
+        if (patchData.getDuration() != null) {
+            movie.setDuration(patchData.getDuration());
+        }
+        if (patchData.getMinimumAge() != null) {
+            movie.setMinimumAge(patchData.getMinimumAge());
+        }
+
+        return movieRepository.save(movie);
     }
 }

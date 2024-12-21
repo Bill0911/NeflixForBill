@@ -5,35 +5,33 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "movieviewcount")
-@IdClass(MovieViewCountId.class)  // Use the composite key class
+@IdClass(MovieViewCountId.class)
 public class MovieViewCount {
 
     @Id
-    @ManyToOne
-    @JoinColumn(name = "account_id", nullable = false)
-    private User user;
+    @Column(name = "account_id", nullable = false)
+    private Integer user;
 
     @Id
-    @ManyToOne
-    @JoinColumn(name = "movie_id", nullable = false)
-    private Movie movie;
+    @Column(name = "movie_id", nullable = false)
+    private Integer movie;
 
     @Column(nullable = false)
     private int number;
 
-    public User getUser() {
+    public Integer getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Integer user) {
         this.user = user;
     }
 
-    public Movie getMovie() {
+    public Integer getMovie() {
         return movie;
     }
 
-    public void setMovie(Movie movie) {
+    public void setMovie(Integer movie) {
         this.movie = movie;
     }
 
@@ -49,5 +47,3 @@ public class MovieViewCount {
         this.number++;
     }
 }
-
-

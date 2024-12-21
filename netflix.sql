@@ -12,27 +12,574 @@
 -- Database: `netflix`
 --
 
+--
+-- PROCEDURES FOR EPISODE
+
 DELIMITER $$
+
+CREATE PROCEDURE `AddEpisode` (
+    IN `p_title` VARCHAR(255),
+    IN `p_duration` TIME,
+    IN `p_series_id` INT
+)
+BEGIN
+    INSERT INTO `episode` (`title`, `duration`, `series_id`)
+    VALUES (p_title, IFNULL(p_duration, '00:00:00'), p_series_id);
+END $$
+
+DELIMITER ;
 --
--- Procedures
+
+DELIMITER $$
+
+CREATE PROCEDURE `GetAllEpisodes` ()
+BEGIN
+    SELECT * FROM `episode`;
+END $$
+
+DELIMITER ;
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `AddMovieViewCount` (IN `p_movieId` INT, IN `p_accountId` INT)   BEGIN
-    -- Check if the record exists in the movieviewcount table
-    IF EXISTS (
-        SELECT 1 
-        FROM movieviewcount 
-        WHERE account_id = p_accountId AND movie_id = p_movieId
-    ) THEN
-        -- If it exists, increment the view count
+
+DELIMITER $$
+
+CREATE PROCEDURE `GetEpisodeById` (IN `p_episode_id` INT)
+BEGIN
+    SELECT * FROM `episode` WHERE `episode_id` = p_episode_id;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `UpdateEpisode` (
+    IN `p_episode_id` INT,
+    IN `p_title` VARCHAR(255),
+    IN `p_duration` TIME,
+    IN `p_series_id` INT
+)
+BEGIN
+    UPDATE `episode`
+    SET 
+        `title` = p_title,
+        `duration` = IFNULL(p_duration, '00:00:00'),
+        `series_id` = p_series_id
+    WHERE `episode_id` = p_episode_id;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `DeleteEpisode` (IN `p_episode_id` INT)
+BEGIN
+    DELETE FROM `episode` WHERE `episode_id` = p_episode_id;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `PatchEpisode` (
+    IN `p_episode_id` INT,
+    IN `p_title` VARCHAR(255),
+    IN `p_duration` TIME,
+    IN `p_series_id` INT
+)
+BEGIN
+    UPDATE `episode`
+    SET 
+        `title` = COALESCE(p_title, `title`),
+        `duration` = COALESCE(p_duration, `duration`),
+        `series_id` = COALESCE(p_series_id, `series_id`)
+    WHERE `episode_id` = p_episode_id;
+END $$
+
+DELIMITER ;
+
+--
+-- PROCEDURES FOR GENRE
+
+DELIMITER $$
+
+CREATE PROCEDURE `AddGenre` (
+    IN `p_genre_name` VARCHAR(255)
+)
+BEGIN
+    INSERT INTO `genre` (`genre_name`)
+    VALUES (p_genre_name);
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `GetAllGenres` ()
+BEGIN
+    SELECT * FROM `genre`;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `GetGenreById` (
+    IN `p_genre_id` INT
+)
+BEGIN
+    SELECT * FROM `genre`
+    WHERE `genre_id` = p_genre_id;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `UpdateGenre` (
+    IN `p_genre_id` INT,
+    IN `p_genre_name` VARCHAR(255)
+)
+BEGIN
+    UPDATE `genre`
+    SET `genre_name` = p_genre_name
+    WHERE `genre_id` = p_genre_id;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `DeleteGenre` (
+    IN `p_genre_id` INT
+)
+BEGIN
+    DELETE FROM `genre`
+    WHERE `genre_id` = p_genre_id;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `DeleteGenre` (
+    IN `p_genre_id` INT
+)
+BEGIN
+    DELETE FROM `genre`
+    WHERE `genre_id` = p_genre_id;
+END $$
+
+DELIMITER ;
+--
+
+--
+-- PROCEDURES FOR GENRE_FOR_MOVIE
+
+DELIMITER $$
+
+CREATE PROCEDURE `AddGenreForMovie` (
+    IN `p_movie_id` INT,
+    IN `p_genre_id` INT
+)
+BEGIN
+    INSERT INTO `genreformovie` (`movie_id`, `genre_id`)
+    VALUES (p_movie_id, p_genre_id);
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `GetAllGenreForMovies` ()
+BEGIN
+    SELECT * FROM `genreformovie`;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `GetGenresForMovie` (
+    IN `p_movie_id` INT
+)
+BEGIN
+    SELECT gfm.*, g.genre_name
+    FROM `genreformovie` gfm
+    JOIN `genre` g ON gfm.genre_id = g.genre_id
+    WHERE gfm.movie_id = p_movie_id;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `GetGenresForMovie` (
+    IN `p_movie_id` INT
+)
+BEGIN
+    SELECT gfm.*, g.genre_name
+    FROM `genreformovie` gfm
+    JOIN `genre` g ON gfm.genre_id = g.genre_id
+    WHERE gfm.movie_id = p_movie_id;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `DeleteGenreForMovie` (
+    IN `p_movie_id` INT,
+    IN `p_genre_id` INT
+)
+BEGIN
+    DELETE FROM `genreformovie`
+    WHERE `movie_id` = p_movie_id AND `genre_id` = p_genre_id;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `PatchGenreForMovie` (
+    IN `p_movie_id` INT,
+    IN `p_old_genre_id` INT,
+    IN `p_new_genre_id` INT
+)
+BEGIN
+    UPDATE `genreformovie`
+    SET `genre_id` = COALESCE(p_new_genre_id, `genre_id`)
+    WHERE `movie_id` = p_movie_id AND `genre_id` = p_old_genre_id;
+END $$
+
+DELIMITER ;
+--
+
+--
+-- PROCEDURE FOR GENRE_FOR_SERIE
+
+DELIMITER $$
+
+CREATE PROCEDURE `AddGenreForSeries` (
+    IN `p_series_id` INT,
+    IN `p_genre_id` INT
+)
+BEGIN
+    INSERT INTO `genreforseries` (`series_id`, `genre_id`)
+    VALUES (p_series_id, p_genre_id);
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `GetAllGenresForSeries` ()
+BEGIN
+    SELECT * FROM `genreforseries`;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `GetGenresForSeries` (
+    IN `p_series_id` INT
+)
+BEGIN
+    SELECT gfs.*, g.genre_name
+    FROM `genreforseries` gfs
+    JOIN `genre` g ON gfs.genre_id = g.genre_id
+    WHERE gfs.series_id = p_series_id;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `DeleteGenreForSeries` (
+    IN `p_series_id` INT,
+    IN `p_genre_id` INT
+)
+BEGIN
+    DELETE FROM `genreforseries`
+    WHERE `series_id` = p_series_id AND `genre_id` = p_genre_id;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE `PatchGenreForSeries` (
+    IN `p_series_id` INT,
+    IN `p_old_genre_id` INT,
+    IN `p_new_genre_id` INT
+)
+BEGIN
+    UPDATE `genreforseries`
+    SET `genre_id` = COALESCE(p_new_genre_id, `genre_id`)
+    WHERE `series_id` = p_series_id AND `genre_id` = p_old_genre_id;
+END $$
+
+DELIMITER ;
+--
+
+--
+-- PROCEDURE FOR GENRE_FOR_USER
+
+DELIMITER $$
+
+CREATE PROCEDURE AddGenreForUser(IN p_account_id INT, IN p_genre_id INT)
+BEGIN
+    INSERT INTO genreforuser (account_id, genre_id) VALUES (p_account_id, p_genre_id);
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE GetAllGenreForUsers()
+BEGIN
+    SELECT * FROM genreforuser;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE GetGenreForUserById(IN p_account_id INT, IN p_genre_id INT)
+BEGIN
+    SELECT * FROM genreforuser WHERE account_id = p_account_id AND genre_id = p_genre_id;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE UpdateGenreForUser(IN p_account_id INT, IN p_genre_id INT)
+BEGIN
+    UPDATE genreforuser
+    SET genre_id = p_genre_id
+    WHERE account_id = p_account_id;
+END $$
+
+DELIMITER ;
+--
+
+DELIMITER $$
+
+CREATE PROCEDURE PatchGenreForUser(
+    IN p_account_id INT,
+    IN p_genre_id INT,
+    IN p_new_genre_id INT
+)
+BEGIN
+    UPDATE genreforuser
+    SET genre_id = COALESCE(p_new_genre_id, genre_id)
+    WHERE account_id = p_account_id AND genre_id = p_genre_id;
+END $$
+
+DELIMITER ;
+
+--
+-- PROCEDURE FOR LANGUAGE
+
+DELIMITER $$
+
+CREATE PROCEDURE AddLanguage(IN p_name VARCHAR(255))
+BEGIN
+    INSERT INTO language (name) VALUES (p_name);
+END $$
+
+CREATE PROCEDURE GetAllLanguages()
+BEGIN
+    SELECT * FROM language;
+END $$
+
+CREATE PROCEDURE GetLanguageById(IN p_language_id INT)
+BEGIN
+    SELECT * FROM language WHERE language_id = p_language_id;
+END $$
+
+CREATE PROCEDURE UpdateLanguage(IN p_language_id INT, IN p_name VARCHAR(255))
+BEGIN
+    UPDATE language
+    SET name = p_name
+    WHERE language_id = p_language_id;
+END $$
+
+CREATE PROCEDURE DeleteLanguage(IN p_language_id INT)
+BEGIN
+    DELETE FROM language WHERE language_id = p_language_id;
+END $$
+
+CREATE PROCEDURE PatchLanguage(IN p_language_id INT, IN p_name VARCHAR(255))
+BEGIN
+    UPDATE language
+    SET name = COALESCE(p_name, name)
+    WHERE language_id = p_language_id;
+END $$
+
+DELIMITER ;
+
+--
+-- PROCEDURE FOR MOVIE
+
+DELIMITER $$
+
+CREATE PROCEDURE AddMovie(IN p_title VARCHAR(255), IN p_duration TIME, IN p_minimum_age INT)
+BEGIN
+    INSERT INTO movie (title, duration, minimum_age)
+    VALUES (p_title, IFNULL(p_duration, '00:00:00'), p_minimum_age);
+END $$
+
+CREATE PROCEDURE GetAllMovies()
+BEGIN
+    SELECT * FROM movie;
+END $$
+
+CREATE PROCEDURE GetMovieById(IN p_movie_id INT)
+BEGIN
+    SELECT * FROM movie WHERE movie_id = p_movie_id;
+END $$
+
+CREATE PROCEDURE UpdateMovie(IN p_movie_id INT, IN p_title VARCHAR(255), IN p_duration TIME, IN p_minimum_age INT)
+BEGIN
+    UPDATE movie
+    SET title = p_title,
+        duration = IFNULL(p_duration, '00:00:00'),
+        minimum_age = p_minimum_age
+    WHERE movie_id = p_movie_id;
+END $$
+
+CREATE PROCEDURE DeleteMovie(IN p_movie_id INT)
+BEGIN
+    DELETE FROM movie WHERE movie_id = p_movie_id;
+END $$
+
+CREATE PROCEDURE PatchMovie(IN p_movie_id INT, IN p_title VARCHAR(255), IN p_duration TIME, IN p_minimum_age INT)
+BEGIN
+    UPDATE movie
+    SET title = COALESCE(p_title, title),
+        duration = COALESCE(p_duration, duration),
+        minimum_age = COALESCE(p_minimum_age, minimum_age)
+    WHERE movie_id = p_movie_id;
+END $$
+
+DELIMITER ;
+
+--
+-- PROCEDURE FOR MOVIEVIEWCOUNT
+
+DELIMITER $$
+
+CREATE PROCEDURE IncrementMovieViewCount(IN p_userId INT, IN p_movieId INT)
+BEGIN
+    IF EXISTS (SELECT 1 FROM movieviewcount WHERE account_id = p_userId AND movie_id = p_movieId) THEN
         UPDATE movieviewcount
         SET number = number + 1
-        WHERE account_id = p_accountId AND movie_id = p_movieId;
+        WHERE account_id = p_userId AND movie_id = p_movieId;
     ELSE
-        -- If it doesn't exist, create a new entry with initial count = 1
-        INSERT INTO movieviewcount (`account_id`, `movie_id`, `number`)
-        VALUES (p_accountId, p_movieId, 1);
+        INSERT INTO movieviewcount (account_id, movie_id, number)
+        VALUES (p_userId, p_movieId, 1);
     END IF;
+END $$
+
+CREATE PROCEDURE GetMovieViewCountByUser(IN p_userId INT)
+BEGIN
+    SELECT * FROM movieviewcount WHERE account_id = p_userId;
+END $$
+
+DELIMITER ;
+
+--
+-- PROCEDURE FOR SERIE
+
+DELIMITER $$
+
+-- Procedure to Add a New Series
+CREATE PROCEDURE `AddSeries` (
+    IN `p_title` VARCHAR(255),
+    IN `p_minimum_age` INT
+)
+BEGIN
+    INSERT INTO `series` (`title`, `minimum_age`)
+    VALUES (p_title, p_minimum_age);
 END$$
+
+-- Procedure to Get All Series
+CREATE PROCEDURE `GetAllSeries` ()
+BEGIN
+    SELECT * FROM `series`;
+END$$
+
+-- Procedure to Get Series by ID
+CREATE PROCEDURE `GetSeriesById` (
+    IN `p_series_id` INT
+)
+BEGIN
+    SELECT * FROM `series`
+    WHERE `series_id` = p_series_id;
+END$$
+
+-- Procedure to Update an Existing Series
+CREATE PROCEDURE `UpdateSeries` (
+    IN `p_series_id` INT,
+    IN `p_title` VARCHAR(255),
+    IN `p_minimum_age` INT
+)
+BEGIN
+    UPDATE `series`
+    SET 
+        `title` = p_title,
+        `minimum_age` = p_minimum_age
+    WHERE `series_id` = p_series_id;
+END$$
+
+-- Procedure to Delete a Series
+CREATE PROCEDURE `DeleteSeries` (
+    IN `p_series_id` INT
+)
+BEGIN
+    DELETE FROM `series`
+    WHERE `series_id` = p_series_id;
+END$$
+
+-- Procedure to Partially Update (PATCH) a Series
+CREATE PROCEDURE `PatchSeries` (
+    IN `p_series_id` INT,
+    IN `p_title` VARCHAR(255),
+    IN `p_minimum_age` INT
+)
+BEGIN
+    UPDATE `series`
+    SET 
+        `title` = COALESCE(p_title, `title`),
+        `minimum_age` = COALESCE(p_minimum_age, `minimum_age`)
+    WHERE `series_id` = p_series_id;
+END$$
+
+DELIMITER ;
+
+--
+-- PROCEDURE FOR SERIES_VIEW_COUNT
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `AddSeriesViewCount` (IN `p_seriesId` INT, IN `p_accountId` INT)   BEGIN
     -- Check if the record exists in the seriesviewcount table

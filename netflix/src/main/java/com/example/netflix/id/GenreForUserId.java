@@ -1,42 +1,39 @@
 package com.example.netflix.id;
 
 import com.example.netflix.entity.Genre;
-import com.example.netflix.entity.Profile;
 import com.example.netflix.entity.User;
 import jakarta.persistence.Embeddable;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@Embeddable
 public class GenreForUserId implements Serializable {
 
-    private User user;
-    private Genre genre;
+    private Integer userId;  // Use primary key type directly
+    private Integer genreId; // Use primary key type directly
 
     public GenreForUserId() {}
 
-    public GenreForUserId(User user, Genre genre) {
-        this.user = user;
-        this.genre = genre;
+    public GenreForUserId(Integer userId, Integer genreId) {
+        this.userId = userId;
+        this.genreId = genreId;
     }
 
-    public User getUser()
-    {
-        return user;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setUser(User user)
-    {
-        this.user = user;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
-    public Genre getGenre()
-    {
-        return genre;
+    public Integer getGenreId() {
+        return genreId;
     }
 
-    public void setGenre(Genre genre)
-    {
-        this.genre = genre;
+    public void setGenreId(Integer genreId) {
+        this.genreId = genreId;
     }
 
     @Override
@@ -44,13 +41,12 @@ public class GenreForUserId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GenreForUserId that = (GenreForUserId) o;
-        return Objects.equals(user.getAccountId(), that.user.getAccountId()) &&
-                Objects.equals(genre.getGenreId(), that.genre.getGenreId());
+        return Objects.equals(userId, that.userId) &&
+                Objects.equals(genreId, that.genreId);
     }
 
-    // hashCode() method: generate hash code based on accountId and movieId
     @Override
     public int hashCode() {
-        return Objects.hash(user.getAccountId(), genre.getGenreId());
+        return Objects.hash(userId, genreId);
     }
 }

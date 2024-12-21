@@ -2,48 +2,59 @@ package com.example.netflix.controller;
 
 import com.example.netflix.entity.Episode;
 import com.example.netflix.service.EpisodeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/series/episodes")
-public class EpisodeController
-{
-    @Autowired
-    private EpisodeService episodeService;
+@RequestMapping("/api/episodes")
+public class EpisodeController {
 
-    @PostMapping
-    public ResponseEntity<Episode> createEpisode(@RequestBody Episode episode)
-    {
-        Episode createdEpisode = episodeService.saveEpisode(episode);
-        return ResponseEntity.ok(createdEpisode);
-    }
+    private final EpisodeService episodeService;
 
-    @GetMapping("/{episodeId}")
-    public ResponseEntity<Episode> getEpisodeById(@PathVariable Integer episodeId) {
-        Optional<Episode> episode = episodeService.getEpisodeById(episodeId);
-        return episode.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public EpisodeController(EpisodeService episodeService) {
+        this.episodeService = episodeService;
     }
 
     @GetMapping
     public ResponseEntity<List<Episode>> getAllEpisodes() {
-        List<Episode> episodes = episodeService.getAllEpisodes();
-        return ResponseEntity.ok(episodes);
+        return ResponseEntity.ok(episodeService.getAllEpisodes());
     }
 
-    @DeleteMapping("/{episodeId}")
-    public ResponseEntity<Void> deleteEpisode(@PathVariable Integer episodeId) {
-        episodeService.deleteEpisode(episodeId);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/{id}")
+    public ResponseEntity<Episode> getEpisodeById(@PathVariable Integer id) {
+        return episodeService.getEpisodeById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/next")
-    public ResponseEntity<Episode> getNextEpisode(@RequestParam Integer seriesId, @RequestParam Integer currentEpisodeId) {
-        Optional<Episode> nextEpisode = episodeService.findNextEpisode(seriesId, currentEpisodeId);
-        return nextEpisode.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @PostMapping
+    public ResponseEntity<Episode> addEpisode(@RequestBody Episode episode) {
+        return ResponseEntity.ok(episodeService.addEpisode(episode));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Episode> updateEpisode(@PathVariable Integer id, @RequestBody Episode episode) {
+        try {
+            return ResponseEntity.ok(episodeService.updateEpisode(id, episode));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteEpisode(@PathVariable Integer id) {
+        episodeService.deleteEpisode(id);
+        return ResponseEntity.ok("Episode deleted successfully.");
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Episode> patchEpisode(@PathVariable Integer id, @RequestBody Episode patchData) {
+        try {
+            return ResponseEntity.ok(episodeService.patchEpisode(id, patchData));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
