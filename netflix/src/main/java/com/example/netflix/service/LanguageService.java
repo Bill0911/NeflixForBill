@@ -5,46 +5,48 @@ import com.example.netflix.repository.LanguageRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
-public class LanguageService
-{
+public class LanguageService {
 
     private final LanguageRepository languageRepository;
 
-    public LanguageService(LanguageRepository languageRepository)
-    {
+    public LanguageService(LanguageRepository languageRepository) {
         this.languageRepository = languageRepository;
     }
 
-    public List<Language> getAllLanguages()
-    {
+    public List<Language> getAllLanguages() {
         return languageRepository.findAll();
     }
 
-    public Optional<Language> getLanguageById(Integer id)
-    {
-        return languageRepository.findById(id);
+    public Language getLanguageById(Integer languageId) {
+        return languageRepository.findById(languageId)
+                .orElseThrow(() -> new RuntimeException("Language not found with ID: " + languageId));
     }
 
-    public Language createLanguage(Language language)
-    {
+    public Language addLanguage(Language language) {
         return languageRepository.save(language);
     }
 
-    public Language updateLanguage(Integer id, Language updatedLanguage)
-    {
-        return languageRepository.findById(id)
-                .map(existingLanguage -> {
-                    existingLanguage.setName(updatedLanguage.getName());
-                    return languageRepository.save(existingLanguage);
-                })
-                .orElseThrow(() -> new RuntimeException("Language not found with id: " + id));
+    public Language updateLanguage(Integer languageId, Language updatedLanguage) {
+        Language language = languageRepository.findById(languageId)
+                .orElseThrow(() -> new RuntimeException("Language not found with ID: " + languageId));
+        language.setName(updatedLanguage.getName());
+        return languageRepository.save(language);
     }
 
-    public void deleteLanguage(Integer id)
-    {
-        languageRepository.deleteById(id);
+    public void deleteLanguage(Integer languageId) {
+        languageRepository.deleteById(languageId);
+    }
+
+    public Language patchLanguage(Integer languageId, Language patchData) {
+        Language language = languageRepository.findById(languageId)
+                .orElseThrow(() -> new RuntimeException("Language not found with ID: " + languageId));
+
+        if (patchData.getName() != null) {
+            language.setName(patchData.getName());
+        }
+
+        return languageRepository.save(language);
     }
 }

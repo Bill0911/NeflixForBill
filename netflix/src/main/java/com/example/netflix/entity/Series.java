@@ -1,49 +1,44 @@
 package com.example.netflix.entity;
+
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="series")
-public class Series
-{
+@Table(name = "series")
+public class Series {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name= "series_id")
+    @Column(name = "series_id")
     private Integer seriesId;
 
     @Column(nullable = false)
     private String title;
 
     @Column(name = "minimum_age", nullable = false)
-    private Integer minimum_age;
+    private Integer minimumAge;
 
-    public Integer getSeriesId()
-    {
+    // Getters and Setters
+    public Integer getSeriesId() {
         return seriesId;
     }
 
-    public void setSeriesId(Integer seriesId)
-    {
+    public void setSeriesId(Integer seriesId) {
         this.seriesId = seriesId;
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title)
-    {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public Integer getMinimum_age()
-    {
-        return minimum_age;
+    public Integer getMinimumAge() {
+        return minimumAge;
     }
 
-    public void setMinimum_age(Integer ageRange)
-    {
-        this.minimum_age = ageRange;
+    public void setMinimumAge(Integer minimumAge) {
+        this.minimumAge = minimumAge;
     }
 }
