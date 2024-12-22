@@ -37,7 +37,7 @@ public class ProfileController {
 
         if (belongsToUser.isSuccess() && fitsMovieAgeRestrictions.isSuccess())
         {
-            movieViewCountService.addMovieToViewCount(id, movieId);
+            movieViewCountService.incrementMovieViewCount(id, movieId);
             return ResponseEntity.ok("Movie has been watched!");
         }
 
