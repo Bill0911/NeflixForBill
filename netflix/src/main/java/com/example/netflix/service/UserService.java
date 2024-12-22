@@ -3,6 +3,7 @@ package com.example.netflix.service;
 import com.example.netflix.entity.Language;
 import com.example.netflix.entity.Profile;
 import com.example.netflix.dto.ProfileRequest;
+import com.example.netflix.entity.Role;
 import com.example.netflix.entity.User;
 import com.example.netflix.repository.LanguageRepository;
 import com.example.netflix.repository.ProfileRepository;
@@ -108,6 +109,10 @@ public class UserService {
         }
 
         return null;
+    }
+
+    public boolean isRoleForAccount(Integer accountId, Role role) {
+        return userRepository.findByAccountId(accountId).map(user -> user.getRole() == role).orElse(false);
     }
 }
 
