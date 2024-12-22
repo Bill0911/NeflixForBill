@@ -3,7 +3,6 @@ package com.example.netflix.entity;
 import java.util.List;
 
 public enum Role {
-    VIEWER("Basic viewer with limited access", List.of("READ_CONTENT")),
     JUNIOR("Junior manager with moderate access", List.of("READ_CONTENT", "MANAGE_PROFILES")),
     MEDIOR("Medior manager with extended access", List.of("READ_CONTENT", "MANAGE_PROFILES", "VIEW_ANALYTICS")),
     SENIOR("Senior manager with full access", List.of("READ_CONTENT", "MANAGE_PROFILES", "VIEW_ANALYTICS", "ADMIN_PRIVILEGES"));
