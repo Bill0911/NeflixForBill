@@ -32,6 +32,7 @@ public class PersonalizedOfferController {
     @GetMapping("/personalized-offer")
     public List<MovieInPersonalizedOffer> getPersonalizedOffer(@RequestHeader("Authorization") String token) {
         Integer userId = jwtUtil.extractId(token.substring(7));
+        System.out.println("The results are NOT YET retrieved");
         return personalizedOfferService.getPersonalizedOffer(userId, 24);
     }
 }

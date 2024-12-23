@@ -26,8 +26,9 @@ public class GenreService {
         return genreRepository.findById(id);
     }
 
-    public Integer addGenre(String genreName) {
-        return genreRepository.addGenre(genreName);
+    public String addGenre(String genreName) {
+        genreRepository.addGenre(genreName);
+        return genreName;
     }
 
     public Genre updateGenre(Integer id, Genre updatedGenre) {

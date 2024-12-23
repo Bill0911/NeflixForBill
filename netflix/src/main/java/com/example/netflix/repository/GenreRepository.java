@@ -13,5 +13,5 @@ import java.util.Optional;
 public interface GenreRepository extends JpaRepository<Genre, Integer>
 {
     @Query(value = "CALL AddGenre(:genreName)", nativeQuery = true)
-    Integer addGenre(@Param("genreName") String genreName);
+    void addGenre(@Param("genreName") String genreName);
 }
