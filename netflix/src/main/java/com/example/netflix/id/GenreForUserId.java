@@ -1,7 +1,5 @@
 package com.example.netflix.id;
 
-import com.example.netflix.entity.Genre;
-import com.example.netflix.entity.User;
 import jakarta.persistence.Embeddable;
 
 import java.io.Serializable;
@@ -10,22 +8,22 @@ import java.util.Objects;
 @Embeddable
 public class GenreForUserId implements Serializable {
 
-    private Integer userId;  // Use primary key type directly
+    private Integer accountId;  // Use primary key type directly
     private Integer genreId; // Use primary key type directly
 
     public GenreForUserId() {}
 
-    public GenreForUserId(Integer userId, Integer genreId) {
-        this.userId = userId;
+    public GenreForUserId(Integer accountId, Integer genreId) {
+        this.accountId = accountId;
         this.genreId = genreId;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getAccountId() {
+        return accountId;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setAccountId(Integer accountId) {
+        this.accountId = accountId;
     }
 
     public Integer getGenreId() {
@@ -41,12 +39,12 @@ public class GenreForUserId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GenreForUserId that = (GenreForUserId) o;
-        return Objects.equals(userId, that.userId) &&
+        return Objects.equals(accountId, that.accountId) &&
                 Objects.equals(genreId, that.genreId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, genreId);
+        return Objects.hash(accountId, genreId);
     }
 }

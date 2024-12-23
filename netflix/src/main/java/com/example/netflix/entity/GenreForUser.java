@@ -5,15 +5,15 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "genreforuser")
-@IdClass(GenreForUserId.class) // Use the composite key class
+@IdClass(GenreForUserId.class)
 public class GenreForUser {
 
     @Id
-    @Column(name = "account_id", nullable = false)
+    @Column(name = "account_id")
     private Integer accountId;
 
     @Id
-    @Column(name = "genre_id", nullable = false)
+    @Column(name = "genre_id")
     private Integer genreId;
 
     @ManyToOne

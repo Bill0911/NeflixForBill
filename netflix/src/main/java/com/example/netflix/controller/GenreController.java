@@ -1,5 +1,6 @@
 package com.example.netflix.controller;
 
+import com.example.netflix.dto.GenreDTO;
 import com.example.netflix.entity.Genre;
 import com.example.netflix.service.GenreService;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +31,9 @@ public class GenreController {
     }
 
     @PostMapping
-    public ResponseEntity<Genre> addGenre(@RequestBody Genre genre) {
-        return ResponseEntity.ok(genreService.addGenre(genre));
+    public ResponseEntity<String> addGenre(@RequestBody GenreDTO genre) {
+        Integer genreId = genreService.addGenre(genre.getGenreName());
+        return ResponseEntity.ok("New genre id : " + genreId);
     }
 
     @PutMapping("/{id}")
