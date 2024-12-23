@@ -18,4 +18,7 @@ public interface GenreRepository extends JpaRepository<Genre, Integer>
     @Transactional
     @Query(value = "CALL AddGenre(:genreName)", nativeQuery = true)
     void addGenre(@Param("genreName") String genreName);
+
+    @Query(value = "CALL GetGenreById(:genreId)", nativeQuery = true)
+    Optional<Genre> findByGenreId(@Param("genreId") Integer genreId);
 }
