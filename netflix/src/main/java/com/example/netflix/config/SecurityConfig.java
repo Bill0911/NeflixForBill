@@ -19,9 +19,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
-    public SecurityConfig(JwtFilter jwtFilter) {
+    public SecurityConfig(JwtFilter jwtFilter, CustomAccessDeniedHandler accessDeniedHandler) {
         this.jwtFilter = jwtFilter;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Bean
@@ -29,9 +31,12 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF for stateless APIs
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/login", "/api/genres/**", "/api/languages", "/api/users/register", "/api/movies/**", "/api/series/**", "/api/users/lang", "/api/users/add-profile", "/api/profiles/watch-movie", "/api/profiles/watch-series" ,"/api/genre-for-series/**", "/api/preferences/**").permitAll()// Public APIs
-                        .requestMatchers("/api/admin/**").hasRole("SENIOR")
+                        .requestMatchers("/api/users/login", "/api/languages", "/api/users/register", "/api/movies/**", "/api/series/**", "/api/users/lang", "/api/users/add-profile", "/api/profiles/watch-movie", "/api/profiles/watch-series" ,"/api/genre-for-series/**", "/api/preferences/**").permitAll()// Public APIs
+                        .requestMatchers(HttpMethod.GET, "/api/genres").hasAuthority("SENIOR")
                         .anyRequest().authenticated()  // Protect all other endpoints
+                )
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(accessDeniedHandler) // Register custom handler here
                 )
                 .addFilterBefore(jwtFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
         return http.build();

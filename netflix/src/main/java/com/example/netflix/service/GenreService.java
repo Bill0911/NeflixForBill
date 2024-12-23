@@ -23,7 +23,7 @@ public class GenreService {
     }
 
     public Optional<Genre> getGenreById(Integer id) {
-        return genreRepository.findById(id);
+        return genreRepository.findByGenreId(id);
     }
 
     public void addGenre(String genreName) {
