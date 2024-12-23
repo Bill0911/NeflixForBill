@@ -1,7 +1,9 @@
 package com.example.netflix.service;
 
+import com.example.netflix.dto.GenreDTO;
 import com.example.netflix.entity.Genre;
 import com.example.netflix.repository.GenreRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,8 +26,8 @@ public class GenreService {
         return genreRepository.findById(id);
     }
 
-    public Genre addGenre(Genre genre) {
-        return genreRepository.save(genre);
+    public Integer addGenre(String genreName) {
+        return genreRepository.addGenre(genreName);
     }
 
     public Genre updateGenre(Integer id, Genre updatedGenre) {

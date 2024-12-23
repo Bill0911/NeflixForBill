@@ -11,8 +11,7 @@ public class GenreForSeriesId implements Serializable {
     private Integer seriesId;
 
     // Default constructor
-    public GenreForSeriesId() {
-    }
+    public GenreForSeriesId() {}
 
     // Parameterized constructor
     public GenreForSeriesId(Integer genreId, Integer seriesId) {
