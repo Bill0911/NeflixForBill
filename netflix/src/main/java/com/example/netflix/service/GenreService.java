@@ -26,9 +26,10 @@ public class GenreService {
         return genreRepository.findById(id);
     }
 
-    public String addGenre(String genreName) {
+    public void addGenre(String genreName) {
+        System.out.println("Genre has not been added yet");
         genreRepository.addGenre(genreName);
-        return genreName;
+        System.out.println("Genre has been added ");
     }
 
     public Genre updateGenre(Integer id, Genre updatedGenre) {
