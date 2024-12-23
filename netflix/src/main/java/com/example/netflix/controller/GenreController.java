@@ -32,8 +32,8 @@ public class GenreController {
 
     @PostMapping
     public ResponseEntity<String> addGenre(@RequestBody GenreDTO genre) {
-        Integer genreId = genreService.addGenre(genre.getGenreName());
-        return ResponseEntity.ok("New genre id : " + genreId);
+        String genreName = genreService.addGenre(genre.getGenreName());
+        return ResponseEntity.ok("New genre '"+ genreName +"' added");
     }
 
     @PutMapping("/{id}")

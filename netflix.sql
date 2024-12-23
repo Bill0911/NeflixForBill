@@ -1,587 +1,42 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Dec 20, 2024 at 01:42 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
 
 
 --
--- Database: `netflix`
+-- Database: `sql7753243`
 --
-
---
--- PROCEDURES FOR EPISODE
 
 DELIMITER $$
-
-CREATE PROCEDURE `AddEpisode` (
-    IN `p_title` VARCHAR(255),
-    IN `p_duration` TIME,
-    IN `p_series_id` INT
-)
-BEGIN
+--
+-- Procedures
+--
+CREATE DEFINER=`sql7753243`@`%` PROCEDURE `AddEpisode` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     INSERT INTO `episode` (`title`, `duration`, `series_id`)
     VALUES (p_title, IFNULL(p_duration, '00:00:00'), p_series_id);
-END $$
+END$$
 
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `GetAllEpisodes` ()
-BEGIN
-    SELECT * FROM `episode`;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `GetEpisodeById` (IN `p_episode_id` INT)
-BEGIN
-    SELECT * FROM `episode` WHERE `episode_id` = p_episode_id;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `UpdateEpisode` (
-    IN `p_episode_id` INT,
-    IN `p_title` VARCHAR(255),
-    IN `p_duration` TIME,
-    IN `p_series_id` INT
-)
-BEGIN
-    UPDATE `episode`
-    SET 
-        `title` = p_title,
-        `duration` = IFNULL(p_duration, '00:00:00'),
-        `series_id` = p_series_id
-    WHERE `episode_id` = p_episode_id;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `DeleteEpisode` (IN `p_episode_id` INT)
-BEGIN
-    DELETE FROM `episode` WHERE `episode_id` = p_episode_id;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `PatchEpisode` (
-    IN `p_episode_id` INT,
-    IN `p_title` VARCHAR(255),
-    IN `p_duration` TIME,
-    IN `p_series_id` INT
-)
-BEGIN
-    UPDATE `episode`
-    SET 
-        `title` = COALESCE(p_title, `title`),
-        `duration` = COALESCE(p_duration, `duration`),
-        `series_id` = COALESCE(p_series_id, `series_id`)
-    WHERE `episode_id` = p_episode_id;
-END $$
-
-DELIMITER ;
-
---
--- PROCEDURES FOR GENRE
-
-DELIMITER $$
-
-CREATE PROCEDURE `AddGenre` (
-    IN `p_genre_name` VARCHAR(255)
-)
-BEGIN
+CREATE DEFINER=`sql7753243`@`%` PROCEDURE `AddGenre` (IN `p_genre_name` VARCHAR(255))   BEGIN
     INSERT INTO `genre` (`genre_name`)
     VALUES (p_genre_name);
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `GetAllGenres` ()
-BEGIN
-    SELECT * FROM `genre`;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `GetGenreById` (
-    IN `p_genre_id` INT
-)
-BEGIN
-    SELECT * FROM `genre`
-    WHERE `genre_id` = p_genre_id;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `UpdateGenre` (
-    IN `p_genre_id` INT,
-    IN `p_genre_name` VARCHAR(255)
-)
-BEGIN
-    UPDATE `genre`
-    SET `genre_name` = p_genre_name
-    WHERE `genre_id` = p_genre_id;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `DeleteGenre` (
-    IN `p_genre_id` INT
-)
-BEGIN
-    DELETE FROM `genre`
-    WHERE `genre_id` = p_genre_id;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `DeleteGenre` (
-    IN `p_genre_id` INT
-)
-BEGIN
-    DELETE FROM `genre`
-    WHERE `genre_id` = p_genre_id;
-END $$
-
-DELIMITER ;
---
-
---
--- PROCEDURES FOR GENRE_FOR_MOVIE
-
-DELIMITER $$
-
-CREATE PROCEDURE `AddGenreForMovie` (
-    IN `p_movie_id` INT,
-    IN `p_genre_id` INT
-)
-BEGIN
-    INSERT INTO `genreformovie` (`movie_id`, `genre_id`)
-    VALUES (p_movie_id, p_genre_id);
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `GetAllGenreForMovies` ()
-BEGIN
-    SELECT * FROM `genreformovie`;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `GetGenresForMovie` (
-    IN `p_movie_id` INT
-)
-BEGIN
-    SELECT gfm.*, g.genre_name
-    FROM `genreformovie` gfm
-    JOIN `genre` g ON gfm.genre_id = g.genre_id
-    WHERE gfm.movie_id = p_movie_id;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `GetGenresForMovie` (
-    IN `p_movie_id` INT
-)
-BEGIN
-    SELECT gfm.*, g.genre_name
-    FROM `genreformovie` gfm
-    JOIN `genre` g ON gfm.genre_id = g.genre_id
-    WHERE gfm.movie_id = p_movie_id;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `DeleteGenreForMovie` (
-    IN `p_movie_id` INT,
-    IN `p_genre_id` INT
-)
-BEGIN
-    DELETE FROM `genreformovie`
-    WHERE `movie_id` = p_movie_id AND `genre_id` = p_genre_id;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `PatchGenreForMovie` (
-    IN `p_movie_id` INT,
-    IN `p_old_genre_id` INT,
-    IN `p_new_genre_id` INT
-)
-BEGIN
-    UPDATE `genreformovie`
-    SET `genre_id` = COALESCE(p_new_genre_id, `genre_id`)
-    WHERE `movie_id` = p_movie_id AND `genre_id` = p_old_genre_id;
-END $$
-
-DELIMITER ;
---
-
---
--- PROCEDURE FOR GENRE_FOR_SERIE
-
-DELIMITER $$
-
-CREATE PROCEDURE `AddGenreForSeries` (
-    IN `p_series_id` INT,
-    IN `p_genre_id` INT
-)
-BEGIN
-    INSERT INTO `genreforseries` (`series_id`, `genre_id`)
-    VALUES (p_series_id, p_genre_id);
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `GetAllGenresForSeries` ()
-BEGIN
-    SELECT * FROM `genreforseries`;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `GetGenresForSeries` (
-    IN `p_series_id` INT
-)
-BEGIN
-    SELECT gfs.*, g.genre_name
-    FROM `genreforseries` gfs
-    JOIN `genre` g ON gfs.genre_id = g.genre_id
-    WHERE gfs.series_id = p_series_id;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `DeleteGenreForSeries` (
-    IN `p_series_id` INT,
-    IN `p_genre_id` INT
-)
-BEGIN
-    DELETE FROM `genreforseries`
-    WHERE `series_id` = p_series_id AND `genre_id` = p_genre_id;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE `PatchGenreForSeries` (
-    IN `p_series_id` INT,
-    IN `p_old_genre_id` INT,
-    IN `p_new_genre_id` INT
-)
-BEGIN
-    UPDATE `genreforseries`
-    SET `genre_id` = COALESCE(p_new_genre_id, `genre_id`)
-    WHERE `series_id` = p_series_id AND `genre_id` = p_old_genre_id;
-END $$
-
-DELIMITER ;
---
-
---
--- PROCEDURE FOR GENRE_FOR_USER
-
-DELIMITER $$
-
-CREATE PROCEDURE AddGenreForUser(IN p_account_id INT, IN p_genre_id INT)
-BEGIN
-    INSERT INTO genreforuser (account_id, genre_id) VALUES (p_account_id, p_genre_id);
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE GetAllGenreForUsers()
-BEGIN
-    SELECT * FROM genreforuser;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE GetGenreForUserById(IN p_account_id INT, IN p_genre_id INT)
-BEGIN
-    SELECT * FROM genreforuser WHERE account_id = p_account_id AND genre_id = p_genre_id;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE UpdateGenreForUser(IN p_account_id INT, IN p_genre_id INT)
-BEGIN
-    UPDATE genreforuser
-    SET genre_id = p_genre_id
-    WHERE account_id = p_account_id;
-END $$
-
-DELIMITER ;
---
-
-DELIMITER $$
-
-CREATE PROCEDURE PatchGenreForUser(
-    IN p_account_id INT,
-    IN p_genre_id INT,
-    IN p_new_genre_id INT
-)
-BEGIN
-    UPDATE genreforuser
-    SET genre_id = COALESCE(p_new_genre_id, genre_id)
-    WHERE account_id = p_account_id AND genre_id = p_genre_id;
-END $$
-
-DELIMITER ;
-
---
--- PROCEDURE FOR LANGUAGE
-
-DELIMITER $$
-
-CREATE PROCEDURE AddLanguage(IN p_name VARCHAR(255))
-BEGIN
-    INSERT INTO language (name) VALUES (p_name);
-END $$
-
-CREATE PROCEDURE GetAllLanguages()
-BEGIN
-    SELECT * FROM language;
-END $$
-
-CREATE PROCEDURE GetLanguageById(IN p_language_id INT)
-BEGIN
-    SELECT * FROM language WHERE language_id = p_language_id;
-END $$
-
-CREATE PROCEDURE UpdateLanguage(IN p_language_id INT, IN p_name VARCHAR(255))
-BEGIN
-    UPDATE language
-    SET name = p_name
-    WHERE language_id = p_language_id;
-END $$
-
-CREATE PROCEDURE DeleteLanguage(IN p_language_id INT)
-BEGIN
-    DELETE FROM language WHERE language_id = p_language_id;
-END $$
-
-CREATE PROCEDURE PatchLanguage(IN p_language_id INT, IN p_name VARCHAR(255))
-BEGIN
-    UPDATE language
-    SET name = COALESCE(p_name, name)
-    WHERE language_id = p_language_id;
-END $$
-
-DELIMITER ;
-
---
--- PROCEDURE FOR MOVIE
-
-DELIMITER $$
-
-CREATE PROCEDURE AddMovie(IN p_title VARCHAR(255), IN p_duration TIME, IN p_minimum_age INT)
-BEGIN
-    INSERT INTO movie (title, duration, minimum_age)
-    VALUES (p_title, IFNULL(p_duration, '00:00:00'), p_minimum_age);
-END $$
-
-CREATE PROCEDURE GetAllMovies()
-BEGIN
-    SELECT * FROM movie;
-END $$
-
-CREATE PROCEDURE GetMovieById(IN p_movie_id INT)
-BEGIN
-    SELECT * FROM movie WHERE movie_id = p_movie_id;
-END $$
-
-CREATE PROCEDURE UpdateMovie(IN p_movie_id INT, IN p_title VARCHAR(255), IN p_duration TIME, IN p_minimum_age INT)
-BEGIN
-    UPDATE movie
-    SET title = p_title,
-        duration = IFNULL(p_duration, '00:00:00'),
-        minimum_age = p_minimum_age
-    WHERE movie_id = p_movie_id;
-END $$
-
-CREATE PROCEDURE DeleteMovie(IN p_movie_id INT)
-BEGIN
-    DELETE FROM movie WHERE movie_id = p_movie_id;
-END $$
-
-CREATE PROCEDURE PatchMovie(IN p_movie_id INT, IN p_title VARCHAR(255), IN p_duration TIME, IN p_minimum_age INT)
-BEGIN
-    UPDATE movie
-    SET title = COALESCE(p_title, title),
-        duration = COALESCE(p_duration, duration),
-        minimum_age = COALESCE(p_minimum_age, minimum_age)
-    WHERE movie_id = p_movie_id;
-END $$
-
-DELIMITER ;
-
---
--- PROCEDURE FOR MOVIEVIEWCOUNT
-
-DELIMITER $$
-
-CREATE PROCEDURE IncrementMovieViewCount(IN p_userId INT, IN p_movieId INT)
-BEGIN
-    IF EXISTS (SELECT 1 FROM movieviewcount WHERE account_id = p_userId AND movie_id = p_movieId) THEN
+END$$
+
+CREATE DEFINER=`sql7753243`@`%` PROCEDURE `AddMovieViewCount` (IN `p_movieId` INT, IN `p_accountId` INT)   BEGIN
+    -- Check if the record exists in the movieviewcount table
+    IF EXISTS (
+        SELECT 1 
+        FROM movieviewcount 
+        WHERE account_id = p_accountId AND movie_id = p_movieId
+    ) THEN
+        -- If it exists, increment the view count
         UPDATE movieviewcount
         SET number = number + 1
-        WHERE account_id = p_userId AND movie_id = p_movieId;
+        WHERE account_id = p_accountId AND movie_id = p_movieId;
     ELSE
-        INSERT INTO movieviewcount (account_id, movie_id, number)
-        VALUES (p_userId, p_movieId, 1);
+        -- If it doesn't exist, create a new entry with initial count = 1
+        INSERT INTO movieviewcount (`account_id`, `movie_id`, `number`)
+        VALUES (p_accountId, p_movieId, 1);
     END IF;
-END $$
-
-CREATE PROCEDURE GetMovieViewCountByUser(IN p_userId INT)
-BEGIN
-    SELECT * FROM movieviewcount WHERE account_id = p_userId;
-END $$
-
-DELIMITER ;
-
---
--- PROCEDURE FOR SERIE
-
-DELIMITER $$
-
--- Procedure to Add a New Series
-CREATE PROCEDURE `AddSeries` (
-    IN `p_title` VARCHAR(255),
-    IN `p_minimum_age` INT
-)
-BEGIN
-    INSERT INTO `series` (`title`, `minimum_age`)
-    VALUES (p_title, p_minimum_age);
 END$$
 
--- Procedure to Get All Series
-CREATE PROCEDURE `GetAllSeries` ()
-BEGIN
-    SELECT * FROM `series`;
-END$$
-
--- Procedure to Get Series by ID
-CREATE PROCEDURE `GetSeriesById` (
-    IN `p_series_id` INT
-)
-BEGIN
-    SELECT * FROM `series`
-    WHERE `series_id` = p_series_id;
-END$$
-
--- Procedure to Update an Existing Series
-CREATE PROCEDURE `UpdateSeries` (
-    IN `p_series_id` INT,
-    IN `p_title` VARCHAR(255),
-    IN `p_minimum_age` INT
-)
-BEGIN
-    UPDATE `series`
-    SET 
-        `title` = p_title,
-        `minimum_age` = p_minimum_age
-    WHERE `series_id` = p_series_id;
-END$$
-
--- Procedure to Delete a Series
-CREATE PROCEDURE `DeleteSeries` (
-    IN `p_series_id` INT
-)
-BEGIN
-    DELETE FROM `series`
-    WHERE `series_id` = p_series_id;
-END$$
-
--- Procedure to Partially Update (PATCH) a Series
-CREATE PROCEDURE `PatchSeries` (
-    IN `p_series_id` INT,
-    IN `p_title` VARCHAR(255),
-    IN `p_minimum_age` INT
-)
-BEGIN
-    UPDATE `series`
-    SET 
-        `title` = COALESCE(p_title, `title`),
-        `minimum_age` = COALESCE(p_minimum_age, `minimum_age`)
-    WHERE `series_id` = p_series_id;
-END$$
-
-DELIMITER ;
-
---
--- PROCEDURE FOR SERIES_VIEW_COUNT
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `AddSeriesViewCount` (IN `p_seriesId` INT, IN `p_accountId` INT)   BEGIN
+CREATE DEFINER=`sql7753243`@`%` PROCEDURE `AddSeriesViewCount` (IN `p_seriesId` INT, IN `p_accountId` INT)   BEGIN
     -- Check if the record exists in the seriesviewcount table
     IF EXISTS (
         SELECT 1 
@@ -599,7 +54,33 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `AddSeriesViewCount` (IN `p_seriesId
     END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetPersonalizedOffer` (IN `userId` INT, IN `maxMovies` INT)   BEGIN
+CREATE DEFINER=`sql7753243`@`%` PROCEDURE `DeleteEpisode` (IN `p_episode_id` INT)   BEGIN
+    DELETE FROM `episode` WHERE `episode_id` = p_episode_id;
+END$$
+
+CREATE DEFINER=`sql7753243`@`%` PROCEDURE `DeleteGenre` (IN `p_genre_id` INT)   BEGIN
+    DELETE FROM `genre`
+    WHERE `genre_id` = p_genre_id;
+END$$
+
+CREATE DEFINER=`sql7753243`@`%` PROCEDURE `GetAllEpisodes` ()   BEGIN
+    SELECT * FROM `episode`;
+END$$
+
+CREATE DEFINER=`sql7753243`@`%` PROCEDURE `GetAllGenres` ()   BEGIN
+    SELECT * FROM `genre`;
+END$$
+
+CREATE DEFINER=`sql7753243`@`%` PROCEDURE `GetEpisodeById` (IN `p_episode_id` INT)   BEGIN
+    SELECT * FROM `episode` WHERE `episode_id` = p_episode_id;
+END$$
+
+CREATE DEFINER=`sql7753243`@`%` PROCEDURE `GetGenreById` (IN `p_genre_id` INT)   BEGIN
+    SELECT * FROM `genre`
+    WHERE `genre_id` = p_genre_id;
+END$$
+
+CREATE DEFINER=`sql7753243`@`%` PROCEDURE `GetPersonalizedOffer` (IN `userId` INT, IN `maxMovies` INT)   BEGIN
     DECLARE done INT DEFAULT FALSE;
     DECLARE genreId INT;
     DECLARE genreViews INT;
@@ -661,6 +142,30 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetPersonalizedOffer` (IN `userId` 
     DROP TEMPORARY TABLE TempPersonalizedOffer;
 END$$
 
+CREATE DEFINER=`sql7753243`@`%` PROCEDURE `PatchEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
+    UPDATE `episode`
+    SET 
+        `title` = COALESCE(p_title, `title`),
+        `duration` = COALESCE(p_duration, `duration`),
+        `series_id` = COALESCE(p_series_id, `series_id`)
+    WHERE `episode_id` = p_episode_id;
+END$$
+
+CREATE DEFINER=`sql7753243`@`%` PROCEDURE `UpdateEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
+    UPDATE `episode`
+    SET 
+        `title` = p_title,
+        `duration` = IFNULL(p_duration, '00:00:00'),
+        `series_id` = p_series_id
+    WHERE `episode_id` = p_episode_id;
+END$$
+
+CREATE DEFINER=`sql7753243`@`%` PROCEDURE `UpdateGenre` (IN `p_genre_id` INT, IN `p_genre_name` VARCHAR(255))   BEGIN
+    UPDATE `genre`
+    SET `genre_name` = p_genre_name
+    WHERE `genre_id` = p_genre_id;
+END$$
+
 DELIMITER ;
 
 -- --------------------------------------------------------
@@ -674,35 +179,8 @@ CREATE TABLE `account` (
   `email` varchar(255) NOT NULL,
   `subscription` varchar(10) NOT NULL,
   `trial_start_date` date NOT NULL,
-  `discount` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `content`
---
-
-CREATE TABLE `content` (
-  `content_id` int(11) UNSIGNED NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `type` enum('MOVIE','SERIES') NOT NULL,
-  `quality` enum('SD','HD','UHD') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `content_history`
---
-
-CREATE TABLE `content_history` (
-  `account_id` int(11) UNSIGNED NOT NULL,
-  `content_id` int(11) UNSIGNED NOT NULL,
-  `viewed_at` datetime DEFAULT NULL,
-  `paused_at` datetime DEFAULT NULL,
-  `resumed_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `discount` tinyint(1) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -715,7 +193,7 @@ CREATE TABLE `episode` (
   `title` varchar(255) DEFAULT NULL,
   `duration` time DEFAULT '00:00:00',
   `series_id` int(11) UNSIGNED DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -726,7 +204,7 @@ CREATE TABLE `episode` (
 CREATE TABLE `genre` (
   `genre_id` int(11) UNSIGNED NOT NULL,
   `genre_name` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `genre`
@@ -740,7 +218,12 @@ INSERT INTO `genre` (`genre_id`, `genre_name`) VALUES
 (5, 'Tearjerker'),
 (6, 'Pg-13'),
 (7, 'fantasy'),
-(8, 'sci-fi');
+(8, 'sci-fi'),
+(17, 'Adventure'),
+(18, 'triler'),
+(19, 'biography'),
+(20, 'history'),
+(21, 'musical');
 
 -- --------------------------------------------------------
 
@@ -751,7 +234,7 @@ INSERT INTO `genre` (`genre_id`, `genre_name`) VALUES
 CREATE TABLE `genreformovie` (
   `genre_id` int(11) UNSIGNED NOT NULL,
   `movie_id` int(11) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `genreformovie`
@@ -759,9 +242,9 @@ CREATE TABLE `genreformovie` (
 
 INSERT INTO `genreformovie` (`genre_id`, `movie_id`) VALUES
 (2, 1),
-(3, 3),
 (5, 1),
 (7, 2),
+(3, 3),
 (8, 3);
 
 -- --------------------------------------------------------
@@ -773,7 +256,7 @@ INSERT INTO `genreformovie` (`genre_id`, `movie_id`) VALUES
 CREATE TABLE `genreforseries` (
   `genre_id` int(11) UNSIGNED NOT NULL,
   `series_id` int(11) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -784,7 +267,7 @@ CREATE TABLE `genreforseries` (
 CREATE TABLE `genreforuser` (
   `genre_id` int(11) UNSIGNED NOT NULL,
   `account_id` int(11) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -795,7 +278,7 @@ CREATE TABLE `genreforuser` (
 CREATE TABLE `language` (
   `language_id` int(11) UNSIGNED NOT NULL,
   `name` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `language`
@@ -822,8 +305,8 @@ CREATE TABLE `movie` (
   `sd_available` bit(1) DEFAULT b'1',
   `hd_available` bit(1) DEFAULT b'0',
   `uhd_available` bit(1) DEFAULT b'0',
-  `minimum_age` int(3) NOT NULL DEFAULT 12
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `minimum_age` int(3) NOT NULL DEFAULT '12'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `movie`
@@ -843,7 +326,7 @@ INSERT INTO `movie` (`movie_id`, `title`, `duration`, `sd_available`, `hd_availa
 CREATE TABLE `moviesprofilewatchlist` (
   `profile_id` int(11) UNSIGNED NOT NULL,
   `movie_id` int(11) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -855,17 +338,18 @@ CREATE TABLE `movieviewcount` (
   `account_id` int(11) UNSIGNED NOT NULL,
   `movie_id` int(11) UNSIGNED NOT NULL,
   `number` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `movieviewcount`
 --
 
 INSERT INTO `movieviewcount` (`account_id`, `movie_id`, `number`) VALUES
-(1, 1, 2),
+(1, 1, 3),
 (1, 2, 2),
 (1, 3, 1),
-(3, 1, 1);
+(3, 1, 1),
+(5, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -877,9 +361,9 @@ CREATE TABLE `profile` (
   `profile_id` int(11) UNSIGNED NOT NULL,
   `account_id` int(11) UNSIGNED DEFAULT NULL,
   `profile_image` varchar(255) DEFAULT NULL,
-  `age` int(3) NOT NULL DEFAULT 0,
+  `age` int(3) NOT NULL DEFAULT '0',
   `name` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `profile`
@@ -898,8 +382,15 @@ INSERT INTO `profile` (`profile_id`, `account_id`, `profile_image`, `age`, `name
 CREATE TABLE `series` (
   `series_id` int(11) UNSIGNED NOT NULL,
   `title` varchar(255) DEFAULT NULL,
-  `minimum_age` int(3) NOT NULL DEFAULT 12
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `minimum_age` int(3) NOT NULL DEFAULT '12'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `series`
+--
+
+INSERT INTO `series` (`series_id`, `title`, `minimum_age`) VALUES
+(1, 'Sex education', 18);
 
 -- --------------------------------------------------------
 
@@ -910,7 +401,7 @@ CREATE TABLE `series` (
 CREATE TABLE `seriesprofilewatchlist` (
   `profile_id` int(11) UNSIGNED NOT NULL,
   `series_id` int(11) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -924,7 +415,7 @@ CREATE TABLE `seriesviewcount` (
   `episode_id` int(11) UNSIGNED NOT NULL,
   `number` int(11) DEFAULT NULL,
   `last_viewed` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -936,7 +427,7 @@ CREATE TABLE `subscriptioncosts` (
 `UserID` int(11) unsigned
 ,`Email` varchar(255)
 ,`SubscriptionType` enum('SD','HD','UHD')
-,`SubscriptionCost` int(3)
+,`SubscriptionCost` int(4)
 );
 
 -- --------------------------------------------------------
@@ -952,23 +443,29 @@ CREATE TABLE `user` (
   `payment_method` varchar(255) DEFAULT 'Credit Card',
   `blocked` bit(1) DEFAULT b'0',
   `subscription` enum('SD','HD','UHD') DEFAULT 'SD',
-  `trial_start_date` datetime DEFAULT current_timestamp(),
+  `trial_start_date` datetime DEFAULT '0000-00-00 00:00:00',
   `language_id` int(11) UNSIGNED DEFAULT NULL,
-  `role` enum('VIEWER','JUNIOR','MEDIOR','SENIOR') DEFAULT 'VIEWER',
-  `failed_attempts` int(11) DEFAULT 0,
+  `role` enum('JUNIOR','MEDIOR','SENIOR') DEFAULT 'JUNIOR',
+  `failed_attempts` int(11) DEFAULT '0',
   `lock_time` datetime DEFAULT NULL,
-  `discount` tinyint(1) DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `discount` tinyint(1) DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `user`
 --
 
 INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `blocked`, `subscription`, `trial_start_date`, `language_id`, `role`, `failed_attempts`, `lock_time`, `discount`) VALUES
-(1, 'fjodor.smorodins@gmail.com', '$2a$10$hszeHDUNOv4lnd24ZS9sOeOkOJUYo5zSi2H2makEPti1uznr4s5P2', 'abc', b'0', 'SD', '2024-12-07 14:32:59', 4, 'VIEWER', 0, NULL, 0),
-(2, 'fjodorsm@gmail.com', '$2a$10$2QlecdJ25ELwT/avANQAUelbxtS9tysiRO5LSE0omLATaWhdAPfZC', 'Credit Card', b'0', 'SD', '2024-12-07 14:33:33', 1, 'VIEWER', 0, NULL, 0),
-(3, 'smorodins@gmail.com', '$2a$10$KhhGnFeK2q32DYG7/fMhNe/GEzf1dDJVkQqq5isK1vwuIO9h0zor.', 'CrC', b'0', 'SD', '2024-12-16 18:54:30', 3, 'VIEWER', 0, NULL, 0),
-(4, 'fjodor@gg.com', '$2a$10$2a1DrTOPXSoPBp7fmVBSx.EfUawn.8oW1oondBTX6idrvmtXzMe7W', 'cash', b'0', 'SD', '2024-12-20 11:13:32', 1, 'VIEWER', 0, NULL, 0);
+(1, 'fjodor.smorodins@gmail.com', '$2a$10$hszeHDUNOv4lnd24ZS9sOeOkOJUYo5zSi2H2makEPti1uznr4s5P2', 'abc', b'0', 'SD', '2024-12-07 14:32:59', 4, 'SENIOR', 0, NULL, 0),
+(2, 'fjodorsm@gmail.com', '$2a$10$2QlecdJ25ELwT/avANQAUelbxtS9tysiRO5LSE0omLATaWhdAPfZC', 'Credit Card', b'0', 'SD', '2024-12-07 14:33:33', 1, 'JUNIOR', 0, NULL, 0),
+(3, 'smorodins@gmail.com', '$2a$10$KhhGnFeK2q32DYG7/fMhNe/GEzf1dDJVkQqq5isK1vwuIO9h0zor.', 'CrC', b'0', 'SD', '2024-12-16 18:54:30', 3, '', 0, NULL, 0),
+(5, 'fjodors@hello.com', '$2a$10$hKsRL99MRpKUr.vrJPqsfuG3qhGkDjXQEYDxHytWFBYgW7HZJ/54W', 'golden bars', b'0', 'SD', '2024-12-20 16:19:25', 2, '', 0, NULL, 0),
+(6, 'artjoms.grishajevs@hello.com', '$2a$10$NboUZOHniHtnfHhFFECcF.dA64uJsp.8/OnD0B0NEuMvTyvIfN7we', 'children', b'0', 'SD', '2024-12-20 16:24:58', 1, '', 0, NULL, 0),
+(7, 'somebody@hello.com', '$2a$10$4H41Ugw1ho9ga4DfTV1rwegl.uxbZcTbEu3/SBeklNzsHnXoYliTe', 'money', b'0', 'SD', '2024-12-20 17:08:59', 1, '', 0, NULL, 0),
+(9, 'somepersonwhatever@hello.com', '$2a$10$DhZSCWySz9rypM/jM8mR6.yzaCPIpugVlITMSWx9whkmEp1ciPK42', 'something', b'0', 'SD', '2024-12-20 17:24:39', 2, '', 0, NULL, 0),
+(10, 'iamsteve@hello.com', '$2a$10$92qxixAWTf94z9sK.Lf2iebtyLdBV9ckOx.xfzGLv4enlX5gdsis6', 'mastercard', b'0', 'SD', '2024-12-20 17:58:22', 3, 'JUNIOR', 0, NULL, 0),
+(15, 'test1@.com', '$2a$10$aP97IvFmxH8yLGuL1012Xe4sfLd6s1SdokAAKOhG3.tvWCTkmfD2.', 'some method', b'0', 'SD', '2024-12-20 22:46:29', 3, '', 1, NULL, 0),
+(17, 'medior.fjodor@g.com', '$2a$10$gQuhxuEegp0Ypg.IrGiL8.bmQwV4sdMzXirKh7N0N4KbOXAq4xwFi', 'some money transfer method', b'0', 'SD', '2024-12-23 17:55:18', 3, 'JUNIOR', 0, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -990,7 +487,7 @@ CREATE TABLE `user_genre_count` (
 --
 DROP TABLE IF EXISTS `subscriptioncosts`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `subscriptioncosts`  AS SELECT `u`.`account_id` AS `UserID`, `u`.`email` AS `Email`, `u`.`subscription` AS `SubscriptionType`, CASE WHEN to_days(curdate()) - to_days(`u`.`trial_start_date`) <= 7 THEN 0 ELSE CASE WHEN `u`.`subscription` = 'SD' THEN 10 WHEN `u`.`subscription` = 'HD' THEN 15 WHEN `u`.`subscription` = 'UHD' THEN 20 ELSE 0 END- CASE WHEN `u`.`discount` = 1 THEN 2 ELSE 0 END END AS `SubscriptionCost` FROM `user` AS `u` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`sql7753243`@`%` SQL SECURITY DEFINER VIEW `subscriptioncosts`  AS SELECT `u`.`account_id` AS `UserID`, `u`.`email` AS `Email`, `u`.`subscription` AS `SubscriptionType`, (case when ((to_days(curdate()) - to_days(`u`.`trial_start_date`)) <= 7) then 0 else ((case when (`u`.`subscription` = 'SD') then 10 when (`u`.`subscription` = 'HD') then 15 when (`u`.`subscription` = 'UHD') then 20 else 0 end) - (case when (`u`.`discount` = 1) then 2 else 0 end)) end) AS `SubscriptionCost` FROM `user` AS `u` ;
 
 -- --------------------------------------------------------
 
@@ -999,7 +496,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `user_genre_count`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, sum(`mvc`.`number`) AS `total_views` FROM (((`movieviewcount` `mvc` join `movie` `m` on(`mvc`.`movie_id` = `m`.`movie_id`)) join `genreformovie` `mg` on(`m`.`movie_id` = `mg`.`movie_id`)) join `genre` `g` on(`mg`.`genre_id` = `g`.`genre_id`)) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, sum(`mvc`.`number`) DESC ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`sql7753243`@`%` SQL SECURITY DEFINER VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, sum(`mvc`.`number`) AS `total_views` FROM (((`movieviewcount` `mvc` join `movie` `m` on((`mvc`.`movie_id` = `m`.`movie_id`))) join `genreformovie` `mg` on((`m`.`movie_id` = `mg`.`movie_id`))) join `genre` `g` on((`mg`.`genre_id` = `g`.`genre_id`))) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, sum(`mvc`.`number`) DESC ;
 
 --
 -- Indexes for dumped tables
@@ -1010,19 +507,6 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 ALTER TABLE `account`
   ADD PRIMARY KEY (`account_id`);
-
---
--- Indexes for table `content`
---
-ALTER TABLE `content`
-  ADD PRIMARY KEY (`content_id`);
-
---
--- Indexes for table `content_history`
---
-ALTER TABLE `content_history`
-  ADD PRIMARY KEY (`account_id`,`content_id`),
-  ADD KEY `content_id` (`content_id`);
 
 --
 -- Indexes for table `episode`
@@ -1117,7 +601,7 @@ ALTER TABLE `seriesviewcount`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`account_id`),
-  ADD KEY `language_id` (`language_id`);
+  ADD KEY `FKj9k2portqypgs993xn20pywtr` (`language_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -1130,12 +614,6 @@ ALTER TABLE `account`
   MODIFY `account_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `content`
---
-ALTER TABLE `content`
-  MODIFY `content_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `episode`
 --
 ALTER TABLE `episode`
@@ -1145,7 +623,7 @@ ALTER TABLE `episode`
 -- AUTO_INCREMENT for table `genre`
 --
 ALTER TABLE `genre`
-  MODIFY `genre_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `genre_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `language`
@@ -1169,18 +647,11 @@ ALTER TABLE `profile`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `account_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `account_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `content_history`
---
-ALTER TABLE `content_history`
-  ADD CONSTRAINT `content_history_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `content_history_ibfk_2` FOREIGN KEY (`content_id`) REFERENCES `content` (`content_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `episode`
@@ -1192,15 +663,15 @@ ALTER TABLE `episode`
 -- Constraints for table `genreformovie`
 --
 ALTER TABLE `genreformovie`
-  ADD CONSTRAINT `FK9k0bup58wyigpu52ap88luwm3` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`),
-  ADD CONSTRAINT `FKcooxhml1jwh4bnp2o9n63ka3k` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`);
+  ADD CONSTRAINT `FKcooxhml1jwh4bnp2o9n63ka3k` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`),
+  ADD CONSTRAINT `FK9k0bup58wyigpu52ap88luwm3` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`);
 
 --
 -- Constraints for table `genreforseries`
 --
 ALTER TABLE `genreforseries`
-  ADD CONSTRAINT `FK46gf3ps13sggr3a79227kltsn` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`),
-  ADD CONSTRAINT `FKn3exg02r09uca4mdojqte8dly` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`);
+  ADD CONSTRAINT `FKn3exg02r09uca4mdojqte8dly` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`),
+  ADD CONSTRAINT `FK46gf3ps13sggr3a79227kltsn` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`);
 
 --
 -- Constraints for table `genreforuser`
@@ -1213,8 +684,8 @@ ALTER TABLE `genreforuser`
 -- Constraints for table `movieviewcount`
 --
 ALTER TABLE `movieviewcount`
-  ADD CONSTRAINT `FK960o3778b43sfm6eh63p8yaaj` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`),
-  ADD CONSTRAINT `FKcpuurwpcxsr5pqfikypjvl3qn` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`);
+  ADD CONSTRAINT `FKcpuurwpcxsr5pqfikypjvl3qn` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`),
+  ADD CONSTRAINT `FK960o3778b43sfm6eh63p8yaaj` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`);
 
 --
 -- Constraints for table `profile`
