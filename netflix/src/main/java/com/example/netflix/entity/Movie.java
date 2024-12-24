@@ -2,7 +2,6 @@ package com.example.netflix.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalTime;
-import java.util.Set;
 
 @Entity
 @Table(name = "movie")
@@ -21,13 +20,13 @@ public class Movie
     private LocalTime duration;
 
     @Column(name = "sd_available")
-    private boolean sdAvailable;
+    private Boolean sdAvailable;
 
     @Column(name = "hd_available")
-    private boolean hdAvailable;
+    private Boolean hdAvailable;
 
     @Column(name = "uhd_available")
-    private boolean uhdAvailable;
+    private Boolean uhdAvailable;
 
     @Column(name = "minimum_age", nullable = false)
     private Integer minimumAge;
@@ -84,32 +83,32 @@ public class Movie
         this.minimumAge = minimumAge;
     }
 
-    public boolean isSdAvailable()
+    public Boolean isSdAvailable()
     {
         return sdAvailable;
     }
 
-    public void setSdAvailable(boolean sdAvailable)
+    public void setSdAvailable(Boolean sdAvailable)
     {
         this.sdAvailable = sdAvailable;
     }
 
-    public boolean isHdAvailable()
+    public Boolean isHdAvailable()
     {
         return hdAvailable;
     }
 
-    public void setHdAvailable(boolean hdAvailable)
+    public void setHdAvailable(Boolean hdAvailable)
     {
         this.hdAvailable = hdAvailable;
     }
 
-    public boolean isUhdAvailable()
+    public Boolean isUhdAvailable()
     {
         return uhdAvailable;
     }
 
-    public void setUhdAvailable(boolean uhdAvailable)
+    public void setUhdAvailable(Boolean uhdAvailable)
     {
         this.uhdAvailable = uhdAvailable;
     }
