@@ -32,13 +32,8 @@ public class GenreService {
         System.out.println("Genre has been added ");
     }
 
-    public Genre updateGenre(Integer id, Genre updatedGenre) {
-        return genreRepository.findById(id)
-                .map(existingGenre -> {
-                    existingGenre.setGenreName(updatedGenre.getGenreName());
-                    return genreRepository.save(existingGenre);
-                })
-                .orElseThrow(() -> new RuntimeException("Genre not found with ID: " + id));
+    public void updateGenre(Integer id, String genreName) {
+        genreRepository.updateById(id, genreName);;
     }
 
     public Genre patchGenre(Integer id, Genre patchData) {

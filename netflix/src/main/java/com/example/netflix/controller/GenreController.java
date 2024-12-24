@@ -3,6 +3,7 @@ package com.example.netflix.controller;
 import com.example.netflix.dto.GenreDTO;
 import com.example.netflix.entity.Genre;
 import com.example.netflix.service.GenreService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,26 +38,36 @@ public class GenreController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Genre> updateGenre(@PathVariable Integer id, @RequestBody Genre genre) {
+    public ResponseEntity<String> updateGenre(@PathVariable Integer id, @RequestBody GenreDTO genre) {
         try {
-            return ResponseEntity.ok(genreService.updateGenre(id, genre));
+            genreService.updateGenre(id, genre.getGenreName());
+            return ResponseEntity.ok("Genre " + id + " has been updated");
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Failed to update genre with ID" + id + ": " + e.getMessage());
         }
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Genre> patchGenre(@PathVariable Integer id, @RequestBody Genre patchData) {
+    public ResponseEntity<String> patchGenre(@PathVariable Integer id, @RequestBody GenreDTO patchData) {
         try {
-            return ResponseEntity.ok(genreService.patchGenre(id, patchData));
+            genreService.updateGenre(id, patchData.getGenreName());
+            return ResponseEntity.ok("Genre " + id + " has been patched");
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Failed to patch genre with ID" + id + ": " + e.getMessage());
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteGenre(@PathVariable Integer id) {
-        genreService.deleteGenre(id);
-        return ResponseEntity.ok("Genre deleted successfully.");
+        try {
+            genreService.deleteGenre(id);
+            return ResponseEntity.ok("Genre deleted successfully.");
+        }
+        catch (RuntimeException e) {
+            if (e.getMessage().contains("foreign key constraint")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("This genres' id is mention in other table's rows as foreign key");
+            }
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Deletion failed: " + e.getMessage());
+        }
     }
 }

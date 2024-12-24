@@ -24,4 +24,14 @@ public interface GenreRepository extends JpaRepository<Genre, Integer>
 
     @Query(value = "CALL GetAllGenres", nativeQuery = true)
     List<Genre> findAllGenres();
+
+    @Modifying
+    @Transactional
+    @Query(value = "CALL DeleteGenre(:genreId)", nativeQuery = true)
+    void deleteById(@Param("genreId") Integer genreId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "CALL UpdateGenre(:genreId, :genreName)", nativeQuery = true)
+    void updateById(@Param("genreId") Integer genreId, @Param("genreName") String genreName);
 }
