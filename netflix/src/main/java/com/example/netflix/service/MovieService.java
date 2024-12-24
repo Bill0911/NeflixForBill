@@ -41,20 +41,7 @@ public class MovieService {
         movieRepository.deleteById(movieId);
     }
 
-    public Movie patchMovie(Integer movieId, Movie patchData) {
-        Movie movie = movieRepository.findById(movieId)
-                .orElseThrow(() -> new RuntimeException("Movie not found with ID: " + movieId));
-
-        if (patchData.getTitle() != null) {
-            movie.setTitle(patchData.getTitle());
-        }
-        if (patchData.getDuration() != null) {
-            movie.setDuration(patchData.getDuration());
-        }
-        if (patchData.getMinimumAge() != null) {
-            movie.setMinimumAge(patchData.getMinimumAge());
-        }
-
-        return movieRepository.save(movie);
+    public void patchMovie(Integer movieId, Movie patchData) {
+        movieRepository.patchById(movieId, patchData.getTitle(), patchData.getDuration(), patchData.isSdAvailable(), patchData.isHdAvailable(), patchData.isUhdAvailable(), patchData.getMinimumAge());
     }
 }

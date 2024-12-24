@@ -44,7 +44,13 @@ public class MovieController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Movie> patchMovie(@PathVariable Integer id, @RequestBody Movie patchData) {
-        return ResponseEntity.ok(movieService.patchMovie(id, patchData));
+    public ResponseEntity<Object> patchMovie(@PathVariable Integer id, @RequestBody Movie patchData) {
+        try {
+            movieService.patchMovie(id, patchData);
+            return ResponseEntity.ok(patchData);
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.ok("Movie patch error: " + e.getMessage());
+        }
     }
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 24, 2024 at 02:43 PM
+-- Generation Time: Dec 24, 2024 at 04:50 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -75,7 +75,7 @@ CREATE DEFINER=`sql7753243`@`%` PROCEDURE `DeleteEpisode` (IN `p_episode_id` INT
     DELETE FROM `episode` WHERE `episode_id` = p_episode_id;
 END$$
 
-CREATE DEFINER=`sql7753243`@`%` PROCEDURE `DeleteGenre` (IN `p_genre_id` INT)   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteGenre` (IN `p_genre_id` INT)   BEGIN
     DELETE FROM `genre`
     WHERE `genre_id` = p_genre_id;
 END$$
@@ -168,7 +168,18 @@ CREATE DEFINER=`sql7753243`@`%` PROCEDURE `PatchEpisode` (IN `p_episode_id` INT,
     WHERE `episode_id` = p_episode_id;
 END$$
 
-CREATE DEFINER=`sql7753243`@`%` PROCEDURE `UpdateEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `PatchMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
+    UPDATE `movie`
+    SET 
+        `title` = COALESCE(p_title, `title`),
+        `duration` = COALESCE(p_duration, `duration`),
+        `sd_available` = COALESCE(p_sd_available, `sd_available`),
+        `hd_available` = COALESCE(p_hd_available, `hd_available`),
+        `uhd_available` = COALESCE(p_uhd_available, `uhd_available`)
+    WHERE `movie_id` = p_movie_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     UPDATE `episode`
     SET 
         `title` = p_title,
@@ -177,10 +188,10 @@ CREATE DEFINER=`sql7753243`@`%` PROCEDURE `UpdateEpisode` (IN `p_episode_id` INT
     WHERE `episode_id` = p_episode_id;
 END$$
 
-CREATE DEFINER=`sql7753243`@`%` PROCEDURE `UpdateGenre` (IN `p_genre_id` INT, IN `p_genre_name` VARCHAR(255))   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateGenre` (IN `p_from_genre_id` INT, IN `p_genre_name` VARCHAR(255))   BEGIN
     UPDATE `genre`
     SET `genre_name` = p_genre_name
-    WHERE `genre_id` = p_genre_id;
+    WHERE `genre_id` = p_from_genre_id;
 END$$
 
 DELIMITER ;
@@ -233,15 +244,14 @@ INSERT INTO `genre` (`genre_id`, `genre_name`) VALUES
 (3, 'Romance'),
 (4, 'Melodrama'),
 (5, 'Tearjerker'),
-(6, 'Pg-13'),
 (7, 'fantasy'),
 (8, 'sci-fi'),
 (17, 'Adventure'),
 (18, 'triler'),
 (19, 'biography'),
-(20, 'history'),
+(20, 'History'),
 (21, 'musical'),
-(26, 'war');
+(29, 'War');
 
 -- --------------------------------------------------------
 
@@ -331,7 +341,7 @@ CREATE TABLE `movie` (
 --
 
 INSERT INTO `movie` (`movie_id`, `title`, `duration`, `sd_available`, `hd_available`, `uhd_available`, `minimum_age`) VALUES
-(1, 'wompwomp funny', '01:25:27', b'1', b'1', b'0', 14),
+(1, 'wompwomp funny', '00:00:00', b'0', b'0', b'1', 14),
 (2, 'lordoftherings', '03:30:52', b'1', b'1', b'0', 12),
 (3, 'star wars', '00:31:16', b'1', b'1', b'0', 12);
 
@@ -477,7 +487,7 @@ CREATE TABLE `user` (
   `payment_method` varchar(255) DEFAULT 'Credit Card',
   `blocked` bit(1) DEFAULT b'0',
   `subscription` enum('SD','HD','UHD') DEFAULT 'SD',
-  `trial_start_date` datetime DEFAULT NULL,
+  `trial_start_date` datetime DEFAULT current_timestamp(),
   `language_id` int(11) UNSIGNED DEFAULT NULL,
   `role` enum('JUNIOR','MEDIOR','SENIOR') DEFAULT 'JUNIOR',
   `failed_attempts` int(11) DEFAULT 0,
@@ -608,7 +618,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `genre`
 --
 ALTER TABLE `genre`
-  MODIFY `genre_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `genre_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- Constraints for dumped tables

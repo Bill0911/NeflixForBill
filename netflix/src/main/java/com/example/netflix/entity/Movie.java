@@ -20,11 +20,17 @@ public class Movie
     @Column(name = "duration", columnDefinition = "TIME DEFAULT '00:00:00'")
     private LocalTime duration;
 
+    @Column(name = "sd_available")
+    private boolean sdAvailable;
+
+    @Column(name = "hd_available")
+    private boolean hdAvailable;
+
+    @Column(name = "uhd_available")
+    private boolean uhdAvailable;
+
     @Column(name = "minimum_age", nullable = false)
     private Integer minimumAge;
-
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
-    private Set<GenreForMovie> genreForMovies;
 
     public Movie()
     {
@@ -78,13 +84,33 @@ public class Movie
         this.minimumAge = minimumAge;
     }
 
-    public Set<GenreForMovie> getGenreForMovies ()
+    public boolean isSdAvailable()
     {
-        return genreForMovies;
+        return sdAvailable;
     }
 
-    public void setGenreForMovies (Set<GenreForMovie> genreForMovies)
+    public void setSdAvailable(boolean sdAvailable)
     {
-        this.genreForMovies = genreForMovies;
+        this.sdAvailable = sdAvailable;
+    }
+
+    public boolean isHdAvailable()
+    {
+        return hdAvailable;
+    }
+
+    public void setHdAvailable(boolean hdAvailable)
+    {
+        this.hdAvailable = hdAvailable;
+    }
+
+    public boolean isUhdAvailable()
+    {
+        return uhdAvailable;
+    }
+
+    public void setUhdAvailable(boolean uhdAvailable)
+    {
+        this.uhdAvailable = uhdAvailable;
     }
 }
