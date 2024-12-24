@@ -17,13 +17,12 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "CALL PatchMovie(:movieId, :title, :duration, :sd_available, " +
-            ":hd_available, :uhd_available, :minimum_age)", nativeQuery = true)
+    @Query(value = "CALL PatchMovie(:movieId, :title, :duration, :sd_available, :hd_available, :uhd_available, :minimum_age)", nativeQuery = true)
     void patchById(@Param("movieId") Integer movieId,
                    @Param("title") String title,
                    @Param("duration") LocalTime duration,
-                   @Param("sd_available") boolean sd_available,
-                   @Param("hd_available") boolean hd_available,
-                   @Param("uhd_available") boolean uhd_available,
+                   @Param("sd_available") Boolean sd_available,
+                   @Param("hd_available") Boolean hd_available,
+                   @Param("uhd_available") Boolean uhd_available,
                    @Param("minimum_age") Integer minimum_age);
 }

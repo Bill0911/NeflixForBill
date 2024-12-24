@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 24, 2024 at 04:50 PM
+-- Generation Time: Dec 24, 2024 at 05:24 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -25,17 +25,17 @@ DELIMITER $$
 --
 -- Procedures
 --
-CREATE DEFINER=`sql7753243`@`%` PROCEDURE `AddEpisode` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
+CREATE PROCEDURE `AddEpisode` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     INSERT INTO `episode` (`title`, `duration`, `series_id`)
     VALUES (p_title, IFNULL(p_duration, '00:00:00'), p_series_id);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `AddGenre` (IN `p_genre_name` VARCHAR(255))   BEGIN
+CREATE PROCEDURE `AddGenre` (IN `p_genre_name` VARCHAR(255))   BEGIN
     INSERT INTO `genre` (`genre_name`)
     VALUES (p_genre_name);
 END$$
 
-CREATE DEFINER=`sql7753243`@`%` PROCEDURE `AddMovieViewCount` (IN `p_movieId` INT, IN `p_accountId` INT)   BEGIN
+CREATE PROCEDURE `AddMovieViewCount` (IN `p_movieId` INT, IN `p_accountId` INT)   BEGIN
     -- Check if the record exists in the movieviewcount table
     IF EXISTS (
         SELECT 1 
@@ -53,7 +53,7 @@ CREATE DEFINER=`sql7753243`@`%` PROCEDURE `AddMovieViewCount` (IN `p_movieId` IN
     END IF;
 END$$
 
-CREATE DEFINER=`sql7753243`@`%` PROCEDURE `AddSeriesViewCount` (IN `p_seriesId` INT, IN `p_accountId` INT)   BEGIN
+CREATE PROCEDURE `AddSeriesViewCount` (IN `p_seriesId` INT, IN `p_accountId` INT)   BEGIN
     -- Check if the record exists in the seriesviewcount table
     IF EXISTS (
         SELECT 1 
@@ -71,33 +71,33 @@ CREATE DEFINER=`sql7753243`@`%` PROCEDURE `AddSeriesViewCount` (IN `p_seriesId` 
     END IF;
 END$$
 
-CREATE DEFINER=`sql7753243`@`%` PROCEDURE `DeleteEpisode` (IN `p_episode_id` INT)   BEGIN
+CREATE PROCEDURE `DeleteEpisode` (IN `p_episode_id` INT)   BEGIN
     DELETE FROM `episode` WHERE `episode_id` = p_episode_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `DeleteGenre` (IN `p_genre_id` INT)   BEGIN
+CREATE PROCEDURE `DeleteGenre` (IN `p_genre_id` INT)   BEGIN
     DELETE FROM `genre`
     WHERE `genre_id` = p_genre_id;
 END$$
 
-CREATE DEFINER=`sql7753243`@`%` PROCEDURE `GetAllEpisodes` ()   BEGIN
+CREATE PROCEDURE `GetAllEpisodes` ()   BEGIN
     SELECT * FROM `episode`;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetAllGenres` ()   BEGIN
+CREATE PROCEDURE `GetAllGenres` ()   BEGIN
     SELECT * FROM `genre`;
 END$$
 
-CREATE DEFINER=`sql7753243`@`%` PROCEDURE `GetEpisodeById` (IN `p_episode_id` INT)   BEGIN
+CREATE PROCEDURE `GetEpisodeById` (IN `p_episode_id` INT)   BEGIN
     SELECT * FROM `episode` WHERE `episode_id` = p_episode_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetGenreById` (IN `p_genre_id` INT)   BEGIN
+CREATE PROCEDURE `GetGenreById` (IN `p_genre_id` INT)   BEGIN
     SELECT * FROM `genre`
     WHERE `genre_id` = p_genre_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetPersonalizedOffer` (IN `userId` INT, IN `maxMovies` INT)   BEGIN
+CREATE PROCEDURE `GetPersonalizedOffer` (IN `userId` INT, IN `maxMovies` INT)   BEGIN
     DECLARE done INT DEFAULT FALSE;
     DECLARE genreId INT;
     DECLARE genreViews INT;
@@ -159,7 +159,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetPersonalizedOffer` (IN `userId` 
     DROP TEMPORARY TABLE TempPersonalizedOffer;
 END$$
 
-CREATE DEFINER=`sql7753243`@`%` PROCEDURE `PatchEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
+CREATE  PROCEDURE `PatchEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     UPDATE `episode`
     SET 
         `title` = COALESCE(p_title, `title`),
@@ -168,18 +168,19 @@ CREATE DEFINER=`sql7753243`@`%` PROCEDURE `PatchEpisode` (IN `p_episode_id` INT,
     WHERE `episode_id` = p_episode_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `PatchMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
+CREATE PROCEDURE `PatchMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
     UPDATE `movie`
     SET 
         `title` = COALESCE(p_title, `title`),
         `duration` = COALESCE(p_duration, `duration`),
         `sd_available` = COALESCE(p_sd_available, `sd_available`),
         `hd_available` = COALESCE(p_hd_available, `hd_available`),
-        `uhd_available` = COALESCE(p_uhd_available, `uhd_available`)
+        `uhd_available` = COALESCE(p_uhd_available, `uhd_available`),
+        `minimum_age` = COALESCE(p_minimum_age, `minimum_age`)
     WHERE `movie_id` = p_movie_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
+CREATE PROCEDURE `UpdateEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     UPDATE `episode`
     SET 
         `title` = p_title,
@@ -188,7 +189,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateEpisode` (IN `p_episode_id` I
     WHERE `episode_id` = p_episode_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateGenre` (IN `p_from_genre_id` INT, IN `p_genre_name` VARCHAR(255))   BEGIN
+CREATE PROCEDURE `UpdateGenre` (IN `p_from_genre_id` INT, IN `p_genre_name` VARCHAR(255))   BEGIN
     UPDATE `genre`
     SET `genre_name` = p_genre_name
     WHERE `genre_id` = p_from_genre_id;
@@ -341,7 +342,7 @@ CREATE TABLE `movie` (
 --
 
 INSERT INTO `movie` (`movie_id`, `title`, `duration`, `sd_available`, `hd_available`, `uhd_available`, `minimum_age`) VALUES
-(1, 'wompwomp funny', '00:00:00', b'0', b'0', b'1', 14),
+(1, 'womp-womp, funny', '01:32:00', b'1', b'1', b'0', 14),
 (2, 'lordoftherings', '03:30:52', b'1', b'1', b'0', 12),
 (3, 'star wars', '00:31:16', b'1', b'1', b'0', 12);
 
@@ -531,7 +532,7 @@ CREATE TABLE `user_genre_count` (
 --
 DROP TABLE IF EXISTS `subscriptioncosts`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`sql7753243`@`%` SQL SECURITY DEFINER VIEW `subscriptioncosts`  AS SELECT `u`.`account_id` AS `UserID`, `u`.`email` AS `Email`, `u`.`subscription` AS `SubscriptionType`, CASE WHEN to_days(curdate()) - to_days(`u`.`trial_start_date`) <= 7 THEN 0 ELSE CASE WHEN `u`.`subscription` = 'SD' THEN 10 WHEN `u`.`subscription` = 'HD' THEN 15 WHEN `u`.`subscription` = 'UHD' THEN 20 ELSE 0 END- CASE WHEN `u`.`discount` = 1 THEN 2 ELSE 0 END END AS `SubscriptionCost` FROM `user` AS `u` ;
+CREATE ALGORITHM=UNDEFINED  SQL SECURITY DEFINER VIEW `subscriptioncosts`  AS SELECT `u`.`account_id` AS `UserID`, `u`.`email` AS `Email`, `u`.`subscription` AS `SubscriptionType`, CASE WHEN to_days(curdate()) - to_days(`u`.`trial_start_date`) <= 7 THEN 0 ELSE CASE WHEN `u`.`subscription` = 'SD' THEN 10 WHEN `u`.`subscription` = 'HD' THEN 15 WHEN `u`.`subscription` = 'UHD' THEN 20 ELSE 0 END- CASE WHEN `u`.`discount` = 1 THEN 2 ELSE 0 END END AS `SubscriptionCost` FROM `user` AS `u` ;
 
 -- --------------------------------------------------------
 
@@ -540,7 +541,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`sql7753243`@`%` SQL SECURITY DEFINER VIEW `s
 --
 DROP TABLE IF EXISTS `user_genre_count`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, sum(`mvc`.`number`) AS `total_views` FROM (((`movieviewcount` `mvc` join `movie` `m` on(`mvc`.`movie_id` = `m`.`movie_id`)) join `genreformovie` `mg` on(`m`.`movie_id` = `mg`.`movie_id`)) join `genre` `g` on(`mg`.`genre_id` = `g`.`genre_id`)) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, sum(`mvc`.`number`) DESC ;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, sum(`mvc`.`number`) AS `total_views` FROM (((`movieviewcount` `mvc` join `movie` `m` on(`mvc`.`movie_id` = `m`.`movie_id`)) join `genreformovie` `mg` on(`m`.`movie_id` = `mg`.`movie_id`)) join `genre` `g` on(`mg`.`genre_id` = `g`.`genre_id`)) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, sum(`mvc`.`number`) DESC ;
 
 --
 -- Indexes for dumped tables

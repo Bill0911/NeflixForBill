@@ -42,6 +42,7 @@ public class MovieService {
     }
 
     public void patchMovie(Integer movieId, Movie patchData) {
+        System.out.println(patchData.getTitle() + ", " + patchData.getDuration() + ", SD:" + patchData.isSdAvailable() + ", HD:" + patchData.isHdAvailable() + ", UHD:" + patchData.isUhdAvailable() + ", " + patchData.getMinimumAge());
         movieRepository.patchById(movieId, patchData.getTitle(), patchData.getDuration(), patchData.isSdAvailable(), patchData.isHdAvailable(), patchData.isUhdAvailable(), patchData.getMinimumAge());
     }
 }
