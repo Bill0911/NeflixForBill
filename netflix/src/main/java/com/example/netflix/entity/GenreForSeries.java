@@ -3,7 +3,6 @@ package com.example.netflix.entity;
 import com.example.netflix.id.GenreForSeriesId;
 import jakarta.persistence.*;
 
-import jakarta.persistence.*;
 
 @Entity
 @Table(name = "genreforseries")
