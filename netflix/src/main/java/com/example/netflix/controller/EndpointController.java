@@ -1,6 +1,6 @@
 package com.example.netflix.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +17,8 @@ public class EndpointController {
 
     private final RequestMappingHandlerMapping handlerMapping;
 
-    @Autowired
-    public EndpointController(ApplicationContext applicationContext) {
-        this.handlerMapping = applicationContext.getBean(RequestMappingHandlerMapping.class);
+    public EndpointController(@Qualifier("requestMappingHandlerMapping") RequestMappingHandlerMapping handlerMapping) {
+        this.handlerMapping = handlerMapping;
     }
 
     @GetMapping

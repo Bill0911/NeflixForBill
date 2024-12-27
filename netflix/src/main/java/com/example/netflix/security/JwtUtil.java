@@ -18,7 +18,7 @@ public class JwtUtil {
     public String generateToken(int accountId, String role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("account_id", accountId);
-        claims.put("role", role); // Add role to claims
+        claims.put("role", role);
         return createToken(claims);
     }
 
@@ -42,10 +42,14 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (JwtException e) {
+            throw new RuntimeException("Invalid or expired token", e);
+        }
     }
 }
