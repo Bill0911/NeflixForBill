@@ -11,6 +11,7 @@ public class MovieViewCountService {
 
     private final MovieViewCountRepository movieViewCountRepository;
 
+
     public MovieViewCountService(MovieViewCountRepository movieViewCountRepository) {
         this.movieViewCountRepository = movieViewCountRepository;
     }
