@@ -1,5 +1,6 @@
 package com.example.netflix.entity;
 
-public enum Subscription {
+public enum SubscriptionType
+{
     SD, HD, UHD
 }

@@ -31,9 +31,9 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User registerUser(User user) {
+    public void registerUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        this.userRepository.save(user);
     }
 
     public String changeLanguage(Integer languageId, Integer accountId) {

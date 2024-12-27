@@ -22,7 +22,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Subscription subscription = Subscription.SD; // Default subscription
+    private SubscriptionType subscription = SubscriptionType.SD; // Default subscription
 
     @Column(name = "trial_start_date", nullable = false)
     private LocalDateTime trialStartDate = LocalDateTime.now(); // Default to current time
@@ -50,6 +50,9 @@ public class User {
 
     @Column(name = "lock_time")
     private LocalDateTime lockTime = null;
+
+    @Column(name = "discount", nullable = false)
+    private boolean discount = false;
 
     public User(String email, String password)
     {
@@ -86,11 +89,11 @@ public class User {
         this.password = password;
     }
 
-    public Subscription getSubscription() {
+    public SubscriptionType getSubscription() {
         return subscription;
     }
 
-    public void setSubscription(Subscription subscription) {
+    public void setSubscription(SubscriptionType subscription) {
         this.subscription = subscription;
     }
 
@@ -164,5 +167,15 @@ public class User {
 
     public void addProfile(Profile profile) {
         this.profiles.add(profile);
+    }
+
+    public boolean isDiscount ()
+    {
+        return discount;
+    }
+
+    public void setDiscount (boolean discount)
+    {
+        this.discount = discount;
     }
 }
