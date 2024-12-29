@@ -4,14 +4,17 @@ DELIMITER $$
 --
 -- Procedures
 --
-CREATE PROCEDURE `AddEpisode` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
+CREATE PROCEDURE `AddEpisode` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT(11))   BEGIN
     INSERT INTO `episode` (`title`, `duration`, `series_id`)
     VALUES (p_title, IFNULL(p_duration, '00:00:00'), p_series_id);
-END$$
-
 CREATE PROCEDURE `AddGenre` (IN `p_genre_name` VARCHAR(255))   BEGIN
     INSERT INTO `genre` (`genre_name`)
     VALUES (p_genre_name);
+END$$
+
+CREATE PROCEDURE `AddMovie` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_minimum_age` INT(11))   BEGIN
+    INSERT INTO `episode` (`title`, `duration`, `minimum_age`)
+    VALUES (p_title, p_duration, p_minimum_age);
 END$$
 
 CREATE PROCEDURE `AddMovieViewCount` (IN `p_movieId` INT, IN `p_accountId` INT)   BEGIN
@@ -30,6 +33,11 @@ CREATE PROCEDURE `AddMovieViewCount` (IN `p_movieId` INT, IN `p_accountId` INT) 
         INSERT INTO movieviewcount (`account_id`, `movie_id`, `number`)
         VALUES (p_accountId, p_movieId, 1);
     END IF;
+END$$
+
+CREATE PROCEDURE `AddSeries` (IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(11))   BEGIN
+    INSERT INTO `series` (`title`, `minimum_age`)
+    VALUES (p_title, p_minimum_age);
 END$$
 
 CREATE PROCEDURE `AddSeriesViewCount` (IN `p_seriesId` INT, IN `p_accountId` INT)   BEGIN
@@ -64,6 +72,11 @@ CREATE PROCEDURE `DeleteGenre` (IN `p_genre_id` INT)   BEGIN
     WHERE `genre_id` = p_genre_id;
 END$$
 
+CREATE PROCEDURE `DeleteMovie` (IN `p_movie_id` INT(11))   BEGIN
+    DELETE FROM `movie`
+    WHERE `movie_id` = p_movie_id;
+END$$
+
 CREATE PROCEDURE `GetAllEpisodes` ()   BEGIN
     SELECT * FROM `episode`;
 END$$
@@ -79,6 +92,10 @@ END$$
 CREATE PROCEDURE `GetGenreById` (IN `p_genre_id` INT)   BEGIN
     SELECT * FROM `genre`
     WHERE `genre_id` = p_genre_id;
+END$$
+
+CREATE PROCEDURE `GetMovieById` (IN `p_movie_id` INT)   BEGIN
+    SELECT * FROM `movie` WHERE `movie_id` = p_movie_id;
 END$$
 
 CREATE PROCEDURE `GetPersonalizedOffer` (IN `userId` INT, IN `maxMovies` INT)   BEGIN
@@ -141,6 +158,10 @@ CREATE PROCEDURE `GetPersonalizedOffer` (IN `userId` INT, IN `maxMovies` INT)   
 
     -- Drop the temporary table
     DROP TEMPORARY TABLE TempPersonalizedOffer;
+END$$
+
+CREATE PROCEDURE `GetSeriesById` (IN `p_series_id` INT(11))   BEGIN
+    SELECT * FROM `series` WHERE `series_id` = p_series_id;
 END$$
 
 CREATE PROCEDURE `GetUserByEmail` (IN `p_email` VARCHAR(255))   BEGIN
@@ -222,6 +243,22 @@ CREATE PROCEDURE `UpdateGenre` (IN `p_genre_id` INT, IN `p_genre_name` VARCHAR(2
     UPDATE `genre`
     SET `genre_name` = p_genre_name
     WHERE `genre_id` = p_from_genre_id;
+END$$
+
+CREATE PROCEDURE `UpdateUser` (IN `p_account_id` INT(11), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_blocked` BIT(1), OUT `output` VARCHAR(255), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
+    UPDATE `user`
+    SET 
+        `password` = p_password,
+        `payment_method` = p_payment_method,
+        `blocked` = p_blocked,
+        `subscription` = p_subscription,
+        `trial_start_date` = p_trial_start_date,
+        `language_id` = p_language_id, 
+        `role` = p_role, 
+        `failed_attempts` = p_failed_attempts, 
+        `lock_time` = p_lock_time, 
+        `discount` = p_discount
+    WHERE `account_id` = p_account_id;
 END$$
 
 DELIMITER ;
