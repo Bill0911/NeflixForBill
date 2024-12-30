@@ -1,17 +1,13 @@
 
 
+--
+-- Database: `netflix`
+--
+
 DELIMITER $$
 --
 -- Procedures
 --
-CREATE PROCEDURE `AddEpisode` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT(11))   BEGIN
-    INSERT INTO `episode` (`title`, `duration`, `series_id`)
-    VALUES (p_title, IFNULL(p_duration, '00:00:00'), p_series_id);
-CREATE PROCEDURE `AddGenre` (IN `p_genre_name` VARCHAR(255))   BEGIN
-    INSERT INTO `genre` (`genre_name`)
-    VALUES (p_genre_name);
-END$$
-
 CREATE PROCEDURE `AddMovie` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_minimum_age` INT(11))   BEGIN
     INSERT INTO `episode` (`title`, `duration`, `minimum_age`)
     VALUES (p_title, p_duration, p_minimum_age);
@@ -380,15 +376,6 @@ CREATE TABLE `language` (
 --
 
 INSERT INTO `language` (`language_id`, `name`) VALUES
-(1, 'english'),
-(2, 'dutch'),
-(3, 'latvian'),
-(4, 'russian'),
-(5, 'spanish'),
-(6, 'ukranian'),
-(1, 'english'),
-(2, 'dutch'),
-(3, 'latvian'),
 (4, 'russian'),
 (5, 'spanish'),
 (6, 'ukranian');
@@ -414,9 +401,6 @@ CREATE TABLE `movie` (
 --
 
 INSERT INTO `movie` (`movie_id`, `title`, `duration`, `sd_available`, `hd_available`, `uhd_available`, `minimum_age`) VALUES
-(1, 'womp-womp, funny', '01:32:00', b'1', b'1', b'0', 14),
-(2, 'lordoftherings', '03:30:52', b'1', b'1', b'0', 12),
-(3, 'star wars', '00:31:16', b'1', b'1', b'0', 12),
 (1, 'womp-womp, funny', '01:32:00', b'1', b'1', b'0', 14),
 (2, 'lordoftherings', '03:30:52', b'1', b'1', b'0', 12),
 (3, 'star wars', '00:31:16', b'1', b'1', b'0', 12);
@@ -546,16 +530,6 @@ CREATE TABLE `profile` (
 
 INSERT INTO `profile` (`profile_id`, `account_id`, `profile_image`, `age`, `name`) VALUES
 (1, 2, 'pizdiets.png', 16, 'krutoy patsan'),
-(2, 2, 'abcdefg.png', 12, 'tupoy loshara'),
-(1, 2, 'pizdiets.png', 16, 'krutoy patsan'),
-(2, 2, 'abcdefg.png', 12, 'tupoy loshara'),
-(1, 2, 'pizdiets.png', 16, 'krutoy patsan'),
-(2, 2, 'abcdefg.png', 12, 'tupoy loshara'),
-(1, 2, 'pizdiets.png', 16, 'krutoy patsan'),
-(2, 2, 'abcdefg.png', 12, 'tupoy loshara'),
-(1, 2, 'pizdiets.png', 16, 'krutoy patsan'),
-(2, 2, 'abcdefg.png', 12, 'tupoy loshara'),
-(1, 2, 'pizdiets.png', 16, 'krutoy patsan'),
 (2, 2, 'abcdefg.png', 12, 'tupoy loshara');
 
 -- --------------------------------------------------------
@@ -575,11 +549,6 @@ CREATE TABLE `series` (
 --
 
 INSERT INTO `series` (`series_id`, `title`, `minimum_age`) VALUES
-(1, 'Sex education', 18),
-(1, 'Sex education', 18),
-(1, 'Sex education', 18),
-(1, 'Sex education', 18),
-(1, 'Sex education', 18),
 (1, 'Sex education', 18);
 
 -- --------------------------------------------------------
@@ -677,7 +646,7 @@ CREATE TABLE `user_genre_count` (
 --
 DROP TABLE IF EXISTS `paymentstatus`;
 
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`account_id` AS `account_id`, `u`.`email` AS `email`, `p`.`subscription_type` AS `subscription_type`, `p`.`payment_amount` AS `payment_amount`, `p`.`is_paid` AS `is_paid`, `p`.`is_discount_applied` AS `is_discount_applied`, `p`.`payment_date` AS `payment_date` FROM (`payments` `p` join `user` `u` on(`p`.`account_id` = `u`.`account_id`)) ;
+CREATE VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`account_id` AS `account_id`, `u`.`email` AS `email`, `p`.`subscription_type` AS `subscription_type`, `p`.`payment_amount` AS `payment_amount`, `p`.`is_paid` AS `is_paid`, `p`.`is_discount_applied` AS `is_discount_applied`, `p`.`payment_date` AS `payment_date` FROM (`payments` `p` join `user` `u` on(`p`.`account_id` = `u`.`account_id`)) ;
 
 -- --------------------------------------------------------
 
@@ -686,7 +655,7 @@ CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `paymentstatus`  AS SELECT 
 --
 DROP TABLE IF EXISTS `subscriptioncosts`;
 
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `subscriptioncosts`  AS SELECT `u`.`account_id` AS `UserID`, `u`.`email` AS `Email`, `u`.`subscription` AS `SubscriptionType`, CASE WHEN to_days(curdate()) - to_days(`u`.`trial_start_date`) <= 7 THEN 0 ELSE CASE WHEN `u`.`subscription` = 'SD' THEN 10 WHEN `u`.`subscription` = 'HD' THEN 15 WHEN `u`.`subscription` = 'UHD' THEN 20 ELSE 0 END- CASE WHEN `u`.`discount` = 1 THEN 2 ELSE 0 END END AS `SubscriptionCost` FROM `user` AS `u` ;
+CREATE VIEW `subscriptioncosts`  AS SELECT `u`.`account_id` AS `UserID`, `u`.`email` AS `Email`, `u`.`subscription` AS `SubscriptionType`, CASE WHEN to_days(curdate()) - to_days(`u`.`trial_start_date`) <= 7 THEN 0 ELSE CASE WHEN `u`.`subscription` = 'SD' THEN 10 WHEN `u`.`subscription` = 'HD' THEN 15 WHEN `u`.`subscription` = 'UHD' THEN 20 ELSE 0 END- CASE WHEN `u`.`discount` = 1 THEN 2 ELSE 0 END END AS `SubscriptionCost` FROM `user` AS `u` ;
 
 -- --------------------------------------------------------
 
@@ -695,7 +664,7 @@ CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `subscriptioncosts`  AS SEL
 --
 DROP TABLE IF EXISTS `user_genre_count`;
 
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, sum(`mvc`.`number`) AS `total_views` FROM (((`movieviewcount` `mvc` join `movie` `m` on(`mvc`.`movie_id` = `m`.`movie_id`)) join `genreformovie` `mg` on(`m`.`movie_id` = `mg`.`movie_id`)) join `genre` `g` on(`mg`.`genre_id` = `g`.`genre_id`)) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, sum(`mvc`.`number`) DESC ;
+CREATE VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, sum(`mvc`.`number`) AS `total_views` FROM (((`movieviewcount` `mvc` join `movie` `m` on(`mvc`.`movie_id` = `m`.`movie_id`)) join `genreformovie` `mg` on(`m`.`movie_id` = `mg`.`movie_id`)) join `genre` `g` on(`mg`.`genre_id` = `g`.`genre_id`)) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, sum(`mvc`.`number`) DESC ;
 
 --
 -- Indexes for dumped tables
@@ -735,18 +704,35 @@ ALTER TABLE `genreforseries`
   ADD KEY `series_id` (`series_id`);
 
 --
--- Indexes for table `password_reset_tokens`
+-- Indexes for table `genreforuser`
 --
-ALTER TABLE `password_reset_tokens`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+ALTER TABLE `genreforuser`
+  ADD PRIMARY KEY (`genre_id`,`account_id`),
+  ADD KEY `account_id` (`account_id`);
 
 --
--- Indexes for table `payments`
+-- Indexes for table `language`
 --
-ALTER TABLE `payments`
-  ADD PRIMARY KEY (`payment_id`),
-  ADD KEY `account_id` (`account_id`);
+ALTER TABLE `language`
+  ADD PRIMARY KEY (`language_id`);
+
+--
+-- Indexes for table `movie`
+--
+ALTER TABLE `movie`
+  ADD PRIMARY KEY (`movie_id`);
+
+--
+-- Indexes for table `profile`
+--
+ALTER TABLE `profile`
+  ADD PRIMARY KEY (`profile_id`);
+
+--
+-- Indexes for table `series`
+--
+ALTER TABLE `series`
+  ADD PRIMARY KEY (`series_id`);
 
 --
 -- Indexes for table `user`
@@ -761,16 +747,34 @@ ALTER TABLE `user`
 --
 
 --
--- AUTO_INCREMENT for table `password_reset_tokens`
+-- AUTO_INCREMENT for table `episode`
 --
-ALTER TABLE `password_reset_tokens`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `episode`
+  MODIFY `episode_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `payments`
+-- AUTO_INCREMENT for table `language`
 --
-ALTER TABLE `payments`
-  MODIFY `payment_id` bigint(20) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `language`
+  MODIFY `language_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `movie`
+--
+ALTER TABLE `movie`
+  MODIFY `movie_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `profile`
+--
+ALTER TABLE `profile`
+  MODIFY `profile_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `series`
+--
+ALTER TABLE `series`
+  MODIFY `series_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `user`
@@ -778,18 +782,5 @@ ALTER TABLE `payments`
 ALTER TABLE `user`
   MODIFY `account_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
---
--- Constraints for dumped tables
---
+ALTER TABLE `genre` MODIFY `genre_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- Constraints for table `password_reset_tokens`
---
-ALTER TABLE `password_reset_tokens`
-  ADD CONSTRAINT `password_reset_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`account_id`);
-
---
--- Constraints for table `payments`
---
-ALTER TABLE `payments`
-  ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`);
