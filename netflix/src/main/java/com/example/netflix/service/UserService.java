@@ -1,39 +1,49 @@
 package com.example.netflix.service;
 
-import com.example.netflix.entity.Language;
-import com.example.netflix.entity.Profile;
+import com.example.netflix.entity.*;
 import com.example.netflix.dto.ProfileRequest;
-import com.example.netflix.entity.Role;
-import com.example.netflix.entity.User;
 import com.example.netflix.repository.LanguageRepository;
+import com.example.netflix.repository.PasswordResetTokenRepository;
 import com.example.netflix.repository.ProfileRepository;
 import com.example.netflix.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
 
+    @Autowired
     private final UserRepository userRepository;
 
+    @Autowired
     private final LanguageRepository languageRepository;
 
+    @Autowired
     private final ProfileRepository profileRepository;
+
+    @Autowired
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, PasswordEncoder passwordEncoder) {
+    @Autowired
+    private PasswordResetTokenRepository tokenRepository;
+
+    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, PasswordEncoder passwordEncoder, PasswordResetTokenRepository tokenRepository) {
         this.userRepository = userRepository;
         this.languageRepository = languageRepository;
         this.profileRepository = profileRepository;
         this.passwordEncoder = passwordEncoder;
+        this.tokenRepository = tokenRepository;
     }
 
-    public User registerUser(User user) {
+    public void registerUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        this.userRepository.save(user);
     }
 
     public String changeLanguage(Integer languageId, Integer accountId) {
@@ -113,6 +123,47 @@ public class UserService {
 
     public boolean isRoleForAccount(Integer accountId, Role role) {
         return userRepository.findByAccountId(accountId).map(user -> user.getRole() == role).orElse(false);
+    }
+
+    public void createPasswordResetToken(String email, String token) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            PasswordResetToken resetToken = new PasswordResetToken();
+            resetToken.setToken(token);
+            resetToken.setUser(user);
+            resetToken.setExpiryDate(calculateExpiryDate(2 * 60)); // only 2 hours
+            tokenRepository.save(resetToken);
+        } else {
+            throw new RuntimeException("User not found with email: " + email);
+        }
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        Optional<PasswordResetToken> tokenOptional = tokenRepository.findByToken(token);
+        if (tokenOptional.isPresent()) {
+            PasswordResetToken resetToken = tokenOptional.get();
+            if (isTokenExpired(resetToken)) {
+                throw new RuntimeException("Token has expired");
+            }
+            User user = resetToken.getUser();
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+        } else {
+            throw new RuntimeException("Invalid token");
+        }
+    }
+
+    private Date calculateExpiryDate(int expiryTimeInMinutes) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.MINUTE, expiryTimeInMinutes);
+        return new Date(cal.getTime().getTime());
+    }
+
+    private boolean isTokenExpired(PasswordResetToken token) {
+        final Calendar cal = Calendar.getInstance();
+        return token.getExpiryDate().before(cal.getTime());
     }
 }
 
