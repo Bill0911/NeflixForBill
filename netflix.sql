@@ -376,7 +376,10 @@ CREATE TABLE `language` (
 --
 
 INSERT INTO `language` (`language_id`, `name`) VALUES
-(4, 'russian'),
+(1, 'english'),
+(2, 'latvian'),
+(3, 'lithuanian'),
+(4, 'dutch'),
 (5, 'spanish'),
 (6, 'ukranian');
 
