@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/profiles")
 public class ProfileController {
     private final UserService userService;
-
     private final ProfileService profileService;
-
     private final MovieViewCountService movieViewCountService;
     private final SeriesViewCountService seriesViewCountService;
     private final JwtUtil jwtUtil;

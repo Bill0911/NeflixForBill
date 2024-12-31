@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`;
+
     document.getElementById('registerForm').addEventListener('submit', async function(event) {
         event.preventDefault();
         const user = {
@@ -7,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
             password: document.getElementById('registerPassword').value
         };
 
-        const response = await fetch('/api/users/register', {
+        const response = await fetch(`${baseUrl}/api/users/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -26,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
             password: document.getElementById('loginPassword').value
         };
 
-        const response = await fetch('/api/users/login', {
+        const response = await fetch(`${baseUrl}/api/users/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -19,25 +19,21 @@ public class GenreService {
     }
 
     public List<Genre> getAllGenres() {
-        return genreRepository.findAll();
+        return genreRepository.findAllGenres();
     }
 
     public Optional<Genre> getGenreById(Integer id) {
-        return genreRepository.findById(id);
+        return genreRepository.findByGenreId(id);
     }
 
-    public String addGenre(String genreName) {
+    public void addGenre(String genreName) {
+        System.out.println("Genre has not been added yet");
         genreRepository.addGenre(genreName);
-        return genreName;
+        System.out.println("Genre has been added ");
     }
 
-    public Genre updateGenre(Integer id, Genre updatedGenre) {
-        return genreRepository.findById(id)
-                .map(existingGenre -> {
-                    existingGenre.setGenreName(updatedGenre.getGenreName());
-                    return genreRepository.save(existingGenre);
-                })
-                .orElseThrow(() -> new RuntimeException("Genre not found with ID: " + id));
+    public void updateGenre(Integer id, String genreName) {
+        genreRepository.updateById(id, genreName);;
     }
 
     public Genre patchGenre(Integer id, Genre patchData) {

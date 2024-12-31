@@ -2,7 +2,6 @@ package com.example.netflix.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalTime;
-import java.util.Set;
 
 @Entity
 @Table(name = "movie")
@@ -20,11 +19,17 @@ public class Movie
     @Column(name = "duration", columnDefinition = "TIME DEFAULT '00:00:00'")
     private LocalTime duration;
 
+    @Column(name = "sd_available")
+    private Boolean sdAvailable;
+
+    @Column(name = "hd_available")
+    private Boolean hdAvailable;
+
+    @Column(name = "uhd_available")
+    private Boolean uhdAvailable;
+
     @Column(name = "minimum_age", nullable = false)
     private Integer minimumAge;
-
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
-    private Set<GenreForMovie> genreForMovies;
 
     public Movie()
     {
@@ -78,13 +83,33 @@ public class Movie
         this.minimumAge = minimumAge;
     }
 
-    public Set<GenreForMovie> getGenreForMovies ()
+    public Boolean isSdAvailable()
     {
-        return genreForMovies;
+        return sdAvailable;
     }
 
-    public void setGenreForMovies (Set<GenreForMovie> genreForMovies)
+    public void setSdAvailable(Boolean sdAvailable)
     {
-        this.genreForMovies = genreForMovies;
+        this.sdAvailable = sdAvailable;
+    }
+
+    public Boolean isHdAvailable()
+    {
+        return hdAvailable;
+    }
+
+    public void setHdAvailable(Boolean hdAvailable)
+    {
+        this.hdAvailable = hdAvailable;
+    }
+
+    public Boolean isUhdAvailable()
+    {
+        return uhdAvailable;
+    }
+
+    public void setUhdAvailable(Boolean uhdAvailable)
+    {
+        this.uhdAvailable = uhdAvailable;
     }
 }

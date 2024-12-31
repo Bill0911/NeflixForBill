@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 @Table(name = "genreforseries")
 @IdClass(GenreForSeriesId.class)
 public class GenreForSeries {
-
     @Id
     @Column(name = "genre_id")
     private Integer genreId;
