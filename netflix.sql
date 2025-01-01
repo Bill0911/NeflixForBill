@@ -603,6 +603,7 @@ CREATE TABLE `user` (
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `payment_method` varchar(255) DEFAULT 'Credit Card',
+  `active` bit(1) DEFAULT b'0',
   `blocked` bit(1) DEFAULT b'0',
   `subscription` enum('SD','HD','UHD') DEFAULT 'SD',
   `trial_start_date` datetime DEFAULT NULL,

@@ -6,6 +6,8 @@ import com.example.netflix.entity.Profile;
 import com.example.netflix.entity.User;
 import com.example.netflix.security.JwtUtil;
 import com.example.netflix.service.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +36,31 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
-        userService.registerUser(user);
-        return ResponseEntity.ok("User registered successfully");
+        try {
+            String token = jwtUtil.generateActivationToken(user.getEmail());
+            userService.registerUser(user, token);
+            // Log the activation token to the console for testing purposes
+            System.out.println("Activation token for " + user.getEmail() + ": " + token);
+            // Return the token in the response for testing purposes
+            return ResponseEntity.ok(token);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/activate")
+    public ResponseEntity<String> activateUser(@RequestParam String token) {
+        try {
+            String email = jwtUtil.extractEmail(token);
+            userService.activateUser(email);
+            return ResponseEntity.ok("User activated successfully.");
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token has expired.");
+        } catch (JwtException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid token.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
     @PostMapping("/login")
@@ -51,6 +76,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login failed: " + e.getMessage());
         }
     }
+
     @GetMapping("/lang")
     public ResponseEntity<String> getLanguage(@RequestHeader("Authorization") String token) {
         try {

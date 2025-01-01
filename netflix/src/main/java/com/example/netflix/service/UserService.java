@@ -9,10 +9,10 @@ import com.example.netflix.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,9 +41,19 @@ public class UserService {
         this.tokenRepository = tokenRepository;
     }
 
-    public void registerUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        this.userRepository.save(user);
+    public void registerUser(User user, String token) {
+        user.setActive(false);
+        userRepository.save(user);
+        // Save the token in a way that it can be verified later (e.g., in-memory or database)
+    }
+
+    @Transactional
+    public void activateUser(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setActive(true); // Set active to true (1)
+        userRepository.save(user);
+        System.out.println("User activated: " + user.isActive()); // Debug statement
     }
 
     public String changeLanguage(Integer languageId, Integer accountId) {
@@ -64,18 +74,18 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Check if account is blocked
-        if (user.isBlocked()) {
+        if (user.isIsBlocked()) {
             throw new RuntimeException("Account is blocked due to too many failed login attempts.");
         }
 
         // Verify password
         if (!passwordEncoder.matches(password, user.getPassword())) {
             // Increment failed attempts and block account if necessary
-            int failedAttempts = user.getFailedAttempts() + 1;
-            user.setFailedAttempts(failedAttempts);
+            int failedAttempts = user.getFailedLoginAttempts() + 1;
+            user.setFailedLoginAttempts(failedAttempts);
 
             if (failedAttempts >= 3) {
-                user.setBlocked(true);
+                user.setIsBlocked(true);
             }
 
             userRepository.save(user);
@@ -83,7 +93,7 @@ public class UserService {
         }
 
         // Reset failed attempts on successful login
-        user.setFailedAttempts(0);
+        user.setFailedLoginAttempts(0);
         userRepository.save(user);
 
         return user; // Return full User object
@@ -164,6 +174,12 @@ public class UserService {
     private boolean isTokenExpired(PasswordResetToken token) {
         final Calendar cal = Calendar.getInstance();
         return token.getExpiryDate().before(cal.getTime());
+    }
+
+    public boolean isAccountBlocked(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user.isBlocked();
     }
 }
 
