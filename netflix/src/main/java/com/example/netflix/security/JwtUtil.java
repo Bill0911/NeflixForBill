@@ -32,12 +32,19 @@ public class JwtUtil {
         Claims claims = extractAllClaims(token);
         return (String) claims.get("role");
     }
-//========Activation token========//
+    //========Activation token========//
     public String generateActivationToken(String email) {
        Map<String, Object> claims = new HashMap<>();
        claims.put("email", email);
        return createToken(claims, 24 * 60 * 60 * 1000); // 24 hours expiration for activation token
     }
+    //=======reset password token=======//
+    public String generatePasswordResetToken(String email) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("email", email);
+        return createToken(claims, 24 * 60 * 60 * 1000); // 24 hours expiration for password reset token
+    }
+
 
     public String extractEmail(String token) {
         Claims claims = extractAllClaims(token);

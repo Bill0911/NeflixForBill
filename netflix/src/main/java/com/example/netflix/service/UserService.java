@@ -3,7 +3,6 @@ package com.example.netflix.service;
 import com.example.netflix.entity.*;
 import com.example.netflix.dto.ProfileRequest;
 import com.example.netflix.repository.LanguageRepository;
-import com.example.netflix.repository.PasswordResetTokenRepository;
 import com.example.netflix.repository.ProfileRepository;
 import com.example.netflix.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,21 +29,20 @@ public class UserService {
     @Autowired
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordResetTokenRepository tokenRepository;
-
-    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, PasswordEncoder passwordEncoder, PasswordResetTokenRepository tokenRepository) {
+    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.languageRepository = languageRepository;
         this.profileRepository = profileRepository;
         this.passwordEncoder = passwordEncoder;
-        this.tokenRepository = tokenRepository;
     }
 
     public void registerUser(User user, String token) {
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
         user.setActive(false);
         userRepository.save(user);
-        // Save the token in a way that it can be verified later (e.g., in-memory or database)
+        // Debug statement to check the encoded password
+        System.out.println("Encoded password during registration: " + encodedPassword);
     }
 
     @Transactional
@@ -73,10 +71,17 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // Debug statement to check if the user is found
+        System.out.println("User found: " + user.getEmail());
+
         // Check if account is blocked
         if (user.isIsBlocked()) {
             throw new RuntimeException("Account is blocked due to too many failed login attempts.");
         }
+
+        // Debug statement to check the stored password
+        System.out.println("Stored password: " + user.getPassword());
+        System.out.println("Password to verify: " + password);
 
         // Verify password
         if (!passwordEncoder.matches(password, user.getPassword())) {
@@ -89,6 +94,10 @@ public class UserService {
             }
 
             userRepository.save(user);
+
+            // Debug statement to check failed attempts
+            System.out.println("Failed attempts: " + failedAttempts);
+
             throw new RuntimeException("Invalid credentials");
         }
 
@@ -96,9 +105,11 @@ public class UserService {
         user.setFailedLoginAttempts(0);
         userRepository.save(user);
 
+        // Debug statement to confirm successful login
+        System.out.println("Login successful for user: " + user.getEmail());
+
         return user; // Return full User object
     }
-
 
     public String getLanguageName(Integer accountId) {
         Optional<User> user = userRepository.findByAccountId(accountId);
@@ -135,45 +146,11 @@ public class UserService {
         return userRepository.findByAccountId(accountId).map(user -> user.getRole() == role).orElse(false);
     }
 
-    public void createPasswordResetToken(String email, String token) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            PasswordResetToken resetToken = new PasswordResetToken();
-            resetToken.setToken(token);
-            resetToken.setUser(user);
-            resetToken.setExpiryDate(calculateExpiryDate(2 * 60)); // only 2 hours
-            tokenRepository.save(resetToken);
-        } else {
-            throw new RuntimeException("User not found with email: " + email);
-        }
-    }
-
-    public void resetPassword(String token, String newPassword) {
-        Optional<PasswordResetToken> tokenOptional = tokenRepository.findByToken(token);
-        if (tokenOptional.isPresent()) {
-            PasswordResetToken resetToken = tokenOptional.get();
-            if (isTokenExpired(resetToken)) {
-                throw new RuntimeException("Token has expired");
-            }
-            User user = resetToken.getUser();
-            user.setPassword(passwordEncoder.encode(newPassword));
-            userRepository.save(user);
-        } else {
-            throw new RuntimeException("Invalid token");
-        }
-    }
-
     private Date calculateExpiryDate(int expiryTimeInMinutes) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.MINUTE, expiryTimeInMinutes);
         return new Date(cal.getTime().getTime());
-    }
-
-    private boolean isTokenExpired(PasswordResetToken token) {
-        final Calendar cal = Calendar.getInstance();
-        return token.getExpiryDate().before(cal.getTime());
     }
 
     public boolean isAccountBlocked(String email) {
