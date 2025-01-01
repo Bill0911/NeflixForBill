@@ -42,9 +42,16 @@ public class JwtUtil {
     public String generatePasswordResetToken(String email) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", email);
-        return createToken(claims, 24 * 60 * 60 * 1000); // 24 hours expiration for password reset token
+        String token = createToken(claims, 24 * 60 * 60 * 1000); // 24 hours expiration for password reset token
+        System.out.println("Generated password reset token: " + token);
+        return token;
     }
 
+    public String extractEmailFromPasswordResetToken(String token) {
+        Claims claims = extractAllClaims(token);
+        System.out.println("Extracted email from token: " + claims.get("email"));
+        return (String) claims.get("email");
+    }
 
     public String extractEmail(String token) {
         Claims claims = extractAllClaims(token);
@@ -56,19 +63,31 @@ public class JwtUtil {
     }
 
     private String createToken(Map<String, Object> claims, long expirationTime) {
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
+        System.out.println("Created token: " + token);
+        return token;
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            System.out.println("Extracted claims: " + claims);
+            return claims;
+        } catch (ExpiredJwtException e) {
+            System.out.println("Token has expired");
+            throw new RuntimeException("Token has expired");
+        } catch (JwtException e) {
+            System.out.println("Invalid token");
+            throw new RuntimeException("Invalid token");
+        }
     }
 }

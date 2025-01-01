@@ -158,5 +158,19 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return user.isBlocked();
     }
+
+    public void requestPasswordReset(String email)
+    {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public void resetPassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
 }
 
