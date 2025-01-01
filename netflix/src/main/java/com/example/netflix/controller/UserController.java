@@ -110,31 +110,5 @@ public class UserController {
         }
     }
 
-    @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestParam String email)
-    {
-        try {
-            String token = UUID.randomUUID().toString();
-            userService.createPasswordResetToken(email, token);
-
-            // Log the reset token to the console (simulating email sending)
-            System.out.println("Password reset token for " + email + ": " + token);
-
-            return ResponseEntity.ok("Password reset token has been generated. Check the console for the token.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
-        }
-    }
-
-    @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword)
-    {
-        try {
-            userService.resetPassword(token, newPassword);
-            return ResponseEntity.ok("Password has been reset successfully.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
-        }
-    }
 
 }
