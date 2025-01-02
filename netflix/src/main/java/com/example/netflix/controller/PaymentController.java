@@ -20,9 +20,11 @@ public class PaymentController {
     public Payment processPayment(@RequestParam Integer userId, @RequestParam SubscriptionType subscriptionType, @RequestParam boolean discountApplied) {
         logger.info("Processing payment for userId: {}, subscriptionType: {}, discountApplied: {}", userId, subscriptionType, discountApplied);
         try {
-            return paymentService.processPayment(userId, subscriptionType, discountApplied);
+            Payment payment = paymentService.processPayment(userId, subscriptionType, discountApplied);
+            logger.info("Payment processed successfully for userId: {}", userId);
+            return payment;
         } catch (Exception e) {
-            logger.error("Error processing payment", e);
+            logger.error("Error processing payment for userId: {}", userId, e);
             throw e;
         }
     }

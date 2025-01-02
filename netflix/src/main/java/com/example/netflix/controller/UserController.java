@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.UUID;
 
 
 @RestController
@@ -117,8 +116,8 @@ public class UserController {
             String email = request.get("email");
             userService.requestPasswordReset(email);
             String token = jwtUtil.generatePasswordResetToken(email);
-            System.out.println("Password reset token: " + token);
-            return ResponseEntity.ok("Password reset token: " + token);
+            //System.out.println("Password reset token: " + token);
+            return ResponseEntity.ok(token);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
@@ -139,8 +138,8 @@ public class UserController {
     }
 
     @PostMapping("/invite")
-    public void inviteUser(@RequestParam Integer userId, @RequestParam Integer invitedUserId)
+    public void inviteUser(@RequestParam Integer userId, @RequestParam Integer invitedAccountId)
     {
-        userService.inviteUser(userId, invitedUserId);
+        userService.inviteUser(userId, invitedAccountId);
     }
 }
