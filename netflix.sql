@@ -1,21 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Jan 02, 2025 at 05:01 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `netflix`
@@ -25,7 +7,7 @@ DELIMITER $$
 --
 -- Procedures
 --
-CREATE `AddEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
+CREATE PROCEDURE `AddEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     INSERT INTO `episode` (`title`, `duration`, `series_id`)
     VALUES (p_title, p_duration, p_series_id);
 END$$
@@ -830,31 +812,6 @@ INSERT INTO `movieviewcount` (`account_id`, `movie_id`, `number`, `last_viewed`)
 (1, 2, 2, NULL),
 (1, 3, 1, NULL),
 (3, 1, 1, NULL),
-(5, 2, 2, NULL),
-(1, 1, 3, NULL),
-(1, 2, 2, NULL),
-(1, 3, 1, NULL),
-(3, 1, 1, NULL),
-(5, 2, 2, NULL),
-(1, 1, 3, NULL),
-(1, 2, 2, NULL),
-(1, 3, 1, NULL),
-(3, 1, 1, NULL),
-(5, 2, 2, NULL),
-(1, 1, 3, NULL),
-(1, 2, 2, NULL),
-(1, 3, 1, NULL),
-(3, 1, 1, NULL),
-(5, 2, 2, NULL),
-(1, 1, 3, NULL),
-(1, 2, 2, NULL),
-(1, 3, 1, NULL),
-(3, 1, 1, NULL),
-(5, 2, 2, NULL),
-(1, 1, 3, NULL),
-(1, 2, 2, NULL),
-(1, 3, 1, NULL),
-(3, 1, 1, NULL),
 (5, 2, 2, NULL);
 
 -- --------------------------------------------------------
@@ -894,7 +851,7 @@ CREATE TABLE `payments` (
 --
 CREATE TABLE `paymentstatus` (
 `payment_id` bigint(20)
-,`account_id` int(11)
+,`account_id` int(11) unsigned
 ,`email` varchar(255)
 ,`subscription_type` varchar(10)
 ,`payment_amount` decimal(10,2)
@@ -975,7 +932,7 @@ CREATE TABLE `seriesviewcount` (
 -- (See below for the actual view)
 --
 CREATE TABLE `subscriptioncosts` (
-`UserID` int(11)
+`UserID` int(11) unsigned
 ,`Email` varchar(255)
 ,`SubscriptionType` enum('SD','HD','UHD')
 ,`SubscriptionCost` int(3)
@@ -988,7 +945,7 @@ CREATE TABLE `subscriptioncosts` (
 --
 
 CREATE TABLE `user` (
-  `account_id` int(11) NOT NULL,
+  `account_id` int(11) UNSIGNED NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `payment_method` varchar(255) DEFAULT 'Credit Card',
@@ -1116,6 +1073,20 @@ ALTER TABLE `movie`
   ADD PRIMARY KEY (`movie_id`);
 
 --
+-- Indexes for table `moviesprofilewatchlist`
+--
+ALTER TABLE `moviesprofilewatchlist`
+  ADD KEY `fk_moviesprofilewatchlist_profile` (`profile_id`),
+  ADD KEY `fk_moviesprofilewatchlist_movie` (`movie_id`);
+
+--
+-- Indexes for table `movieviewcount`
+--
+ALTER TABLE `movieviewcount`
+  ADD PRIMARY KEY (`account_id`,`movie_id`),
+  ADD KEY `fk_movieviewcount_movie` (`movie_id`);
+
+--
 -- Indexes for table `profile`
 --
 ALTER TABLE `profile`
@@ -1129,12 +1100,25 @@ ALTER TABLE `series`
   ADD PRIMARY KEY (`series_id`);
 
 --
+-- Indexes for table `seriesprofilewatchlist`
+--
+ALTER TABLE `seriesprofilewatchlist`
+  ADD KEY `fk_seriesprofilewatchlist_profile` (`profile_id`),
+  ADD KEY `fk_seriesprofilewatchlist_series` (`series_id`);
+
+--
+-- Indexes for table `seriesviewcount`
+--
+ALTER TABLE `seriesviewcount`
+  ADD PRIMARY KEY (`account_id`,`series_id`),
+  ADD KEY `fk_seriesviewcount_series` (`series_id`);
+
+--
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`account_id`),
   ADD UNIQUE KEY `email` (`email`),
-  ADD KEY `account_id` (`account_id`),
   ADD KEY `user_language` (`language_id`);
 
 --
@@ -1181,7 +1165,7 @@ ALTER TABLE `series`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `account_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- Constraints for dumped tables
@@ -1197,22 +1181,46 @@ ALTER TABLE `episode`
 -- Constraints for table `genreformovie`
 --
 ALTER TABLE `genreformovie`
-  ADD CONSTRAINT `genre` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `movie` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_genreformovie_genre` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_genreformovie_movie` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `genreforseries`
 --
 ALTER TABLE `genreforseries`
-  ADD CONSTRAINT `series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_genreforseries_genre` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_genreforseries_series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `moviesprofilewatchlist`
+--
+ALTER TABLE `moviesprofilewatchlist`
+  ADD CONSTRAINT `fk_moviesprofilewatchlist_movie` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_moviesprofilewatchlist_profile` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`profile_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `movieviewcount`
+--
+ALTER TABLE `movieviewcount`
+  ADD CONSTRAINT `fk_movieviewcount_movie` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_movieviewcount_user` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `seriesprofilewatchlist`
+--
+ALTER TABLE `seriesprofilewatchlist`
+  ADD CONSTRAINT `fk_seriesprofilewatchlist_profile` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`profile_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_seriesprofilewatchlist_series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `seriesviewcount`
+--
+ALTER TABLE `seriesviewcount`
+  ADD CONSTRAINT `fk_seriesviewcount_series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_seriesviewcount_user` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `user`
 --
 ALTER TABLE `user`
   ADD CONSTRAINT `user_language` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
