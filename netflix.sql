@@ -9,7 +9,7 @@ DELIMITER $$
 -- Procedures
 --
 CREATE PROCEDURE `AddMovie` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_minimum_age` INT(11))   BEGIN
-    INSERT INTO `episode` (`title`, `duration`, `minimum_age`)
+    INSERT INTO `movie` (`title`, `duration`, `minimum_age`)
     VALUES (p_title, p_duration, p_minimum_age);
 END$$
 
@@ -603,7 +603,6 @@ CREATE TABLE `user` (
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `payment_method` varchar(255) DEFAULT 'Credit Card',
-  `active` bit(1) DEFAULT b'0',
   `blocked` bit(1) DEFAULT b'0',
   `subscription` enum('SD','HD','UHD') DEFAULT 'SD',
   `trial_start_date` datetime DEFAULT NULL,
