@@ -137,4 +137,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
+
+    @PostMapping("/invite")
+    public void inviteUser(@RequestParam Integer userId, @RequestParam Integer invitedUserId)
+    {
+        userService.inviteUser(userId, invitedUserId);
+    }
 }

@@ -172,5 +172,28 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
+
+    public void inviteUser(Integer userId, Integer invitedUserId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<User> invitedUserOptional = userRepository.findById(invitedUserId);
+
+        if (userOptional.isEmpty() || invitedUserOptional.isEmpty()) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        User user = userOptional.get();
+        User invitedUser = invitedUserOptional.get();
+
+        if (userId.equals(invitedUserId)) {
+            throw new IllegalArgumentException("User cannot invite themselves");
+        }
+
+        if (user.isActive() && invitedUser.isActive() && !user.isDiscount() && !invitedUser.isDiscount()) {
+            user.setDiscount(true);
+            invitedUser.setDiscount(true);
+            userRepository.save(user);
+            userRepository.save(invitedUser);
+        }
+    }
 }
 

@@ -5,6 +5,8 @@ import com.example.netflix.entity.SubscriptionType;
 import com.example.netflix.entity.User;
 import com.example.netflix.repository.PaymentRepository;
 import com.example.netflix.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,18 +19,29 @@ public class PaymentService {
     @Autowired
     private PaymentRepository paymentRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(PaymentService.class);
+
     @Autowired
     private UserRepository userRepository;
 
     public Payment processPayment(Integer userId, SubscriptionType subscriptionType, boolean discountApplied) {
+        logger.info("Processing payment for userId: {}, subscriptionType: {}, discountApplied: {}", userId, subscriptionType, discountApplied);
+        
         Optional<User> userOptional = userRepository.findById(userId);
         if (!userOptional.isPresent()) {
+            logger.error("User not found for userId: {}", userId);
             throw new IllegalArgumentException("User not found");
         }
 
         User user = userOptional.get();
 
-        double paymentAmount = 0.0;
+        // Check if the trial period has ended
+        if (LocalDateTime.now().isBefore(user.getTrialEndDate())) {
+            logger.error("Trial period is still active for userId: {}", userId);
+            throw new IllegalArgumentException("Trial period is still active");
+        }
+
+        double paymentAmount;
         switch (subscriptionType) {
             case SD:
                 paymentAmount = 7.99;
@@ -40,7 +53,8 @@ public class PaymentService {
                 paymentAmount = 13.99;
                 break;
             default:
-                break;
+                logger.error("Invalid subscription type: {}", subscriptionType);
+                throw new IllegalArgumentException("Invalid subscription type");
         }
 
         if (discountApplied) {
@@ -55,6 +69,30 @@ public class PaymentService {
         payment.setPaid(true);
         payment.setPaymentDate(LocalDateTime.now());
 
-        return paymentRepository.save(payment);
+        Payment savedPayment = paymentRepository.save(payment);
+        logger.info("Payment processed successfully for userId: {}", userId);
+        return savedPayment;
+    }
+
+    public void applyDiscount(Integer userId, Integer invitedUserId)
+    {
+        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<User> invitedUserOptional = userRepository.findById(invitedUserId);
+
+        if (userOptional.isEmpty() || invitedUserOptional.isEmpty())
+        {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        User user = userOptional.get();
+        User invitedUser = invitedUserOptional.get();
+
+        if (user.isActive() && invitedUser.isActive())
+        {
+            user.setDiscount(true);
+            invitedUser.setDiscount(true);
+            userRepository.save(user);
+            userRepository.save(invitedUser);
+        }
     }
 }
