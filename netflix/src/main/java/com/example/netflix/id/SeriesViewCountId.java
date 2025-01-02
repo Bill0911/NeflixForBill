@@ -9,15 +9,13 @@ public class SeriesViewCountId implements Serializable {
 
     private Integer userId;
     private Integer seriesId;
-    private Integer episodeId;
 
     public SeriesViewCountId() {
     }
 
-    public SeriesViewCountId(Integer userId, Integer seriesId, Integer episodeId) {
+    public SeriesViewCountId(Integer userId, Integer seriesId) {
         this.userId = userId;
         this.seriesId = seriesId;
-        this.episodeId = episodeId;
     }
 
     public Integer getUserId() {
@@ -36,26 +34,17 @@ public class SeriesViewCountId implements Serializable {
         this.seriesId = seriesId;
     }
 
-    public Integer getEpisodeId() {
-        return episodeId;
-    }
-
-    public void setEpisodeId(Integer episodeId) {
-        this.episodeId = episodeId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SeriesViewCountId that = (SeriesViewCountId) o;
         return Objects.equals(userId, that.userId) &&
-                Objects.equals(seriesId, that.seriesId) &&
-                Objects.equals(episodeId, that.episodeId);
+                Objects.equals(seriesId, that.seriesId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, seriesId, episodeId);
+        return Objects.hash(userId, seriesId);
     }
 }

@@ -18,10 +18,6 @@ public class SeriesViewCount {
     @Column(name = "series_id")
     private Integer seriesId;
 
-    @Id
-    @Column(name = "episode_id")
-    private Integer episodeId;
-
     @ManyToOne
     @JoinColumn(name = "account_id", insertable = false, updatable = false)
     private User user;
@@ -30,9 +26,6 @@ public class SeriesViewCount {
     @JoinColumn(name = "series_id", insertable = false, updatable = false)
     private Series series;
 
-    @ManyToOne
-    @JoinColumn(name = "episode_id", insertable = false, updatable = false)
-    private Episode episode;
 
     @Column(nullable = false)
     private int number;
@@ -56,14 +49,6 @@ public class SeriesViewCount {
         this.seriesId = seriesId;
     }
 
-    public Integer getEpisodeId() {
-        return episodeId;
-    }
-
-    public void setEpisodeId(Integer episodeId) {
-        this.episodeId = episodeId;
-    }
-
     public User getUser() {
         return user;
     }
@@ -78,14 +63,6 @@ public class SeriesViewCount {
 
     public void setSeries(Series series) {
         this.series = series;
-    }
-
-    public Episode getEpisode() {
-        return episode;
-    }
-
-    public void setEpisode(Episode episode) {
-        this.episode = episode;
     }
 
     public int getNumber() {
