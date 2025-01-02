@@ -30,42 +30,42 @@ CREATE `AddEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_dur
     VALUES (p_title, p_duration, p_series_id);
 END$$
 
-CREATE `AddGenre` (IN `p_title` VARCHAR(255))   BEGIN
+CREATE PROCEDURE `AddGenre` (IN `p_title` VARCHAR(255))   BEGIN
     INSERT INTO `genre` (`title`)
     VALUES (p_title);
 END$$
 
-CREATE `AddGenreForMovie` (IN `p_genreId` INT, IN `p_movieId` INT)   BEGIN
+CREATE PROCEDURE `AddGenreForMovie` (IN `p_genreId` INT, IN `p_movieId` INT)   BEGIN
 	INSERT INTO `genreformovie` (`genre_id`, `movie_id`)
     VALUES (p_genreId, p_movieId);
 END$$
 
-CREATE `AddGenreForSeries` (IN `p_genreId` INT, IN `p_seriesId` INT)   BEGIN
+CREATE PROCEDURE `AddGenreForSeries` (IN `p_genreId` INT, IN `p_seriesId` INT)   BEGIN
 	INSERT INTO `genreforseries` (`genre_id`, `series_id`)
     VALUES (p_genreId, p_seriesId);
 END$$
 
-CREATE `AddGenreForUser` (IN `p_genreId` INT, IN `p_accountId` INT)   BEGIN
+CREATE PROCEDURE `AddGenreForUser` (IN `p_genreId` INT, IN `p_accountId` INT)   BEGIN
 	INSERT INTO `genreforuser` (`genre_id`, `account_id`)
     VALUES (p_genreId, p_accountId);
 END$$
 
-CREATE `AddLanguage` (IN `p_name` VARCHAR(255))   BEGIN
+CREATE PROCEDURE `AddLanguage` (IN `p_name` VARCHAR(255))   BEGIN
     INSERT INTO `genre` (`name`)
     VALUES (p_name);
 END$$
 
-CREATE `AddMovie` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_minimum_age` INT(11))   BEGIN
+CREATE PROCEDURE `AddMovie` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_minimum_age` INT(11))   BEGIN
     INSERT INTO `movie` (`title`, `duration`, `minimum_age`)
     VALUES (p_title, p_duration, p_minimum_age);
 END$$
 
-CREATE `AddMoviesProfileWatchlist` (IN `p_profileId` INT, IN `p_movieId` INT)   BEGIN
+CREATE PROCEDURE `AddMoviesProfileWatchlist` (IN `p_profileId` INT, IN `p_movieId` INT)   BEGIN
 	INSERT INTO `moviesprofilewatchlist` (`profile_id`, `movie_id`)
     VALUES (p_profileId, p_movieId);
 END$$
 
-CREATE `AddMovieViewCount` (IN `p_movieId` INT, IN `p_accountId` INT)   BEGIN
+CREATE PROCEDURE `AddMovieViewCount` (IN `p_movieId` INT, IN `p_accountId` INT)   BEGIN
     -- Check if the record exists in the movieviewcount table
     IF EXISTS (
         SELECT 1 
@@ -77,28 +77,28 @@ CREATE `AddMovieViewCount` (IN `p_movieId` INT, IN `p_accountId` INT)   BEGIN
         SET number = number + 1, last_viewed = current_timestamp()
         WHERE account_id = p_accountId AND movie_id = p_movieId;
     ELSE
-        -- If it doesn't exist, create a new entry with initial count = 1
+        -- 
         INSERT INTO movieviewcount (`account_id`, `movie_id`, `number`, `last_viewed`)
         VALUES (p_accountId, p_movieId, 1, current_timestamp());
     END IF;
 END$$
 
-CREATE `AddProflie` (IN `p_account_id` INT(11), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
+CREATE PROCEDURE `AddProflie` (IN `p_account_id` INT(11), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
     INSERT INTO `profile` (`account_id`, `profile_image`, `age`, `name`)
     VALUES (p_account_id, p_profile_image, p_age, p_name);
 END$$
 
-CREATE `AddSeries` (IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(11))   BEGIN
+CREATE PROCEDURE `AddSeries` (IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(11))   BEGIN
     INSERT INTO `series` (`title`, `minimum_age`)
     VALUES (p_title, p_minimum_age);
 END$$
 
-CREATE `AddSeriesProfileWatchlist` (IN `p_profileId` INT, IN `p_seriesId` INT)   BEGIN
+CREATE PROCEDURE `AddSeriesProfileWatchlist` (IN `p_profileId` INT, IN `p_seriesId` INT)   BEGIN
 	INSERT INTO `seriesprofilewatchlist` (`profile_id`, `series_id`)
     VALUES (p_profileId, p_seriesId);
 END$$
 
-CREATE `AddSeriesViewCount` (IN `p_seriesId` INT, IN `p_accountId` INT)   BEGIN
+CREATE PROCEDURE `AddSeriesViewCount` (IN `p_seriesId` INT, IN `p_accountId` INT)   BEGIN
     -- Check if the record exists in the seriesviewcount table
     IF EXISTS (
         SELECT 1 
@@ -110,27 +110,27 @@ CREATE `AddSeriesViewCount` (IN `p_seriesId` INT, IN `p_accountId` INT)   BEGIN
         SET number = number + 1, last_viewed = current_timestamp()
         WHERE series_id = p_seriesId AND account_id = p_accountId;
     ELSE
-        -- If it doesn't exist, create a new entry with initial count = 1
+        -- If it doesn't exist, CREATE PROCEDURE a new entry with initial count = 1
         INSERT INTO seriesviewcount (`account_id`, `series_id`, `number`, `last_viewed`)
         VALUES (p_accountId, p_seriesId, 1, current_timestamp());
     END IF;
 END$$
 
-CREATE `AddUser` (IN `p_email` VARCHAR(255), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_language_id` INT(11))   BEGIN
+CREATE PROCEDURE `AddUser` (IN `p_email` VARCHAR(255), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_language_id` INT(11))   BEGIN
     INSERT INTO `user` (`email`, `password`, `payment_method`, `language_id`)
     VALUES (p_email, p_password, p_payment_method, p_language_id);
 END$$
 
-CREATE `DeleteEpisode` (IN `p_episode_id` INT)   BEGIN
+CREATE PROCEDURE `DeleteEpisode` (IN `p_episode_id` INT)   BEGIN
     DELETE FROM `episode` WHERE `episode_id` = p_episode_id;
 END$$
 
-CREATE `DeleteGenre` (IN `p_genre_id` INT)   BEGIN
+CREATE PROCEDURE `DeleteGenre` (IN `p_genre_id` INT)   BEGIN
     DELETE FROM `genre`
     WHERE `genre_id` = p_genre_id;
 END$$
 
-CREATE `DeleteGenreForMovie` (IN `p_genre_id` INT, IN `p_movie_id` INT)   BEGIN
+CREATE PROCEDURE `DeleteGenreForMovie` (IN `p_genre_id` INT, IN `p_movie_id` INT)   BEGIN
     DELETE FROM genreformovie
     WHERE movie_id = p_movie_id AND genre_id = p_genre_id;
 
@@ -140,7 +140,7 @@ CREATE `DeleteGenreForMovie` (IN `p_genre_id` INT, IN `p_movie_id` INT)   BEGIN
     END IF;
 END$$
 
-CREATE `DeleteGenreForSeries` (IN `p_genre_id` INT, IN `p_series_id` INT)   BEGIN
+CREATE PROCEDURE `DeleteGenreForSeries` (IN `p_genre_id` INT, IN `p_series_id` INT)   BEGIN
     DELETE FROM genreforseries
     WHERE series_id = p_series_id AND genre_id = p_genre_id;
 
@@ -150,7 +150,7 @@ CREATE `DeleteGenreForSeries` (IN `p_genre_id` INT, IN `p_series_id` INT)   BEGI
     END IF;
 END$$
 
-CREATE `DeleteGenreForUser` (IN `p_genre_id` INT, IN `p_account_id` INT)   BEGIN
+CREATE PROCEDURE `DeleteGenreForUser` (IN `p_genre_id` INT, IN `p_account_id` INT)   BEGIN
     DELETE FROM genreforuser
     WHERE account_id = p_account_id AND genre_id = p_genre_id;
 
@@ -160,16 +160,16 @@ CREATE `DeleteGenreForUser` (IN `p_genre_id` INT, IN `p_account_id` INT)   BEGIN
     END IF;
 END$$
 
-CREATE `DeleteLanguage` (IN `p_language_id` INT)   BEGIN
+CREATE PROCEDURE `DeleteLanguage` (IN `p_language_id` INT)   BEGIN
     DELETE FROM `language` WHERE `language_id` = p_language_id;
 END$$
 
-CREATE `DeleteMovie` (IN `p_movie_id` INT(11))   BEGIN
+CREATE PROCEDURE `DeleteMovie` (IN `p_movie_id` INT(11))   BEGIN
     DELETE FROM `movie`
     WHERE `movie_id` = p_movie_id;
 END$$
 
-CREATE `DeleteMoviesProfileWatchlist` (IN `p_profile_id` INT, IN `p_movie_id` INT)   BEGIN
+CREATE PROCEDURE `DeleteMoviesProfileWatchlist` (IN `p_profile_id` INT, IN `p_movie_id` INT)   BEGIN
     DELETE FROM moviesprofilewatchlist
     WHERE profile_id = p_profile_id AND movie_id = p_movie_id;
 
@@ -179,7 +179,7 @@ CREATE `DeleteMoviesProfileWatchlist` (IN `p_profile_id` INT, IN `p_movie_id` IN
     END IF;
 END$$
 
-CREATE `DeleteMovieViewCount` (IN `p_account_id` INT, IN `p_movie_id` INT)   BEGIN
+CREATE PROCEDURE `DeleteMovieViewCount` (IN `p_account_id` INT, IN `p_movie_id` INT)   BEGIN
     DELETE FROM movieviewcount
     WHERE account_id = p_account_id AND movie_id = p_movie_id;
 
@@ -189,15 +189,15 @@ CREATE `DeleteMovieViewCount` (IN `p_account_id` INT, IN `p_movie_id` INT)   BEG
     END IF;
 END$$
 
-CREATE `DeleteProfile` (IN `p_profile_id` INT)   BEGIN
+CREATE PROCEDURE `DeleteProfile` (IN `p_profile_id` INT)   BEGIN
     DELETE FROM `profile` WHERE `profile_id` = p_profile_id;
 END$$
 
-CREATE `DeleteSeries` (IN `p_series_id` INT)   BEGIN
+CREATE PROCEDURE `DeleteSeries` (IN `p_series_id` INT)   BEGIN
     DELETE FROM `series` WHERE `series_id` = p_series_id;
 END$$
 
-CREATE `DeleteSeriesProfileWatchlist` (IN `p_profile_id` INT, IN `p_series_id` INT)   BEGIN
+CREATE PROCEDURE `DeleteSeriesProfileWatchlist` (IN `p_profile_id` INT, IN `p_series_id` INT)   BEGIN
     DELETE FROM seriesprofilewatchlist
     WHERE profile_id = p_profile_id AND series_id = p_series_id;
 
@@ -207,7 +207,7 @@ CREATE `DeleteSeriesProfileWatchlist` (IN `p_profile_id` INT, IN `p_series_id` I
     END IF;
 END$$
 
-CREATE `DeleteSeriesViewCount` (IN `p_account_id` INT, IN `p_series_id` INT)   BEGIN
+CREATE PROCEDURE `DeleteSeriesViewCount` (IN `p_account_id` INT, IN `p_series_id` INT)   BEGIN
     DELETE FROM seriesviewcount
     WHERE account_id = p_account_id AND series_id = p_series_id;
 
@@ -217,90 +217,90 @@ CREATE `DeleteSeriesViewCount` (IN `p_account_id` INT, IN `p_series_id` INT)   B
     END IF;
 END$$
 
-CREATE `DeleteUser` (IN `p_account_id` INT)   BEGIN
+CREATE PROCEDURE `DeleteUser` (IN `p_account_id` INT)   BEGIN
     DELETE FROM `user` WHERE `account_id` = p_account_id;
 END$$
 
-CREATE `GetEpisodeById` (IN `p_episode_id` INT)   BEGIN
+CREATE PROCEDURE `GetEpisodeById` (IN `p_episode_id` INT)   BEGIN
     SELECT * FROM `episode` WHERE `episode_id` = p_episode_id;
 END$$
 
-CREATE `GetGenreById` (IN `p_genre_id` INT)   BEGIN
+CREATE PROCEDURE `GetGenreById` (IN `p_genre_id` INT)   BEGIN
     SELECT * FROM `genre`
     WHERE `genre_id` = p_genre_id;
 END$$
 
-CREATE `GetGenreForMovie` (IN `p_genre_id` INT, IN `p_movie_id` INT)   BEGIN
+CREATE PROCEDURE `GetGenreForMovie` (IN `p_genre_id` INT, IN `p_movie_id` INT)   BEGIN
     SELECT * FROM `genreformovie`
     WHERE `genre_id` = p_genre_id AND `movie_id` = p_movie_id;
 END$$
 
-CREATE `GetGenreForSeries` (IN `p_genre_id` INT, IN `p_series_id` INT)   BEGIN
+CREATE PROCEDURE `GetGenreForSeries` (IN `p_genre_id` INT, IN `p_series_id` INT)   BEGIN
     SELECT * FROM `genreforseries`
     WHERE `genre_id` = p_genre_id AND `series_id` = p_series_id;
 END$$
 
-CREATE `GetGenreForUser` (IN `p_genre_id` INT, IN `p_account_id` INT)   BEGIN
+CREATE PROCEDURE `GetGenreForUser` (IN `p_genre_id` INT, IN `p_account_id` INT)   BEGIN
     SELECT * FROM `genreforuser`
     WHERE `genre_id` = p_genre_id AND `account_id` = p_account_id;
 END$$
 
-CREATE `GetLanguageById` (IN `p_language_id` INT)   BEGIN
+CREATE PROCEDURE `GetLanguageById` (IN `p_language_id` INT)   BEGIN
     SELECT * FROM `language`
     WHERE `language_id` = p_language_id;
 END$$
 
-CREATE `GetManyEpisodes` ()   BEGIN
+CREATE PROCEDURE `GetManyEpisodes` ()   BEGIN
     SELECT * FROM `episode` LIMIT 49;
 END$$
 
-CREATE `GetManyGenreForMovies` ()   BEGIN
+CREATE PROCEDURE `GetManyGenreForMovies` ()   BEGIN
     SELECT * FROM `genreformovie` LIMIT 49;
 END$$
 
-CREATE `GetManyGenreForSeries` ()   BEGIN
+CREATE PROCEDURE `GetManyGenreForSeries` ()   BEGIN
     SELECT * FROM `genreforseries` LIMIT 49;
 END$$
 
-CREATE `GetManyGenreForUsers` ()   BEGIN
+CREATE PROCEDURE `GetManyGenreForUsers` ()   BEGIN
     SELECT * FROM `genreforuser` LIMIT 49;
 END$$
 
-CREATE `GetManyGenres` ()   BEGIN
+CREATE PROCEDURE `GetManyGenres` ()   BEGIN
     SELECT * FROM `genre` LIMIT 49;
 END$$
 
-CREATE `GetManyMoviesProfileWatchlists` ()   BEGIN
+CREATE PROCEDURE `GetManyMoviesProfileWatchlists` ()   BEGIN
     SELECT * FROM `moviesprofilewatchlist` LIMIT 49;
 END$$
 
-CREATE `GetManyMovieViewCounts` ()   BEGIN
+CREATE PROCEDURE `GetManyMovieViewCounts` ()   BEGIN
     SELECT * FROM `movieviewcount` LIMIT 49;
 END$$
 
-CREATE `GetManySeriesProfileWatchlists` ()   BEGIN
+CREATE PROCEDURE `GetManySeriesProfileWatchlists` ()   BEGIN
     SELECT * FROM `seriesprofilewatchlist` LIMIT 49;
 END$$
 
-CREATE `GetManySeriesViewCounts` ()   BEGIN
+CREATE PROCEDURE `GetManySeriesViewCounts` ()   BEGIN
     SELECT * FROM `seriesviewcount` LIMIT 49;
 END$$
 
-CREATE `GetMovieById` (IN `p_movie_id` INT)   BEGIN
+CREATE PROCEDURE `GetMovieById` (IN `p_movie_id` INT)   BEGIN
     SELECT * FROM `movie` WHERE `movie_id` = p_movie_id;
 END$$
 
-CREATE `GetMoviesProfileWatchlist` (IN `p_profile_id` INT, IN `p_movie_id` INT)   BEGIN
+CREATE PROCEDURE `GetMoviesProfileWatchlist` (IN `p_profile_id` INT, IN `p_movie_id` INT)   BEGIN
     SELECT * FROM moviesprofilewatchlist
     WHERE `profile_id` = p_profile_id AND `movie_id` = p_movie_id;
 END$$
 
-CREATE `GetMovieViewCount` (IN `p_account_id` INT, IN `p_movie_id` INT)   BEGIN
+CREATE PROCEDURE `GetMovieViewCount` (IN `p_account_id` INT, IN `p_movie_id` INT)   BEGIN
     SELECT * FROM movieviewcount
     WHERE `movie_id` = p_movie_id AND `account_id` = p_account_id;
 END$$
 
-CREATE `GetPersonalizedOffer` (IN `userId` INT, IN `maxMovies` INT)   BEGIN
+CREATE PROCEDURE `GetPersonalizedOffer` (IN `userId` INT, IN `maxMovies` INT)   BEGIN
     DECLARE done INT DEFAULT FALSE;
     DECLARE genreId INT;
     DECLARE genreViews INT;
@@ -362,34 +362,34 @@ CREATE `GetPersonalizedOffer` (IN `userId` INT, IN `maxMovies` INT)   BEGIN
     DROP TEMPORARY TABLE TempPersonalizedOffer;
 END$$
 
-CREATE `GetProfileById` (IN `p_profile_id` INT)   BEGIN
+CREATE PROCEDURE `GetProfileById` (IN `p_profile_id` INT)   BEGIN
     SELECT * FROM `profile`
     WHERE `profile_id` = p_profile_id;
 END$$
 
-CREATE `GetSeriesById` (IN `p_series_id` INT(11))   BEGIN
+CREATE PROCEDURE `GetSeriesById` (IN `p_series_id` INT(11))   BEGIN
     SELECT * FROM `series` WHERE `series_id` = p_series_id;
 END$$
 
-CREATE `GetSeriesProfileWatchlist` (IN `p_profile_id` INT, IN `p_series_id` INT)   BEGIN
+CREATE PROCEDURE `GetSeriesProfileWatchlist` (IN `p_profile_id` INT, IN `p_series_id` INT)   BEGIN
     SELECT * FROM seriesprofilewatchlist
     WHERE `profile_id` = p_profile_id AND `eries_id` = p_series_id;
 END$$
 
-CREATE `GetSeriesViewCount` (IN `p_account_id` INT, IN `p_series_id` INT)   BEGIN
+CREATE PROCEDURE `GetSeriesViewCount` (IN `p_account_id` INT, IN `p_series_id` INT)   BEGIN
     SELECT * FROM seriesviewcount
     WHERE `series_id` = p_series_id AND `account_id` = p_account_id;
 END$$
 
-CREATE `GetUserByEmail` (IN `p_email` VARCHAR(255))   BEGIN
+CREATE PROCEDURE `GetUserByEmail` (IN `p_email` VARCHAR(255))   BEGIN
     SELECT * FROM `user` WHERE `email` = p_email;
 END$$
 
-CREATE `GetUserById` (IN `p_account_id` INT(11))   BEGIN
+CREATE PROCEDURE `GetUserById` (IN `p_account_id` INT(11))   BEGIN
     SELECT * FROM `user` WHERE `account_id` = p_account_id;
 END$$
 
-CREATE `PatchEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
+CREATE PROCEDURE `PatchEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     UPDATE `episode`
     SET 
         `title` = COALESCE(p_title, `title`),
@@ -398,7 +398,7 @@ CREATE `PatchEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_d
     WHERE `episode_id` = p_episode_id;
 END$$
 
-CREATE `PatchGenreForMovie` (IN `p_old_genre_id` INT, IN `p_old_movie_id` INT, IN `p_new_genre_id` INT, IN `p_new_movie_id` INT)   BEGIN
+CREATE PROCEDURE `PatchGenreForMovie` (IN `p_old_genre_id` INT, IN `p_old_movie_id` INT, IN `p_new_genre_id` INT, IN `p_new_movie_id` INT)   BEGIN
     UPDATE genreformovie
     SET
         genre_id = IFNULL(p_new_genre_id, genre_id),
@@ -406,7 +406,7 @@ CREATE `PatchGenreForMovie` (IN `p_old_genre_id` INT, IN `p_old_movie_id` INT, I
     WHERE genre_id = p_old_genre_id AND movie_id = p_old_movie_id;
 END$$
 
-CREATE `PatchGenreForSeries` (IN `p_old_genre_id` INT, IN `p_old_series_id` INT, IN `p_new_genre_id` INT, IN `p_new_series_id` INT)   BEGIN
+CREATE PROCEDURE `PatchGenreForSeries` (IN `p_old_genre_id` INT, IN `p_old_series_id` INT, IN `p_new_genre_id` INT, IN `p_new_series_id` INT)   BEGIN
     UPDATE genreforseries
     SET
         genre_id = IFNULL(p_new_genre_id, genre_id),
@@ -414,7 +414,7 @@ CREATE `PatchGenreForSeries` (IN `p_old_genre_id` INT, IN `p_old_series_id` INT,
     WHERE genre_id = p_old_genre_id AND series_id = p_old_series_id;
 END$$
 
-CREATE `PatchGenreForUser` (IN `p_old_user_id` INT, IN `p_old_genre_id` INT, IN `p_new_user_id` INT, IN `p_new_genre_id` INT)   BEGIN
+CREATE PROCEDURE `PatchGenreForUser` (IN `p_old_user_id` INT, IN `p_old_genre_id` INT, IN `p_new_user_id` INT, IN `p_new_genre_id` INT)   BEGIN
 
     UPDATE GenreForUser
     SET
@@ -423,7 +423,7 @@ CREATE `PatchGenreForUser` (IN `p_old_user_id` INT, IN `p_old_genre_id` INT, IN 
     WHERE user_id = p_old_user_id AND genre_id = p_old_genre_id;
 END$$
 
-CREATE `PatchMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
+CREATE PROCEDURE `PatchMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
     UPDATE `movie`
     SET 
         `title` = COALESCE(p_title, `title`),
@@ -435,7 +435,7 @@ CREATE `PatchMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255), IN `p_d
     WHERE `movie_id` = p_movie_id;
 END$$
 
-CREATE `PatchMovieProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_movie_id` INT, IN `p_new_profile_id` INT, IN `p_new_movie_id` INT)   BEGIN
+CREATE PROCEDURE `PatchMovieProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_movie_id` INT, IN `p_new_profile_id` INT, IN `p_new_movie_id` INT)   BEGIN
     UPDATE movieprofilewatchlist
     SET
         profile_id = IFNULL(p_new_profile_id, profile_id),
@@ -443,7 +443,7 @@ CREATE `PatchMovieProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_movie_
     WHERE profile_id = p_old_profile_id AND movie_id = p_old_movie_id;
 END$$
 
-CREATE `PatchMovieViewCount` (IN `p_account_id` INT, IN `p_movie_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
+CREATE PROCEDURE `PatchMovieViewCount` (IN `p_account_id` INT, IN `p_movie_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
     UPDATE movieviewcount
     SET
         number = IFNULL(p_new_number, number),
@@ -451,7 +451,7 @@ CREATE `PatchMovieViewCount` (IN `p_account_id` INT, IN `p_movie_id` INT, IN `p_
     WHERE account_id = p_account_id AND movie_id = p_movie_id;
 END$$
 
-CREATE `PatchProfile` (IN `p_profile_id` INT(11), IN `p_account_id` INT(11), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
+CREATE PROCEDURE `PatchProfile` (IN `p_profile_id` INT(11), IN `p_account_id` INT(11), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
     UPDATE `profile`
     SET 
         `account_id` = COALESCE(p_account_id, `account_id`),
@@ -461,7 +461,7 @@ CREATE `PatchProfile` (IN `p_profile_id` INT(11), IN `p_account_id` INT(11), IN 
     WHERE `profile_id` = p_profile_id;
 END$$
 
-CREATE `PatchSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(3))   BEGIN
+CREATE PROCEDURE `PatchSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(3))   BEGIN
     UPDATE `profile`
     SET 
         `title` = COALESCE(p_title, `title`),
@@ -469,7 +469,7 @@ CREATE `PatchSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(255), IN `p
     WHERE `series_id` = p_series_id;
 END$$
 
-CREATE `PatchSeriesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_series_id` INT, IN `p_new_profile_id` INT, IN `p_new_series_id` INT)   BEGIN
+CREATE PROCEDURE `PatchSeriesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_series_id` INT, IN `p_new_profile_id` INT, IN `p_new_series_id` INT)   BEGIN
     UPDATE seriesprofilewatchlist
     SET
         profile_id = IFNULL(p_new_profile_id, profile_id),
@@ -477,7 +477,7 @@ CREATE `PatchSeriesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_serie
     WHERE profile_id = p_old_profile_id AND series_id = p_old_series_id;
 END$$
 
-CREATE `PatchSeriesViewCount` (IN `p_account_id` INT, IN `p_series_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
+CREATE PROCEDURE `PatchSeriesViewCount` (IN `p_account_id` INT, IN `p_series_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
     UPDATE seriesviewcount
     SET
         number = IFNULL(p_new_number, number),
@@ -485,7 +485,7 @@ CREATE `PatchSeriesViewCount` (IN `p_account_id` INT, IN `p_series_id` INT, IN `
     WHERE account_id = p_account_id AND series_id = p_series_id;
 END$$
 
-CREATE `PatchUser` (IN `p_account_id` INT(11), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_blocked` BIT(1), OUT `output` VARCHAR(255), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
+CREATE PROCEDURE `PatchUser` (IN `p_account_id` INT(11), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_blocked` BIT(1), OUT `output` VARCHAR(255), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
     UPDATE `user`
     SET 
         `password` = COALESCE(p_password, `password`),
@@ -497,7 +497,7 @@ CREATE `PatchUser` (IN `p_account_id` INT(11), IN `p_password` VARCHAR(255), IN 
     WHERE `account_id` = p_account_id;
 END$$
 
-CREATE `process_payment` (IN `userId` INT, IN `subscriptionType` VARCHAR(10), IN `discountApplied` BIT)   BEGIN
+CREATE PROCEDURE `process_payment` (IN `userId` INT, IN `subscriptionType` VARCHAR(10), IN `discountApplied` BIT)   BEGIN
     DECLARE paymentAmount DECIMAL(10, 2);
     IF subscriptionType = 'SD' THEN
         SET paymentAmount = 7.99;
@@ -515,14 +515,14 @@ CREATE `process_payment` (IN `userId` INT, IN `subscriptionType` VARCHAR(10), IN
     VALUES (userId, subscriptionType, paymentAmount, discountApplied, b'1');
 END$$
 
-CREATE `SetUserBlocked` (IN `p_email` INT(11))   BEGIN
+CREATE PROCEDURE `SetUserBlocked` (IN `p_email` INT(11))   BEGIN
     UPDATE `user`
     SET `lock_time` = current_timestamp(),
 `blocked` = 1
     WHERE `email` = p_email;
 END$$
 
-CREATE `UpdateEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
+CREATE PROCEDURE `UpdateEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     UPDATE `episode`
     SET 
         `title` = p_title,
@@ -531,13 +531,13 @@ CREATE `UpdateEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_
     WHERE `episode_id` = p_episode_id;
 END$$
 
-CREATE `UpdateGenre` (IN `p_genre_id` INT, IN `p_genre_name` VARCHAR(255))   BEGIN
+CREATE PROCEDURE `UpdateGenre` (IN `p_genre_id` INT, IN `p_genre_name` VARCHAR(255))   BEGIN
     UPDATE `genre`
     SET `genre_name` = p_genre_name
     WHERE `genre_id` = p_from_genre_id;
 END$$
 
-CREATE `UpdateGenreForMovie` (IN `p_old_genre_id` INT, IN `p_old_movie_id` INT, IN `p_new_genre_id` INT, IN `p_new_movie_id` INT)   BEGIN
+CREATE PROCEDURE `UpdateGenreForMovie` (IN `p_old_genre_id` INT, IN `p_old_movie_id` INT, IN `p_new_genre_id` INT, IN `p_new_movie_id` INT)   BEGIN
     UPDATE genreformovie
     SET
         genre_id = p_new_genre_id,
@@ -545,7 +545,7 @@ CREATE `UpdateGenreForMovie` (IN `p_old_genre_id` INT, IN `p_old_movie_id` INT, 
     WHERE genre_id = p_old_genre_id AND movie_id = p_old_movie_id;
 END$$
 
-CREATE `UpdateGenreForSeries` (IN `p_old_genre_id` INT, IN `p_old_series_id` INT, IN `p_new_genre_id` INT, IN `p_new_series_id` INT)   BEGIN
+CREATE PROCEDURE `UpdateGenreForSeries` (IN `p_old_genre_id` INT, IN `p_old_series_id` INT, IN `p_new_genre_id` INT, IN `p_new_series_id` INT)   BEGIN
     UPDATE genreforseries
     SET
         genre_id = p_new_genre_id,
@@ -553,7 +553,7 @@ CREATE `UpdateGenreForSeries` (IN `p_old_genre_id` INT, IN `p_old_series_id` INT
     WHERE genre_id = p_old_genre_id AND series_id = p_old_series_id;
 END$$
 
-CREATE `UpdateGenreForUser` (IN `p_old_user_id` INT, IN `p_old_genre_id` INT, IN `p_new_user_id` INT, IN `p_new_genre_id` INT)   BEGIN
+CREATE PROCEDURE `UpdateGenreForUser` (IN `p_old_user_id` INT, IN `p_old_genre_id` INT, IN `p_new_user_id` INT, IN `p_new_genre_id` INT)   BEGIN
 
     UPDATE GenreForUser
     SET
@@ -562,13 +562,13 @@ CREATE `UpdateGenreForUser` (IN `p_old_user_id` INT, IN `p_old_genre_id` INT, IN
     WHERE user_id = p_old_user_id AND genre_id = p_old_genre_id;
 END$$
 
-CREATE `UpdateLanguage` (IN `p_language_id` INT(11), IN `p_name` VARCHAR(255))   BEGIN
+CREATE PROCEDURE `UpdateLanguage` (IN `p_language_id` INT(11), IN `p_name` VARCHAR(255))   BEGIN
     UPDATE `language`
     SET `name` = p_name
     WHERE `language_id` = p_language_id;
 END$$
 
-CREATE `UpdateMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
+CREATE PROCEDURE `UpdateMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
     UPDATE `movie`
     SET 
         `title` = p_title,
@@ -580,7 +580,7 @@ CREATE `UpdateMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255), IN `p_
     WHERE `movie_id` = p_movie_id;
 END$$
 
-CREATE `UpdateMovieProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_movie_id` INT, IN `p_new_profile_id` INT, IN `p_new_movie_id` INT)   BEGIN
+CREATE PROCEDURE `UpdateMovieProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_movie_id` INT, IN `p_new_profile_id` INT, IN `p_new_movie_id` INT)   BEGIN
     UPDATE movieprofilewatchlist
     SET
         profile_id = p_new_profile_id,
@@ -588,7 +588,7 @@ CREATE `UpdateMovieProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_movie
     WHERE profile_id = p_old_profile_id AND movie_id = p_old_movie_id;
 END$$
 
-CREATE `UpdateMovieViewCount` (IN `p_account_id` INT, IN `p_movie_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
+CREATE PROCEDURE `UpdateMovieViewCount` (IN `p_account_id` INT, IN `p_movie_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
     UPDATE movieviewcount
     SET
         number = p_new_number,
@@ -596,7 +596,7 @@ CREATE `UpdateMovieViewCount` (IN `p_account_id` INT, IN `p_movie_id` INT, IN `p
     WHERE account_id = p_account_id AND movie_id = p_movie_id;
 END$$
 
-CREATE `UpdateProfile` (IN `p_profile_id` INT(11), IN `p_accountId` INT(11), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
+CREATE PROCEDURE `UpdateProfile` (IN `p_profile_id` INT(11), IN `p_accountId` INT(11), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
     UPDATE `profile`
     SET 
         `account_id` = p_account_id, 
@@ -606,7 +606,7 @@ CREATE `UpdateProfile` (IN `p_profile_id` INT(11), IN `p_accountId` INT(11), IN 
     WHERE `profile_id` = p_profile_id;
 END$$
 
-CREATE `UpdateSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(3))   BEGIN
+CREATE PROCEDURE `UpdateSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(3))   BEGIN
     UPDATE `series`
     SET 
         `title` = p_title,
@@ -614,7 +614,7 @@ CREATE `UpdateSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(255), IN `
     WHERE `series_id` = p_series_id;
 END$$
 
-CREATE `UpdateSeriesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_series_id` INT, IN `p_new_profile_id` INT, IN `p_new_series_id` INT)   BEGIN
+CREATE PROCEDURE `UpdateSeriesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_series_id` INT, IN `p_new_profile_id` INT, IN `p_new_series_id` INT)   BEGIN
     UPDATE seriesprofilewatchlist
     SET
         profile_id = p_new_profile_id,
@@ -622,7 +622,7 @@ CREATE `UpdateSeriesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_seri
     WHERE profile_id = p_old_profile_id AND series_id = p_old_series_id;
 END$$
 
-CREATE `UpdateSeriesViewCount` (IN `p_account_id` INT, IN `p_series_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
+CREATE PROCEDURE `UpdateSeriesViewCount` (IN `p_account_id` INT, IN `p_series_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
     UPDATE seriesviewcount
     SET
         number = p_new_number,
@@ -630,7 +630,7 @@ CREATE `UpdateSeriesViewCount` (IN `p_account_id` INT, IN `p_series_id` INT, IN 
     WHERE account_id = p_account_id AND series_id = p_series_id;
 END$$
 
-CREATE `UpdateUser` (IN `p_account_id` INT(11), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_blocked` BIT(1), OUT `output` VARCHAR(255), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
+CREATE PROCEDURE `UpdateUser` (IN `p_account_id` INT(11), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_blocked` BIT(1), OUT `output` VARCHAR(255), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
     UPDATE `user`
     SET 
         `password` = p_password,
