@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface SeriesViewCountRepository extends JpaRepository<SeriesViewCount, Integer> {
-    Optional<SeriesViewCount> findByUser_AccountIdAndSeries_SeriesIdAndEpisode_EpisodeId(Integer accountId, Integer seriesId, Integer episodeId);
+    Optional<SeriesViewCount> findByUser_AccountIdAndSeries_SeriesId(Integer accountId, Integer seriesId);
     //THis MF wasted me 3 hours because of naming convention
 }

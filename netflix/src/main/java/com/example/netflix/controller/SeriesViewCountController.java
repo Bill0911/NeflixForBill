@@ -27,8 +27,8 @@ public class SeriesViewCountController {
     }
 
     @PostMapping("/increment-view-count")
-    public ResponseEntity<Void> incrementViewCount(@RequestParam Integer accountId, @RequestParam Integer seriesId, @RequestParam Integer episodeId) {
-        seriesViewCountService.incrementViewCount(accountId, seriesId, episodeId);
+    public ResponseEntity<Void> incrementViewCount(@RequestParam Integer accountId, @RequestParam Integer seriesId) {
+        seriesViewCountService.incrementViewCount(accountId, seriesId);
         return ResponseEntity.ok().build();
     }
 }

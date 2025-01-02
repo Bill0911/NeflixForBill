@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 02, 2025 at 02:16 PM
+-- Generation Time: Jan 02, 2025 at 03:47 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -74,12 +74,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `AddMovieViewCount` (IN `p_movieId` 
     ) THEN
         -- If it exists, increment the view count
         UPDATE movieviewcount
-        SET number = number + 1
+        SET number = number + 1, last_viewed = current_timestamp()
         WHERE account_id = p_accountId AND movie_id = p_movieId;
     ELSE
         -- If it doesn't exist, create a new entry with initial count = 1
-        INSERT INTO movieviewcount (`account_id`, `movie_id`, `number`)
-        VALUES (p_accountId, p_movieId, 1);
+        INSERT INTO movieviewcount (`account_id`, `movie_id`, `number`, `last_viewed`)
+        VALUES (p_accountId, p_movieId, 1, current_timestamp());
     END IF;
 END$$
 
@@ -107,12 +107,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `AddSeriesViewCount` (IN `p_seriesId
     ) THEN
         -- If it exists, increment the view count
         UPDATE seriesviewcount
-        SET number = number + 1
+        SET number = number + 1, last_viewed = current_timestamp()
         WHERE series_id = p_seriesId AND account_id = p_accountId;
     ELSE
         -- If it doesn't exist, create a new entry with initial count = 1
-        INSERT INTO seriesviewcount (`account_id`, `series_id`, `number`)
-        VALUES (p_accountId, p_seriesId, 1);
+        INSERT INTO seriesviewcount (`account_id`, `series_id`, `number`, `last_viewed`)
+        VALUES (p_accountId, p_seriesId, 1, current_timestamp());
     END IF;
 END$$
 
@@ -382,6 +382,24 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `PatchMovie` (IN `p_movie_id` INT(11
     WHERE `movie_id` = p_movie_id;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `PatchProfile` (IN `p_profile_id` INT(11), IN `p_account_id` INT(11), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
+    UPDATE `profile`
+    SET 
+        `account_id` = COALESCE(p_account_id, `account_id`),
+        `profile_image` = COALESCE(p_profile_image, `profile_image`),
+        `age` = COALESCE(p_age, `age`),
+        `name` = COALESCE(p_name, `name`)
+    WHERE `profile_id` = p_profile_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `PatchSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(3))   BEGIN
+    UPDATE `profile`
+    SET 
+        `title` = COALESCE(p_title, `title`),
+        `minimum_age` = COALESCE(p_minimum_age, `minimum_age`)
+    WHERE `series_id` = p_series_id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `PatchUser` (IN `p_account_id` INT(11), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_blocked` BIT(1), OUT `output` VARCHAR(255), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
     UPDATE `user`
     SET 
@@ -432,6 +450,42 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateGenre` (IN `p_genre_id` INT, 
     UPDATE `genre`
     SET `genre_name` = p_genre_name
     WHERE `genre_id` = p_from_genre_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateLanguage` (IN `p_language_id` INT(11), IN `p_name` VARCHAR(255))   BEGIN
+    UPDATE `language`
+    SET `name` = p_name
+    WHERE `language_id` = p_language_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
+    UPDATE `movie`
+    SET 
+        `title` = p_title,
+        `duration` = p_duration,
+        `sd_available` = p_sd_available,
+        `hd_available` = p_hd_available,
+        `uhd_available` = p_uhd_available,
+        `minimum_age` = p_minimum_age
+    WHERE `movie_id` = p_movie_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateProfile` (IN `p_profile_id` INT(11), IN `p_accountId` INT(11), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
+    UPDATE `profile`
+    SET 
+        `account_id` = p_account_id, 
+        `profile_image` = p_profile_image, 
+        `age` = p_age, 
+        `name` = p_name 
+    WHERE `profile_id` = p_profile_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(3))   BEGIN
+    UPDATE `series`
+    SET 
+        `title` = p_title,
+        `minimum_age` = p_minimum_age
+    WHERE `series_id` = p_series_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateUser` (IN `p_account_id` INT(11), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_blocked` BIT(1), OUT `output` VARCHAR(255), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
@@ -990,6 +1044,12 @@ ALTER TABLE `user`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `episode`
+--
+ALTER TABLE `episode`
+  ADD CONSTRAINT `FK_episode_series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `genreformovie`
