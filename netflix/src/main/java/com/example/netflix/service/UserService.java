@@ -173,8 +173,8 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void inviteUser(Integer userId, Integer invitedUserId) {
-        Optional<User> userOptional = userRepository.findById(userId);
+    public void inviteUser(Integer accountId, Integer invitedUserId) {
+        Optional<User> userOptional = userRepository.findById(accountId);
         Optional<User> invitedUserOptional = userRepository.findById(invitedUserId);
 
         if (userOptional.isEmpty() || invitedUserOptional.isEmpty()) {
@@ -184,7 +184,7 @@ public class UserService {
         User user = userOptional.get();
         User invitedUser = invitedUserOptional.get();
 
-        if (userId.equals(invitedUserId)) {
+        if (accountId.equals(invitedUserId)) {
             throw new IllegalArgumentException("User cannot invite themselves");
         }
 

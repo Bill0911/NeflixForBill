@@ -624,7 +624,8 @@ INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `active
 (9, 'somepersonwhatever@hello.com', '$2a$10$DhZSCWySz9rypM/jM8mR6.yzaCPIpugVlITMSWx9whkmEp1ciPK42', 'something', b'0', b'0', 'SD', '2024-12-20 17:24:39', '2024-12-27 17:24:39', 2, 'JUNIOR', 0, NULL, b'0'),
 (10, 'iamsteve@hello.com', '$2a$10$92qxixAWTf94z9sK.Lf2iebtyLdBV9ckOx.xfzGLv4enlX5gdsis6', 'mastercard', b'0', b'0', 'SD', '2024-12-20 17:58:22', '2024-12-27 17:58:22', 3, 'JUNIOR', 0, NULL, b'0'),
 (15, 'test1@.com', '$2a$10$aP97IvFmxH8yLGuL1012Xe4sfLd6s1SdokAAKOhG3.tvWCTkmfD2.', 'some method', b'0', b'0', 'SD', '2024-12-20 22:46:29', '2024-12-27 22:46:29', 3, 'JUNIOR', 1, NULL, b'0'),
-(17, 'medior.fjodor@g.com', '$2a$10$gQuhxuEegp0Ypg.IrGiL8.bmQwV4sdMzXirKh7N0N4KbOXAq4xwFi', 'some money transfer method', b'0', b'0', 'SD', '2024-12-23 17:55:18', '2024-12-30 17:55:18', 3, 'JUNIOR', 0, NULL, b'0');
+(17, 'medior.fjodor@g.com', '$2a$10$gQuhxuEegp0Ypg.IrGiL8.bmQwV4sdMzXirKh7N0N4KbOXAq4xwFi', 'some money transfer method', b'0', b'0', 'SD', '2024-12-23 17:55:18', '2024-12-30 17:55:18', 3, 'JUNIOR', 0, NULL, b'0'),
+(18, 'billyJ@outlook.com', '$2a$10$3', 'IDEAL', b'0', b'0', 'SD', '2024-12-23 18:00:00', '2024-12-30 18:00:00', 3, 'JUNIOR', 0, NULL, b'0');
 
 -- --------------------------------------------------------
 
@@ -646,7 +647,18 @@ CREATE TABLE `user_genre_count` (
 --
 DROP TABLE IF EXISTS `paymentstatus`;
 
-CREATE VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`account_id` AS `account_id`, `u`.`email` AS `email`, `p`.`subscription_type` AS `subscription_type`, `p`.`payment_amount` AS `payment_amount`, `p`.`is_paid` AS `is_paid`, `p`.`is_discount_applied` AS `is_discount_applied`, `p`.`payment_date` AS `payment_date` FROM (`payments` `p` join `user` `u` on(`p`.`account_id` = `u`.`account_id`)) ;
+CREATE VIEW `paymentstatus` AS 
+SELECT `p`.`payment_id` AS `payment_id`, 
+`u`.`account_id` AS `account_id`, 
+`u`.`email` AS `email`, 
+`p`.`subscription_type` AS `subscription_type`, 
+`p`.`payment_amount` AS `payment_amount`, 
+`p`.`is_paid` AS `is_paid`, 
+`p`.`is_discount_applied` AS 
+`is_discount_applied`, 
+`p`.`payment_date` AS `payment_date` 
+FROM (`payments` `p` 
+join `user` `u` on(`p`.`account_id` = `u`.`account_id`)) ;
 
 -- --------------------------------------------------------
 
@@ -655,7 +667,27 @@ CREATE VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`ac
 --
 DROP TABLE IF EXISTS `subscriptioncosts`;
 
-CREATE VIEW `subscriptioncosts`  AS SELECT `u`.`account_id` AS `UserID`, `u`.`email` AS `Email`, `u`.`subscription` AS `SubscriptionType`, CASE WHEN to_days(curdate()) - to_days(`u`.`trial_start_date`) <= 7 THEN 0 ELSE CASE WHEN `u`.`subscription` = 'SD' THEN 10 WHEN `u`.`subscription` = 'HD' THEN 15 WHEN `u`.`subscription` = 'UHD' THEN 20 ELSE 0 END- CASE WHEN `u`.`discount` = 1 THEN 2 ELSE 0 END END AS `SubscriptionCost` FROM `user` AS `u` ;
+CREATE VIEW `subscriptioncosts` AS 
+SELECT 
+    `u`.`account_id` AS `UserID`, 
+    `u`.`email` AS `Email`, 
+    `u`.`subscription` AS `SubscriptionType`, 
+    CASE 
+        WHEN TO_DAYS(CURDATE()) - TO_DAYS(`u`.`trial_start_date`) <= 7 THEN 0 
+        ELSE 
+            CASE 
+                WHEN `u`.`subscription` = 'SD' THEN 7.99 
+                WHEN `u`.`subscription` = 'HD' THEN 10.99 
+                WHEN `u`.`subscription` = 'UHD' THEN 13.99 
+                ELSE 0 
+            END - 
+            CASE 
+                WHEN `u`.`discount` = 1 THEN 2 
+                ELSE 0 
+            END 
+    END AS `SubscriptionCost` 
+FROM 
+    `user` AS `u`;
 
 -- --------------------------------------------------------
 

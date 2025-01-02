@@ -63,31 +63,25 @@ public class JwtUtil {
     }
 
     private String createToken(Map<String, Object> claims, long expirationTime) {
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
-        System.out.println("Created token: " + token);
-        return token;
     }
 
     private Claims extractAllClaims(String token) {
         try {
-            Claims claims = Jwts.parserBuilder()
+            return Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            System.out.println("Extracted claims: " + claims);
-            return claims;
         } catch (ExpiredJwtException e) {
-            System.out.println("Token has expired");
-            throw new RuntimeException("Token has expired");
+            throw new RuntimeException("Token has expired", e);
         } catch (JwtException e) {
-            System.out.println("Invalid token");
-            throw new RuntimeException("Invalid token");
+            throw new RuntimeException("Invalid token", e);
         }
     }
 }

@@ -16,17 +16,17 @@ import java.util.Optional;
 @Service
 public class PaymentService {
 
+    private static final Logger logger = LoggerFactory.getLogger(PaymentService.class);
+
     @Autowired
     private PaymentRepository paymentRepository;
-
-    private static final Logger logger = LoggerFactory.getLogger(PaymentService.class);
 
     @Autowired
     private UserRepository userRepository;
 
     public Payment processPayment(Integer userId, SubscriptionType subscriptionType, boolean discountApplied) {
         logger.info("Processing payment for userId: {}, subscriptionType: {}, discountApplied: {}", userId, subscriptionType, discountApplied);
-        
+
         Optional<User> userOptional = userRepository.findById(userId);
         if (!userOptional.isPresent()) {
             logger.error("User not found for userId: {}", userId);
@@ -72,27 +72,5 @@ public class PaymentService {
         Payment savedPayment = paymentRepository.save(payment);
         logger.info("Payment processed successfully for userId: {}", userId);
         return savedPayment;
-    }
-
-    public void applyDiscount(Integer userId, Integer invitedUserId)
-    {
-        Optional<User> userOptional = userRepository.findById(userId);
-        Optional<User> invitedUserOptional = userRepository.findById(invitedUserId);
-
-        if (userOptional.isEmpty() || invitedUserOptional.isEmpty())
-        {
-            throw new IllegalArgumentException("User not found");
-        }
-
-        User user = userOptional.get();
-        User invitedUser = invitedUserOptional.get();
-
-        if (user.isActive() && invitedUser.isActive())
-        {
-            user.setDiscount(true);
-            invitedUser.setDiscount(true);
-            userRepository.save(user);
-            userRepository.save(invitedUser);
-        }
     }
 }
