@@ -470,19 +470,6 @@ INSERT INTO `movieviewcount` (`account_id`, `movie_id`, `number`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `password_reset_tokens`
---
-
-CREATE TABLE `password_reset_tokens` (
-  `id` bigint(20) NOT NULL,
-  `token` varchar(255) NOT NULL,
-  `user_id` bigint(20) NOT NULL,
-  `expiry_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `payments`
 --
 
@@ -607,6 +594,7 @@ CREATE TABLE `user` (
   `blocked` bit(1) DEFAULT b'0',
   `subscription` enum('SD','HD','UHD') DEFAULT 'SD',
   `trial_start_date` datetime DEFAULT NULL,
+  `trial_end_date` datetime DEFAULT NULL,  -- New column for trial end date
   `language_id` int(11) UNSIGNED DEFAULT NULL,
   `role` enum('JUNIOR','MEDIOR','SENIOR') DEFAULT 'JUNIOR',
   `failed_attempts` int(11) DEFAULT 0,
@@ -614,21 +602,29 @@ CREATE TABLE `user` (
   `discount` bit(1) DEFAULT b'0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+SET SQL_SAFE_UPDATES = 0;
+
+UPDATE `user`
+SET `trial_end_date` = DATE_ADD(`trial_start_date`, INTERVAL 7 DAY)
+WHERE `trial_start_date` IS NOT NULL;
+
+SET SQL_SAFE_UPDATES = 1;
+-- the update statement will set the trial end date to 7 days after the trial start date
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `blocked`, `subscription`, `trial_start_date`, `language_id`, `role`, `failed_attempts`, `lock_time`, `discount`) VALUES
-(1, 'fjodor.smorodins@gmail.com', '$2a$10$hszeHDUNOv4lnd24ZS9sOeOkOJUYo5zSi2H2makEPti1uznr4s5P2', 'abc', b'0', 'SD', '2024-12-07 14:32:59', 4, 'SENIOR', 0, NULL, b'0'),
-(2, 'fjodorsm@gmail.com', '$2a$10$2QlecdJ25ELwT/avANQAUelbxtS9tysiRO5LSE0omLATaWhdAPfZC', 'Credit Card', b'0', 'SD', '2024-12-07 14:33:33', 1, 'JUNIOR', 0, NULL, b'0'),
-(3, 'smorodins@gmail.com', '$2a$10$KhhGnFeK2q32DYG7/fMhNe/GEzf1dDJVkQqq5isK1vwuIO9h0zor.', 'CrC', b'0', 'SD', '2024-12-16 18:54:30', 3, 'JUNIOR', 0, NULL, b'0'),
-(5, 'fjodors@hello.com', '$2a$10$hKsRL99MRpKUr.vrJPqsfuG3qhGkDjXQEYDxHytWFBYgW7HZJ/54W', 'golden bars', b'0', 'SD', '2024-12-20 16:19:25', 2, 'JUNIOR', 0, NULL, b'0'),
-(6, 'artjoms.grishajevs@hello.com', '$2a$10$NboUZOHniHtnfHhFFECcF.dA64uJsp.8/OnD0B0NEuMvTyvIfN7we', 'children', b'0', 'SD', '2024-12-20 16:24:58', 1, 'JUNIOR', 0, NULL, b'0'),
-(7, 'somebody@hello.com', '$2a$10$4H41Ugw1ho9ga4DfTV1rwegl.uxbZcTbEu3/SBeklNzsHnXoYliTe', 'money', b'0', 'SD', '2024-12-20 17:08:59', 1, 'JUNIOR', 0, NULL, b'0'),
-(9, 'somepersonwhatever@hello.com', '$2a$10$DhZSCWySz9rypM/jM8mR6.yzaCPIpugVlITMSWx9whkmEp1ciPK42', 'something', b'0', 'SD', '2024-12-20 17:24:39', 2, 'JUNIOR', 0, NULL, b'0'),
-(10, 'iamsteve@hello.com', '$2a$10$92qxixAWTf94z9sK.Lf2iebtyLdBV9ckOx.xfzGLv4enlX5gdsis6', 'mastercard', b'0', 'SD', '2024-12-20 17:58:22', 3, 'JUNIOR', 0, NULL, b'0'),
-(15, 'test1@.com', '$2a$10$aP97IvFmxH8yLGuL1012Xe4sfLd6s1SdokAAKOhG3.tvWCTkmfD2.', 'some method', b'0', 'SD', '2024-12-20 22:46:29', 3, 'JUNIOR', 1, NULL, b'0'),
-(17, 'medior.fjodor@g.com', '$2a$10$gQuhxuEegp0Ypg.IrGiL8.bmQwV4sdMzXirKh7N0N4KbOXAq4xwFi', 'some money transfer method', b'0', 'SD', '2024-12-23 17:55:18', 3, 'JUNIOR', 0, NULL, b'0');
+INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `active`, `blocked`, `subscription`, `trial_start_date`, `trial_end_date`, `language_id`, `role`, `failed_attempts`, `lock_time`, `discount`) VALUES
+(1, 'fjodor.smorodins@gmail.com', '$2a$10$hszeHDUNOv4lnd24ZS9sOeOkOJUYo5zSi2H2makEPti1uznr4s5P2', 'abc', b'0', b'0', 'SD', '2024-12-07 14:32:59', '2024-12-14 14:32:59', 4, 'SENIOR', 0, NULL, b'0'),
+(2, 'fjodorsm@gmail.com', '$2a$10$2QlecdJ25ELwT/avANQAUelbxtS9tysiRO5LSE0omLATaWhdAPfZC', 'Credit Card', b'0', b'0', 'SD', '2024-12-07 14:33:33', '2024-12-14 14:33:33', 1, 'JUNIOR', 0, NULL, b'0'),
+(3, 'smorodins@gmail.com', '$2a$10$KhhGnFeK2q32DYG7/fMhNe/GEzf1dDJVkQqq5isK1vwuIO9h0zor.', 'CrC', b'0', b'0', 'SD', '2024-12-16 18:54:30', '2024-12-23 18:54:30', 3, 'JUNIOR', 0, NULL, b'0'),
+(5, 'fjodors@hello.com', '$2a$10$hKsRL99MRpKUr.vrJPqsfuG3qhGkDjXQEYDxHytWFBYgW7HZJ/54W', 'golden bars', b'0', b'0', 'SD', '2024-12-20 16:19:25', '2024-12-27 16:19:25', 2, 'JUNIOR', 0, NULL, b'0'),
+(6, 'artjoms.grishajevs@hello.com', '$2a$10$NboUZOHniHtnfHhFFECcF.dA64uJsp.8/OnD0B0NEuMvTyvIfN7we', 'children', b'0', b'0', 'SD', '2024-12-20 16:24:58', '2024-12-27 16:24:58', 1, 'JUNIOR', 0, NULL, b'0'),
+(7, 'somebody@hello.com', '$2a$10$4H41Ugw1ho9ga4DfTV1rwegl.uxbZcTbEu3/SBeklNzsHnXoYliTe', 'money', b'0', b'0', 'SD', '2024-12-20 17:08:59', '2024-12-27 17:08:59', 1, 'JUNIOR', 0, NULL, b'0'),
+(9, 'somepersonwhatever@hello.com', '$2a$10$DhZSCWySz9rypM/jM8mR6.yzaCPIpugVlITMSWx9whkmEp1ciPK42', 'something', b'0', b'0', 'SD', '2024-12-20 17:24:39', '2024-12-27 17:24:39', 2, 'JUNIOR', 0, NULL, b'0'),
+(10, 'iamsteve@hello.com', '$2a$10$92qxixAWTf94z9sK.Lf2iebtyLdBV9ckOx.xfzGLv4enlX5gdsis6', 'mastercard', b'0', b'0', 'SD', '2024-12-20 17:58:22', '2024-12-27 17:58:22', 3, 'JUNIOR', 0, NULL, b'0'),
+(15, 'test1@.com', '$2a$10$aP97IvFmxH8yLGuL1012Xe4sfLd6s1SdokAAKOhG3.tvWCTkmfD2.', 'some method', b'0', b'0', 'SD', '2024-12-20 22:46:29', '2024-12-27 22:46:29', 3, 'JUNIOR', 1, NULL, b'0'),
+(17, 'medior.fjodor@g.com', '$2a$10$gQuhxuEegp0Ypg.IrGiL8.bmQwV4sdMzXirKh7N0N4KbOXAq4xwFi', 'some money transfer method', b'0', b'0', 'SD', '2024-12-23 17:55:18', '2024-12-30 17:55:18', 3, 'JUNIOR', 0, NULL, b'0');
 
 -- --------------------------------------------------------
 
