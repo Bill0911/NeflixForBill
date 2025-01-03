@@ -24,30 +24,47 @@ public class PaymentService {
     private UserRepository userRepository;
 
     public Payment processPayment(Integer userId, SubscriptionType subscriptionType, boolean discountApplied) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        // Check if user exists
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+
+        // Calculate payment amount based on subscription type and discount
+        double paymentAmount = calculatePaymentAmount(subscriptionType, discountApplied);
+
+        // Create a new payment record
         Payment payment = new Payment();
         payment.setUser(user);
         payment.setSubscriptionType(subscriptionType);
+        payment.setPaymentAmount(paymentAmount);
         payment.setDiscountApplied(discountApplied);
         payment.setPaid(true);
         payment.setPaymentDate(LocalDateTime.now());
+        payment.setNextBillingDate(LocalDateTime.now().plusMonths(1));
 
-        LocalDateTime nextBillingDate = LocalDateTime.now().plusMonths(1);
-        payment.setNextBillingDate(nextBillingDate);
-
+        // Save the payment record
         paymentRepository.save(payment);
 
         return payment;
     }
 
-    public void updateBillingStatus() {
-        LocalDateTime currentDate = LocalDateTime.now();
-        List<Payment> payments = paymentRepository.findAll();
-        for (Payment payment : payments) {
-            if (payment.getNextBillingDate().isBefore(currentDate) && !payment.isPaid()) {
-                payment.setPaid(false);
-                paymentRepository.save(payment);
-            }
+    private double calculatePaymentAmount(SubscriptionType subscriptionType, boolean discountApplied) {
+        double amount;
+        switch (subscriptionType)
+        {
+            case SD:
+                amount = 7.99;
+                break;
+            case HD:
+                amount = 10.99;
+                break;
+            case UHD:
+                amount = 13.99;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown subscription type: " + subscriptionType);
         }
+        if (discountApplied) {
+            amount -= 2.00;
+        }
+        return amount;
     }
 }
