@@ -36,13 +36,14 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void registerUser(User user, String token) {
+    public User register(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         user.setActive(false);
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
         // Debug statement to check the encoded password
         System.out.println("Encoded password during registration: " + encodedPassword);
+        return savedUser;
     }
 
     @Transactional

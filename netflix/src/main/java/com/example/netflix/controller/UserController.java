@@ -33,18 +33,20 @@ public class UserController {
         }
         throw new RuntimeException("Invalid Authorization header");
     }
-
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody User user) {
+    public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
         try {
-            String token = jwtUtil.generateActivationToken(user.getEmail());
-            userService.registerUser(user, token);
-            // Log the activation token to the console for testing purposes
-            System.out.println("Activation token for " + user.getEmail() + ": " + token);
-            // Return the token in the response for testing purposes
-            return ResponseEntity.ok(token);
+            User registeredUser = userService.register(user);
+            String token = jwtUtil.generateActivationToken(registeredUser.getEmail());
+            String activationLink = "http://localhost:8081/api/users/activate?token=" + token;
+
+            return ResponseEntity.ok(Map.of(
+                    "activationLink", activationLink
+            ));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "error", e.getMessage()
+            ));
         }
     }
 
@@ -116,7 +118,7 @@ public class UserController {
             String email = request.get("email");
             userService.requestPasswordReset(email);
             String token = jwtUtil.generatePasswordResetToken(email);
-            //System.out.println("Password reset token: " + token);
+            System.out.println("Password reset token: " + token);
             return ResponseEntity.ok(token);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());

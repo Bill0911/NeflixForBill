@@ -2,18 +2,39 @@ package com.example.netflix.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @Component
 public class JwtUtil {
 
-    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final long expiration = 3600000; // 1 hour in milliseconds
+    private static final Logger logger = Logger.getLogger(JwtUtil.class.getName());
+
+    @Value("${jwt.secret}")
+    private String secret;
+
+    @Value("${jwt.expiration}")
+    private long expiration;
+
+    private Key secretKey;
+
+    @PostConstruct
+    public void init() {
+        try {
+            logger.info("Initializing JwtUtil with secret and expiration: " + expiration);
+            this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
+        } catch (Exception e) {
+            logger.severe("Error initializing JwtUtil: " + e.getMessage());
+            throw e;
+        }
+    }
 
     //========login token======//
     public String generateToken(int accountId, String role) {
@@ -32,12 +53,14 @@ public class JwtUtil {
         Claims claims = extractAllClaims(token);
         return (String) claims.get("role");
     }
+
     //========Activation token========//
     public String generateActivationToken(String email) {
-       Map<String, Object> claims = new HashMap<>();
-       claims.put("email", email);
-       return createToken(claims, 24 * 60 * 60 * 1000); // 24 hours expiration for activation token
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("email", email);
+        return createToken(claims, 24 * 60 * 60 * 1000); // 24 hours expiration for activation token
     }
+
     //=======reset password token=======//
     public String generatePasswordResetToken(String email) {
         Map<String, Object> claims = new HashMap<>();

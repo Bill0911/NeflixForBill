@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PaymentService {
@@ -30,17 +31,30 @@ public class PaymentService {
         // Calculate payment amount based on subscription type and discount
         double paymentAmount = calculatePaymentAmount(subscriptionType, discountApplied);
 
-        // Create a new payment record
-        Payment payment = new Payment();
-        payment.setUser(user);
-        payment.setSubscriptionType(subscriptionType);
-        payment.setPaymentAmount(paymentAmount);
-        payment.setDiscountApplied(discountApplied);
-        payment.setPaid(true);
-        payment.setPaymentDate(LocalDateTime.now());
-        payment.setNextBillingDate(LocalDateTime.now().plusMonths(1));
+        // Check if a payment record already exists for this user
+        Optional<Payment> existingPaymentOpt = paymentRepository.findByUserAccountId(userId);
 
-        // Save the payment record
+        Payment payment;
+        if (existingPaymentOpt.isPresent()) {
+            // Update the existing payment record
+            payment = existingPaymentOpt.get();
+            payment.setSubscriptionType(subscriptionType);
+            payment.setPaymentAmount(paymentAmount);
+            payment.setDiscountApplied(discountApplied);
+            payment.setPaid(true);
+            payment.setPaymentDate(LocalDateTime.now());
+            payment.setNextBillingDate(LocalDateTime.now().plusMonths(1));
+        } else {
+            payment = new Payment();
+            payment.setUser(user);
+            payment.setSubscriptionType(subscriptionType);
+            payment.setPaymentAmount(paymentAmount);
+            payment.setDiscountApplied(discountApplied);
+            payment.setPaid(true);
+            payment.setPaymentDate(LocalDateTime.now());
+            payment.setNextBillingDate(LocalDateTime.now().plusMonths(1));
+        }
+
         paymentRepository.save(payment);
 
         return payment;
