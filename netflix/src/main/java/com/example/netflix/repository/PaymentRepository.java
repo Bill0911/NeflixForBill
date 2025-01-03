@@ -8,12 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Integer>
 {
-    @Modifying
-    @Transactional
-    @Query("UPDATE Payment p SET p.nextBillingDate = :nextBillingDate WHERE p.user.accountId = :userId")
-    void updateNextBillingDate(Integer userId, LocalDateTime nextBillingDate);
+    Optional<Payment> findByUserAccountId(Integer userId);
 }
