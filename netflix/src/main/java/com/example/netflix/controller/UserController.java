@@ -6,11 +6,13 @@ import com.example.netflix.entity.Profile;
 import com.example.netflix.entity.User;
 import com.example.netflix.security.JwtUtil;
 import com.example.netflix.service.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+import java.util.Map;
 
 
 @RestController
@@ -34,8 +36,31 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
-        userService.registerUser(user);
-        return ResponseEntity.ok("User registered successfully");
+        try {
+            String token = jwtUtil.generateActivationToken(user.getEmail());
+            userService.registerUser(user, token);
+            // Log the activation token to the console for testing purposes
+            System.out.println("Activation token for " + user.getEmail() + ": " + token);
+            // Return the token in the response for testing purposes
+            return ResponseEntity.ok(token);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/activate")
+    public ResponseEntity<String> activateUser(@RequestParam String token) {
+        try {
+            String email = jwtUtil.extractEmail(token);
+            userService.activateUser(email);
+            return ResponseEntity.ok("User activated successfully.");
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token has expired.");
+        } catch (JwtException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid token.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
     @PostMapping("/login")
@@ -51,6 +76,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login failed: " + e.getMessage());
         }
     }
+
     @GetMapping("/lang")
     public ResponseEntity<String> getLanguage(@RequestHeader("Authorization") String token) {
         try {
@@ -84,31 +110,36 @@ public class UserController {
         }
     }
 
-    @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestParam String email)
-    {
+    @PostMapping("/request-password-reset")
+    public ResponseEntity<String> requestPasswordReset(@RequestBody Map<String, String> request) {
         try {
-            String token = UUID.randomUUID().toString();
-            userService.createPasswordResetToken(email, token);
-
-            // Log the reset token to the console (simulating email sending)
-            System.out.println("Password reset token for " + email + ": " + token);
-
-            return ResponseEntity.ok("Password reset token has been generated. Check the console for the token.");
+            String email = request.get("email");
+            userService.requestPasswordReset(email);
+            String token = jwtUtil.generatePasswordResetToken(email);
+            //System.out.println("Password reset token: " + token);
+            return ResponseEntity.ok(token);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword)
-    {
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) {
         try {
-            userService.resetPassword(token, newPassword);
-            return ResponseEntity.ok("Password has been reset successfully.");
+            String token = request.get("token");
+            String newPassword = request.get("newPassword");
+            String email = jwtUtil.extractEmailFromPasswordResetToken(token);
+            System.out.println("Email extracted from token: " + email);
+            userService.resetPassword(email, newPassword);
+            return ResponseEntity.ok("Password reset successfully.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 
+    @PostMapping("/invite")
+    public void inviteUser(@RequestParam Integer userId, @RequestParam Integer invitedAccountId)
+    {
+        userService.inviteUser(userId, invitedAccountId);
+    }
 }

@@ -1,38 +1,17 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Dec 24, 2024 at 05:24 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `netflix`
 --
+SET GLOBAL event_scheduler = ON; --in case for payment status
 
 DELIMITER $$
 --
 -- Procedures
 --
-CREATE PROCEDURE `AddEpisode` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
-    INSERT INTO `episode` (`title`, `duration`, `series_id`)
-    VALUES (p_title, IFNULL(p_duration, '00:00:00'), p_series_id);
-END$$
-
-CREATE PROCEDURE `AddGenre` (IN `p_genre_name` VARCHAR(255))   BEGIN
-    INSERT INTO `genre` (`genre_name`)
-    VALUES (p_genre_name);
+CREATE PROCEDURE `AddMovie` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_minimum_age` INT(11))   BEGIN
+    INSERT INTO `episode` (`title`, `duration`, `minimum_age`)
+    VALUES (p_title, p_duration, p_minimum_age);
 END$$
 
 CREATE PROCEDURE `AddMovieViewCount` (IN `p_movieId` INT, IN `p_accountId` INT)   BEGIN
@@ -53,6 +32,11 @@ CREATE PROCEDURE `AddMovieViewCount` (IN `p_movieId` INT, IN `p_accountId` INT) 
     END IF;
 END$$
 
+CREATE PROCEDURE `AddSeries` (IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(11))   BEGIN
+    INSERT INTO `series` (`title`, `minimum_age`)
+    VALUES (p_title, p_minimum_age);
+END$$
+
 CREATE PROCEDURE `AddSeriesViewCount` (IN `p_seriesId` INT, IN `p_accountId` INT)   BEGIN
     -- Check if the record exists in the seriesviewcount table
     IF EXISTS (
@@ -71,6 +55,11 @@ CREATE PROCEDURE `AddSeriesViewCount` (IN `p_seriesId` INT, IN `p_accountId` INT
     END IF;
 END$$
 
+CREATE PROCEDURE `AddUser` (IN `p_email` VARCHAR(255), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_language_id` INT(11))   BEGIN
+    INSERT INTO `user` (`email`, `password`, `payment_method`, `language_id`)
+    VALUES (p_email, p_password, p_payment_method, p_language_id);
+END$$
+
 CREATE PROCEDURE `DeleteEpisode` (IN `p_episode_id` INT)   BEGIN
     DELETE FROM `episode` WHERE `episode_id` = p_episode_id;
 END$$
@@ -78,6 +67,11 @@ END$$
 CREATE PROCEDURE `DeleteGenre` (IN `p_genre_id` INT)   BEGIN
     DELETE FROM `genre`
     WHERE `genre_id` = p_genre_id;
+END$$
+
+CREATE PROCEDURE `DeleteMovie` (IN `p_movie_id` INT(11))   BEGIN
+    DELETE FROM `movie`
+    WHERE `movie_id` = p_movie_id;
 END$$
 
 CREATE PROCEDURE `GetAllEpisodes` ()   BEGIN
@@ -95,6 +89,10 @@ END$$
 CREATE PROCEDURE `GetGenreById` (IN `p_genre_id` INT)   BEGIN
     SELECT * FROM `genre`
     WHERE `genre_id` = p_genre_id;
+END$$
+
+CREATE PROCEDURE `GetMovieById` (IN `p_movie_id` INT)   BEGIN
+    SELECT * FROM `movie` WHERE `movie_id` = p_movie_id;
 END$$
 
 CREATE PROCEDURE `GetPersonalizedOffer` (IN `userId` INT, IN `maxMovies` INT)   BEGIN
@@ -159,6 +157,18 @@ CREATE PROCEDURE `GetPersonalizedOffer` (IN `userId` INT, IN `maxMovies` INT)   
     DROP TEMPORARY TABLE TempPersonalizedOffer;
 END$$
 
+CREATE PROCEDURE `GetSeriesById` (IN `p_series_id` INT(11))   BEGIN
+    SELECT * FROM `series` WHERE `series_id` = p_series_id;
+END$$
+
+CREATE PROCEDURE `GetUserByEmail` (IN `p_email` VARCHAR(255))   BEGIN
+    SELECT * FROM `user` WHERE `email` = p_email;
+END$$
+
+CREATE PROCEDURE `GetUserById` (IN `p_account_id` INT(11))   BEGIN
+    SELECT * FROM `user` WHERE `account_id` = p_account_id;
+END$$
+
 CREATE PROCEDURE `PatchEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     UPDATE `episode`
     SET 
@@ -166,6 +176,55 @@ CREATE PROCEDURE `PatchEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255
         `duration` = COALESCE(p_duration, `duration`),
         `series_id` = COALESCE(p_series_id, `series_id`)
     WHERE `episode_id` = p_episode_id;
+END$$
+
+CREATE PROCEDURE `PatchMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
+    UPDATE `movie`
+    SET 
+        `title` = COALESCE(p_title, `title`),
+        `duration` = COALESCE(p_duration, `duration`),
+        `sd_available` = COALESCE(p_sd_available, `sd_available`),
+        `hd_available` = COALESCE(p_hd_available, `hd_available`),
+        `uhd_available` = COALESCE(p_uhd_available, `uhd_available`),
+        `minimum_age` = COALESCE(p_minimum_age, `minimum_age`)
+    WHERE `movie_id` = p_movie_id;
+END$$
+
+CREATE PROCEDURE `PatchUser` (IN `p_account_id` INT(11), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_blocked` BIT(1), OUT `output` VARCHAR(255), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
+    UPDATE `user`
+    SET 
+        `password` = COALESCE(p_password, `password`),
+        `payment_method` = COALESCE(p_payment_method, `payment_method`),
+        `blocked` = COALESCE(p_blocked, `blocked`),
+        `subscription` = COALESCE(p_subscription, `subscription`),
+        `trial_start_date` = COALESCE(p_trial_start_date, `trial_start_date`),
+        `language_id` = COALESCE(p_language_id, `language_id`), `role` = COALESCE(p_role, `role`), `failed_attempts` = COALESCE(p_failed_attempts, `failed_attempts`), `lock_time` = COALESCE(p_lock_time, `lock_time`), `discount` = COALESCE(p_discount, `discount`)
+    WHERE `account_id` = p_account_id;
+END$$
+
+CREATE PROCEDURE `process_payment` (IN `userId` INT, IN `subscriptionType` VARCHAR(10), IN `discountApplied` BIT)   BEGIN
+    DECLARE paymentAmount DECIMAL(10, 2);
+    IF subscriptionType = 'SD' THEN
+        SET paymentAmount = 7.99;
+    ELSEIF subscriptionType = 'HD' THEN
+        SET paymentAmount = 10.99;
+    ELSEIF subscriptionType = 'UHD' THEN
+        SET paymentAmount = 13.99;
+    END IF;
+
+    IF discountApplied THEN
+        SET paymentAmount = paymentAmount - 2.00;
+    END IF;
+
+    INSERT INTO payments (account_id, subscription_type, payment_amount, is_discount_applied, is_paid)
+    VALUES (userId, subscriptionType, paymentAmount, discountApplied, b'1');
+END$$
+
+CREATE PROCEDURE `SetUserBlocked` (IN `p_email` INT(11))   BEGIN
+    UPDATE `user`
+    SET `lock_time` = current_timestamp(),
+`blocked` = 1
+    WHERE `email` = p_email;
 END$$
 
 CREATE PROCEDURE `UpdateEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
@@ -181,6 +240,22 @@ CREATE PROCEDURE `UpdateGenre` (IN `p_genre_id` INT, IN `p_genre_name` VARCHAR(2
     UPDATE `genre`
     SET `genre_name` = p_genre_name
     WHERE `genre_id` = p_from_genre_id;
+END$$
+
+CREATE PROCEDURE `UpdateUser` (IN `p_account_id` INT(11), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_blocked` BIT(1), OUT `output` VARCHAR(255), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
+    UPDATE `user`
+    SET 
+        `password` = p_password,
+        `payment_method` = p_payment_method,
+        `blocked` = p_blocked,
+        `subscription` = p_subscription,
+        `trial_start_date` = p_trial_start_date,
+        `language_id` = p_language_id, 
+        `role` = p_role, 
+        `failed_attempts` = p_failed_attempts, 
+        `lock_time` = p_lock_time, 
+        `discount` = p_discount
+    WHERE `account_id` = p_account_id;
 END$$
 
 DELIMITER ;
@@ -303,9 +378,9 @@ CREATE TABLE `language` (
 
 INSERT INTO `language` (`language_id`, `name`) VALUES
 (1, 'english'),
-(2, 'dutch'),
-(3, 'latvian'),
-(4, 'russian'),
+(2, 'latvian'),
+(3, 'lithuanian'),
+(4, 'dutch'),
 (5, 'spanish'),
 (6, 'ukranian');
 
@@ -376,7 +451,23 @@ INSERT INTO `movieviewcount` (`account_id`, `movie_id`, `number`) VALUES
 (1, 2, 2),
 (1, 3, 1),
 (3, 1, 1),
+(5, 2, 2),
+(1, 1, 3),
+(1, 2, 2),
+(1, 3, 1),
+(3, 1, 1),
+(5, 2, 2),
+(1, 1, 3),
+(1, 2, 2),
+(1, 3, 1),
+(3, 1, 1),
+(5, 2, 2),
+(1, 1, 3),
+(1, 2, 2),
+(1, 3, 1),
+(3, 1, 1),
 (5, 2, 2);
+
 
 -- --------------------------------------------------------
 
@@ -398,10 +489,6 @@ CREATE TABLE `profile` (
 
 INSERT INTO `profile` (`profile_id`, `account_id`, `profile_image`, `age`, `name`) VALUES
 (1, 2, 'pizdiets.png', 16, 'krutoy patsan'),
-(2, 2, 'abcdefg.png', 12, 'tupoy loshara'),
-(1, 2, 'pizdiets.png', 16, 'krutoy patsan'),
-(2, 2, 'abcdefg.png', 12, 'tupoy loshara'),
-(1, 2, 'pizdiets.png', 16, 'krutoy patsan'),
 (2, 2, 'abcdefg.png', 12, 'tupoy loshara');
 
 -- --------------------------------------------------------
@@ -421,8 +508,6 @@ CREATE TABLE `series` (
 --
 
 INSERT INTO `series` (`series_id`, `title`, `minimum_age`) VALUES
-(1, 'Sex education', 18),
-(1, 'Sex education', 18),
 (1, 'Sex education', 18);
 
 -- --------------------------------------------------------
@@ -449,58 +534,31 @@ CREATE TABLE `seriesviewcount` (
   `number` int(11) DEFAULT NULL,
   `last_viewed` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 -- --------------------------------------------------------
 --
--- Table structure for table `user`
+-- Table structure for table `payments`
 --
 CREATE TABLE `user` (
-  `account_id` BIGINT AUTO_INCREMENT,
-  `email` varchar(255) NOT NULL UNIQUE,
+  `account_id` bigint(20) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `payment_method` varchar(255) DEFAULT 'Credit Card',
+  `active` bit(1) DEFAULT b'0',
   `blocked` bit(1) DEFAULT b'0',
   `subscription` enum('SD','HD','UHD') DEFAULT 'SD',
   `trial_start_date` datetime DEFAULT NULL,
+  `trial_end_date` datetime DEFAULT NULL,
   `language_id` int(11) UNSIGNED DEFAULT NULL,
   `role` enum('JUNIOR','MEDIOR','SENIOR') DEFAULT 'JUNIOR',
   `failed_attempts` int(11) DEFAULT 0,
   `lock_time` datetime DEFAULT NULL,
-  `discount` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`account_id`),
-  INDEX (`account_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `user`
---
-
-INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `blocked`, `subscription`, `trial_start_date`, `language_id`, `role`, `failed_attempts`, `lock_time`, `discount`) VALUES
- (1, 'fjodor.smorodins@gmail.com', '$2a$10$hszeHDUNOv4lnd24ZS9sOeOkOJUYo5zSi2H2makEPti1uznr4s5P2', 'abc', b'0', 'SD', '2024-12-07 14:32:59', 4, 'SENIOR', 0, NULL, 0),
- (2, 'fjodorsm@gmail.com', '$2a$10$2QlecdJ25ELwT/avANQAUelbxtS9tysiRO5LSE0omLATaWhdAPfZC', 'Credit Card', b'0', 'SD', '2024-12-07 14:33:33', 1, 'JUNIOR', 0, NULL, 0),
- (3, 'smorodins@gmail.com', '$2a$10$KhhGnFeK2q32DYG7/fMhNe/GEzf1dDJVkQqq5isK1vwuIO9h0zor.', 'CrC', b'0', 'SD', '2024-12-16 18:54:30', 3, 'JUNIOR', 0, NULL, 0),
- (5, 'fjodors@hello.com', '$2a$10$hKsRL99MRpKUr.vrJPqsfuG3qhGkDjXQEYDxHytWFBYgW7HZJ/54W', 'golden bars', b'0', 'SD', '2024-12-20 16:19:25', 2, 'JUNIOR', 0, NULL, 0),
- (6, 'artjoms.grishajevs@hello.com', '$2a$10$NboUZOHniHtnfHhFFECcF.dA64uJsp.8/OnD0B0NEuMvTyvIfN7we', 'children', b'0', 'SD', '2024-12-20 16:24:58', 1, 'JUNIOR', 0, NULL, 0),
- (7, 'somebody@hello.com', '$2a$10$4H41Ugw1ho9ga4DfTV1rwegl.uxbZcTbEu3/SBeklNzsHnXoYliTe', 'money', b'0', 'SD', '2024-12-20 17:08:59', 1, 'JUNIOR', 0, NULL, 0),
- (9, 'somepersonwhatever@hello.com', '$2a$10$DhZSCWySz9rypM/jM8mR6.yzaCPIpugVlITMSWx9whkmEp1ciPK42', 'something', b'0', 'SD', '2024-12-20 17:24:39', 2, 'JUNIOR', 0, NULL, 0),
- (10, 'iamsteve@hello.com', '$2a$10$92qxixAWTf94z9sK.Lf2iebtyLdBV9ckOx.xfzGLv4enlX5gdsis6', 'mastercard', b'0', 'SD', '2024-12-20 17:58:22', 3, 'JUNIOR', 0, NULL, 0),
- (15, 'test1@.com', '$2a$10$aP97IvFmxH8yLGuL1012Xe4sfLd6s1SdokAAKOhG3.tvWCTkmfD2.', 'some method', b'0', 'SD', '2024-12-20 22:46:29', 3, 'JUNIOR', 1, NULL, 0),
- (17, 'medior.fjodor@g.com', '$2a$10$gQuhxuEegp0Ypg.IrGiL8.bmQwV4sdMzXirKh7N0N4KbOXAq4xwFi', 'some money transfer method', b'0', 'SD', '2024-12-23 17:55:18', 3, 'JUNIOR', 0, NULL, 0);
-
--- --------------------------------------------------------
+  `discount` bit(1) DEFAULT b'0',
+  PRIMARY KEY (`account_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 --
 -- Stand-in structure for view `user_genre_count`
 -- (See below for the actual view)
 --
-
-CREATE TABLE password_reset_tokens (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    token VARCHAR(255) NOT NULL,
-    user_id BIGINT NOT NULL,
-    expiry_date TIMESTAMP NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(account_id)
-);
-
 CREATE TABLE `user_genre_count` (
 `user_id` int(11) unsigned
 ,`genre_id` int(11) unsigned
@@ -508,98 +566,147 @@ CREATE TABLE `user_genre_count` (
 ,`total_views` decimal(32,0)
 );
 
--- --------------------------------------------------------
--- Stand-in structure for view `subscriptioncosts`
--- (See below for the actual view)
+-- the update statement will set the trial end date to 7 days after the trial start date
+--
+-- Dumping data for table `user`
 --
 
-CREATE TABLE `subscriptioncosts` (
-`UserID` int(11) unsigned
-,`Email` varchar(255)
-,`SubscriptionType` enum('SD','HD','UHD')
-,`SubscriptionCost` int(4)
-);
+INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `active`, `blocked`, `subscription`, `trial_start_date`, `trial_end_date`, `language_id`, `role`, `failed_attempts`, `lock_time`, `discount`) VALUES
+(1, 'fjodor.smorodins@gmail.com', '$2a$10$hszeHDUNOv4lnd24ZS9sOeOkOJUYo5zSi2H2makEPti1uznr4s5P2', 'abc', b'0', b'0', 'SD', '2024-12-07 14:32:59', '2024-12-14 14:32:59', 4, 'SENIOR', 0, NULL, b'0'),
+(2, 'fjodorsm@gmail.com', '$2a$10$2QlecdJ25ELwT/avANQAUelbxtS9tysiRO5LSE0omLATaWhdAPfZC', 'Credit Card', b'0', b'0', 'SD', '2024-12-07 14:33:33', '2024-12-14 14:33:33', 1, 'JUNIOR', 0, NULL, b'0'),
+(3, 'smorodins@gmail.com', '$2a$10$KhhGnFeK2q32DYG7/fMhNe/GEzf1dDJVkQqq5isK1vwuIO9h0zor.', 'CrC', b'0', b'0', 'SD', '2024-12-16 18:54:30', '2024-12-23 18:54:30', 3, 'JUNIOR', 0, NULL, b'0'),
+(5, 'fjodors@hello.com', '$2a$10$hKsRL99MRpKUr.vrJPqsfuG3qhGkDjXQEYDxHytWFBYgW7HZJ/54W', 'golden bars', b'0', b'0', 'SD', '2024-12-20 16:19:25', '2024-12-27 16:19:25', 2, 'JUNIOR', 0, NULL, b'0'),
+(6, 'artjoms.grishajevs@hello.com', '$2a$10$NboUZOHniHtnfHhFFECcF.dA64uJsp.8/OnD0B0NEuMvTyvIfN7we', 'children', b'0', b'0', 'SD', '2024-12-20 16:24:58', '2024-12-27 16:24:58', 1, 'JUNIOR', 0, NULL, b'0'),
+(7, 'somebody@hello.com', '$2a$10$4H41Ugw1ho9ga4DfTV1rwegl.uxbZcTbEu3/SBeklNzsHnXoYliTe', 'money', b'0', b'0', 'SD', '2024-12-20 17:08:59', '2024-12-27 17:08:59', 1, 'JUNIOR', 0, NULL, b'0'),
+(9, 'somepersonwhatever@hello.com', '$2a$10$DhZSCWySz9rypM/jM8mR6.yzaCPIpugVlITMSWx9whkmEp1ciPK42', 'something', b'0', b'0', 'SD', '2024-12-20 17:24:39', '2024-12-27 17:24:39', 2, 'JUNIOR', 0, NULL, b'0'),
+(10, 'iamsteve@hello.com', '$2a$10$92qxixAWTf94z9sK.Lf2iebtyLdBV9ckOx.xfzGLv4enlX5gdsis6', 'mastercard', b'0', b'0', 'SD', '2024-12-20 17:58:22', '2024-12-27 17:58:22', 3, 'JUNIOR', 0, NULL, b'0'),
+(15, 'test1@.com', '$2a$10$aP97IvFmxH8yLGuL1012Xe4sfLd6s1SdokAAKOhG3.tvWCTkmfD2.', 'some method', b'0', b'0', 'SD', '2024-12-20 22:46:29', '2024-12-27 22:46:29', 3, 'JUNIOR', 1, NULL, b'0'),
+(17, 'medior.fjodor@g.com', '$2a$10$gQuhxuEegp0Ypg.IrGiL8.bmQwV4sdMzXirKh7N0N4KbOXAq4xwFi', 'some money transfer method', b'0', b'0', 'SD', '2024-12-23 17:55:18', '2024-12-30 17:55:18', 3, 'JUNIOR', 0, NULL, b'0'),
+(18, 'billyJ@outlook.com', '$2a$10$3', 'IDEAL', b'1', b'0', 'SD', '2024-12-23 18:00:00', '2024-12-30 18:00:00', 3, 'JUNIOR', 0, NULL, b'0');
 
--- --------------------------------------------------------
---
--- Structure for view `paymentstatus`
----- --------------------------------------------------------
+-- -----------------------------------------------------------------------------------------------------
+-- ----------------------------------PAYMENTS DATABASE DESIGN--------------------------------------------
 
 CREATE TABLE `payments` (
-  `payment_id` BIGINT NOT NULL AUTO_INCREMENT,
-  `account_id` BIGINT NOT NULL,
-  `is_discount_applied` bit(1) NOT NULL DEFAULT b'0',
-  `is_paid` bit(1) NOT NULL DEFAULT b'0',
-  `payment_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `subscription_type` varchar(10) NOT NULL,
-  `payment_amount` decimal(10, 2) NOT NULL,
+  `payment_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `account_id` bigint(20) NOT NULL,
+  `is_discount_applied` bit(1) DEFAULT b'0',
+  `is_paid` bit(1) DEFAULT b'0',
+  `payment_date` datetime DEFAULT NULL,
+  `subscription_type` enum('SD','HD','UHD') DEFAULT 'SD',
+  `payment_amount` decimal(10,2) DEFAULT NULL,
+  `next_billing_date` datetime DEFAULT NULL,
   PRIMARY KEY (`payment_id`),
-  FOREIGN KEY (`account_id`) REFERENCES `user`(`account_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+SET SQL_SAFE_UPDATES = 0;
+
+UPDATE `user`
+SET `trial_end_date` = DATE_ADD(`trial_start_date`, INTERVAL 7 DAY)
+WHERE `trial_start_date` IS NOT NULL;
+
+SET SQL_SAFE_UPDATES = 1;
 -- --------------------------------------------------------
 --
--- Structure for view `paymentstatus`
---
-CREATE VIEW `paymentstatus` AS
+-- Stand-in structure for view `paymentstatus`
+-- (See below for the actual view)
+
+CREATE VIEW `paymentstatus` AS 
 SELECT 
-    p.payment_id,
-    u.account_id,
-    u.email,
-    p.subscription_type,
-    p.payment_amount,
-    p.is_paid,
-    p.is_discount_applied,
-    p.payment_date
+    p.`payment_id` AS `payment_id`, 
+    u.`account_id` AS `account_id`, 
+    u.`email` AS `email`, 
+    p.`subscription_type` AS `subscription_type`, 
+    p.`payment_amount` AS `payment_amount`, 
+    p.`is_paid` AS `is_paid`, 
+    p.`is_discount_applied` AS `is_discount_applied`, 
+    p.`payment_date` AS `payment_date`,
+    p.`next_billing_date` AS `next_billing_date`
 FROM 
-    payments p
+    `payments` p
 JOIN 
-    user u ON p.account_id = u.account_id;
+    `user` u ON p.`account_id` = u.`account_id`;
 -- --------------------------------------------------------
---
--- Structure for procedure `payment`
---
-DELIMITER //
 
-CREATE PROCEDURE `process_payment` (
-    IN userId INT,
-    IN subscriptionType VARCHAR(10),
-    IN discountApplied BIT
-)
+CREATE VIEW `subscriptioncosts` AS 
+SELECT 
+    `u`.`account_id` AS `UserID`, 
+    `u`.`email` AS `Email`, 
+    `u`.`subscription` AS `SubscriptionType`, 
+    CASE 
+        WHEN TO_DAYS(CURDATE()) - TO_DAYS(`u`.`trial_start_date`) <= 7 THEN 0 
+        ELSE 
+            CASE 
+                WHEN `u`.`subscription` = 'SD' THEN 7.99 
+                WHEN `u`.`subscription` = 'HD' THEN 10.99 
+                WHEN `u`.`subscription` = 'UHD' THEN 13.99 
+                ELSE 0 
+            END - 
+            CASE 
+                WHEN `u`.`discount` = 1 THEN 2 
+                ELSE 0 
+            END 
+    END AS `SubscriptionCost` 
+FROM 
+    `user` AS `u`;
+
+-- PROCEDURE TO INSERT EXPIRED TRIALS INTO PAYMENTS TABLE
+DELIMITER $$
+
+CREATE PROCEDURE `InsertExpiredTrialsIntoPayments` ()
 BEGIN
-    DECLARE paymentAmount DECIMAL(10, 2);
-    IF subscriptionType = 'SD' THEN
-        SET paymentAmount = 7.99;
-    ELSEIF subscriptionType = 'HD' THEN
-        SET paymentAmount = 10.99;
-    ELSEIF subscriptionType = 'UHD' THEN
-        SET paymentAmount = 13.99;
-    END IF;
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE userId BIGINT;
+    DECLARE subscriptionType ENUM('SD', 'HD', 'UHD');
+    DECLARE discountApplied BIT(1);
+    DECLARE cur CURSOR FOR
+        SELECT account_id, subscription, discount
+        FROM `user`
+        WHERE `trial_end_date` <= CURDATE() AND `active` = b'1';
 
-    IF discountApplied THEN
-        SET paymentAmount = paymentAmount - 2.00;
-    END IF;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
-    INSERT INTO payments (account_id, subscription_type, payment_amount, is_discount_applied, is_paid)
-    VALUES (userId, subscriptionType, paymentAmount, discountApplied, b'1');
-END //
+    OPEN cur;
+    read_loop: LOOP
+        FETCH cur INTO userId, subscriptionType, discountApplied;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        -- Then insert into payments table
+        INSERT INTO `payments` (`account_id`, `subscription_type`, `payment_amount`, `is_discount_applied`, `is_paid`, `payment_date`, `next_billing_date`)
+        VALUES (
+            userId,
+            subscriptionType,
+            CASE 
+                WHEN subscriptionType = 'SD' THEN 7.99 
+                WHEN subscriptionType = 'HD' THEN 10.99 
+                WHEN subscriptionType = 'UHD' THEN 13.99 
+            END - 
+            CASE 
+                WHEN discountApplied = b'1' THEN 2.00 
+                ELSE 0 
+            END,
+            discountApplied,
+            b'0',
+            NOW(),
+            DATE_ADD(NOW(), INTERVAL 1 MONTH)
+        );
+    END LOOP;
+
+    CLOSE cur;
+END$$
 
 DELIMITER ;
--- ------------------------------------------------------
---
--- Structure for view `subscriptioncosts`
---
-DROP TABLE IF EXISTS `subscriptioncosts`;
 
-CREATE ALGORITHM = UNDEFINED  
-SQL SECURITY DEFINER VIEW `subscriptioncosts`  
-AS SELECT `u`.`account_id` AS `UserID`, `u`.`email` 
-AS `Email`, `u`.`subscription` AS `SubscriptionType`, 
-(case when ((to_days(curdate()) - to_days(`u`.`trial_start_date`)) <= 7) 
-then 0 else ((case when (`u`.`subscription` = 'SD') 
-then 10 when (`u`.`subscription` = 'HD') 
-then 15 when (`u`.`subscription` = 'UHD') 
-then 20 else 0 end) - (case when (`u`.`discount` = 1) 
-then 2 else 0 end)) end) AS `SubscriptionCost` FROM `user` AS `u` ;
+-- Create the event to run the procedure daily
+CREATE EVENT `InsertExpiredTrialsDaily`
+ON SCHEDULE EVERY 1 DAY
+STARTS CURRENT_TIMESTAMP
+DO
+CALL `InsertExpiredTrialsIntoPayments`();
+-- ----------------------------------END OF PAYMENTS TABLE--------------------------------------------
 
 -- --------------------------------------------------------
 
@@ -608,16 +715,7 @@ then 2 else 0 end)) end) AS `SubscriptionCost` FROM `user` AS `u` ;
 --
 DROP TABLE IF EXISTS `user_genre_count`;
 
-CREATE ALGORITHM = UNDEFINED
-SQL SECURITY DEFINER VIEW `user_genre_count`  
-AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` 
-AS `genre_id`, `g`.`genre_name` AS `genre_name`, sum(`mvc`.`number`) 
-AS `total_views` FROM (((`movieviewcount` `mvc` 
-join `movie` `m` on((`mvc`.`movie_id` = `m`.`movie_id`))) 
-join `genreformovie` `mg` on((`m`.`movie_id` = `mg`.`movie_id`))) 
-join `genre` `g` on((`mg`.`genre_id` = `g`.`genre_id`))) 
-GROUP BY `mvc`.`account_id`, `g`.`genre_id` 
-ORDER BY `mvc`.`account_id` ASC, sum(`mvc`.`number`) DESC ;
+CREATE VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, sum(`mvc`.`number`) AS `total_views` FROM (((`movieviewcount` `mvc` join `movie` `m` on(`mvc`.`movie_id` = `m`.`movie_id`)) join `genreformovie` `mg` on(`m`.`movie_id` = `mg`.`movie_id`)) join `genre` `g` on(`mg`.`genre_id` = `g`.`genre_id`)) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, sum(`mvc`.`number`) DESC ;
 
 --
 -- Indexes for dumped tables
@@ -676,63 +774,69 @@ ALTER TABLE `movie`
   ADD PRIMARY KEY (`movie_id`);
 
 --
--- Indexes for table `seriesviewcount`
+-- Indexes for table `profile`
 --
-ALTER TABLE `seriesviewcount`
-  ADD KEY `FKeh1b2xgu8esqripye7l4o90rq` (`episode_id`);
+ALTER TABLE `profile`
+  ADD PRIMARY KEY (`profile_id`);
+
+--
+-- Indexes for table `series`
+--
+ALTER TABLE `series`
+  ADD PRIMARY KEY (`series_id`);
 
 --
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
-  ADD KEY `FKj9k2portqypgs993xn20pywtr` (`language_id`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `account_id` (`account_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `genre`
+-- AUTO_INCREMENT for table `episode`
 --
-ALTER TABLE `genre`
-  MODIFY `genre_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+ALTER TABLE `episode`
+  MODIFY `episode_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- Constraints for dumped tables
+-- AUTO_INCREMENT for table `language`
 --
+ALTER TABLE `language`
+  MODIFY `language_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- Constraints for table `genreformovie`
+-- AUTO_INCREMENT for table `movie`
 --
-ALTER TABLE `genreformovie`
-  ADD CONSTRAINT `FK9k0bup58wyigpu52ap88luwm3` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`),
-  ADD CONSTRAINT `FKcooxhml1jwh4bnp2o9n63ka3k` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`);
+ALTER TABLE `movie`
+  MODIFY `movie_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- Constraints for table `genreforseries`
+-- AUTO_INCREMENT for table `profile`
 --
-ALTER TABLE `genreforseries`
-  ADD CONSTRAINT `FK46gf3ps13sggr3a79227kltsn` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`);
+ALTER TABLE `profile`
+  MODIFY `profile_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- Constraints for table `genreforuser`
+-- AUTO_INCREMENT for table `series`
 --
-ALTER TABLE `genreforuser`
-  ADD CONSTRAINT `FKrh2w4n7xtka8f2svniqwoghq1` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`);
+ALTER TABLE `series`
+  MODIFY `series_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- Constraints for table `seriesviewcount`
+-- AUTO_INCREMENT for table `user`
 --
-ALTER TABLE `seriesviewcount`
-  ADD CONSTRAINT `FKeh1b2xgu8esqripye7l4o90rq` FOREIGN KEY (`episode_id`) REFERENCES `episode` (`episode_id`);
+-- Drop the foreign key constraint
+ALTER TABLE `payments` DROP FOREIGN KEY `payments_ibfk_1`;
 
---
--- Constraints for table `user`
---
+-- Modify the `account_id` column
 ALTER TABLE `user`
-  ADD CONSTRAINT `FKj9k2portqypgs993xn20pywtr` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`);
-COMMIT;
+  MODIFY `account_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- Re-add the foreign key constraint
+ALTER TABLE `payments`
+  ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`);
+

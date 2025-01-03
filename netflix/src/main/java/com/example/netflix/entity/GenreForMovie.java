@@ -1,8 +1,6 @@
 package com.example.netflix.entity;
 
 import com.example.netflix.id.GenreForMovieId;
-import com.example.netflix.id.GenreForSeriesId;
-import com.example.netflix.id.MovieViewCountId;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 

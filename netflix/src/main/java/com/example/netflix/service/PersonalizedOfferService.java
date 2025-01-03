@@ -33,19 +33,17 @@ public class PersonalizedOfferService
     }
 
     public List<MovieInPersonalizedOffer> getPersonalizedOffer(int userId, int maxMovies) {
-        // Call the repository method
         System.out.println("The results are NOT YET retrieved (doubled message)");
 
         List<Object[]> results = personalizedOfferRepository.getPersonalizedOffer(userId, maxMovies);
 
         System.out.print("The results are retrieved");
 
-        // Convert the results into Movie objects
         List<MovieInPersonalizedOffer> personalizedMovies = new ArrayList<>();
         for (Object[] result : results) {
             MovieInPersonalizedOffer movie = new MovieInPersonalizedOffer();
-            movie.setMovieId((Integer) result[0]);  // Assuming column 0 is movie_id
-            movie.setTitle((String) result[1]);    // Assuming column 1 is title
+            movie.setMovieId((Integer) result[0]);
+            movie.setTitle((String) result[1]);
             personalizedMovies.add(movie);
         }
 
