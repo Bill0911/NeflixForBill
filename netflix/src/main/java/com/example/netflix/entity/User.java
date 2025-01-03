@@ -27,12 +27,18 @@ public class User {
     @Column(name = "trial_start_date", nullable = false)
     private LocalDateTime trialStartDate = LocalDateTime.now(); // Default to current time
 
+    @Column(name = "trial_end_date", nullable = false)
+    private LocalDateTime trialEndDate = LocalDateTime.now().plusDays(7);
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.JUNIOR; // Default role
 
-    @Column(nullable = false)
-    private boolean blocked = false;
+    @Column(name = "active", columnDefinition = "bit(1) DEFAULT 0")
+    private boolean isActive = false;
+
+    @Column(name = "blocked", columnDefinition = "bit(1) DEFAULT 0")
+    private boolean isBlocked = false;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -46,7 +52,7 @@ public class User {
     private Language language;
 
     @Column(name = "failed_attempts", nullable = false)
-    private int failedAttempts = 0;
+    private int failedLoginAttempts = 0;
 
     @Column(name = "lock_time")
     private LocalDateTime lockTime = null;
@@ -61,9 +67,7 @@ public class User {
     }
 
     public User()
-    {
-
-    }
+    {}
 
     public Integer getAccountId() {
         return accountId;
@@ -109,16 +113,36 @@ public class User {
         return role;
     }
 
+    public boolean isActive ()
+    {
+        return isActive;
+    }
+
+    public void setActive (boolean active)
+    {
+        isActive = active;
+    }
+
+    public boolean isBlocked ()
+    {
+        return isBlocked;
+    }
+
+    public void setBlocked (boolean blocked)
+    {
+        isBlocked = blocked;
+    }
+
     public void setRole(Role role) {
         this.role = role;
     }
 
-    public boolean isBlocked() {
-        return blocked;
+    public boolean isIsBlocked () {
+        return isBlocked;
     }
 
-    public void setBlocked(boolean blocked) {
-        this.blocked = blocked;
+    public void setIsBlocked (boolean blocked) {
+        this.isBlocked = blocked;
     }
 
     public String getPaymentMethod() {
@@ -137,12 +161,12 @@ public class User {
         this.language = language;
     }
 
-    public int getFailedAttempts() {
-        return failedAttempts;
+    public int getFailedLoginAttempts () {
+        return failedLoginAttempts;
     }
 
-    public void setFailedAttempts(int failedAttempts) {
-        this.failedAttempts = failedAttempts;
+    public void setFailedLoginAttempts (int failedAttempts) {
+        this.failedLoginAttempts = failedAttempts;
     }
 
     public LocalDateTime getLockTime() {
@@ -154,7 +178,7 @@ public class User {
     }
 
     public void incrementFailedAttempts () {
-        this.failedAttempts++;
+        this.failedLoginAttempts++;
     }
 
     public List<Profile> getProfiles() {
@@ -172,6 +196,16 @@ public class User {
     public boolean isDiscount ()
     {
         return discount;
+    }
+
+    public LocalDateTime getTrialEndDate ()
+    {
+        return trialEndDate;
+    }
+
+    public void setTrialEndDate (LocalDateTime trialEndDate)
+    {
+        this.trialEndDate = trialEndDate;
     }
 
     public void setDiscount (boolean discount)
