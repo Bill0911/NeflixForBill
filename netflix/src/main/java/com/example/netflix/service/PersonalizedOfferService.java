@@ -1,6 +1,6 @@
 package com.example.netflix.service;
 
-import com.example.netflix.dto.MovieInPersonalizedOffer;
+import com.example.netflix.dto.PersonalizedOfferItem;
 import com.example.netflix.entity.Movie;
 import com.example.netflix.entity.UserGenreCount;
 import com.example.netflix.repository.*;
@@ -32,17 +32,17 @@ public class PersonalizedOfferService
         return userGenreCountRepository.findByUserId(userId);
     }
 
-    public List<MovieInPersonalizedOffer> getPersonalizedOffer(int userId, int maxMovies) {
+    public List<PersonalizedOfferItem> getPersonalizedOfferMovies(int userId, int maxMovies) {
         System.out.println("The results are NOT YET retrieved (doubled message)");
 
         List<Object[]> results = personalizedOfferRepository.getPersonalizedOffer(userId, maxMovies);
 
         System.out.print("The results are retrieved");
 
-        List<MovieInPersonalizedOffer> personalizedMovies = new ArrayList<>();
+        List<PersonalizedOfferItem> personalizedMovies = new ArrayList<>();
         for (Object[] result : results) {
-            MovieInPersonalizedOffer movie = new MovieInPersonalizedOffer();
-            movie.setMovieId((Integer) result[0]);
+            PersonalizedOfferItem movie = new PersonalizedOfferItem();
+            movie.setId((Integer) result[0]);
             movie.setTitle((String) result[1]);
             personalizedMovies.add(movie);
         }
