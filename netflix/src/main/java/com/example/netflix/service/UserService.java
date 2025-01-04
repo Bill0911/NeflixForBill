@@ -224,8 +224,8 @@ public class UserService {
         Optional<Payment> existingPaymentOpt = paymentRepository.findByUserAccountId(user.getAccountId());
 
         Payment payment;
-        if (existingPaymentOpt.isPresent()) {
-            // Update the existing payment record
+        if (existingPaymentOpt.isPresent())
+        {
             payment = existingPaymentOpt.get();
             payment.setSubscriptionType(user.getSubscription());
             payment.setPaymentAmount(paymentAmount);
@@ -233,7 +233,9 @@ public class UserService {
             payment.setPaid(true);
             payment.setPaymentDate(LocalDateTime.now());
             payment.setNextBillingDate(LocalDateTime.now().plusMonths(1));
-        } else {
+        }
+        else
+        {
             payment = new Payment();
             payment.setUser(user);
             payment.setSubscriptionType(user.getSubscription());
@@ -252,9 +254,11 @@ public class UserService {
     // but for some reasons it does not update table after getting 200 OK,
     // so I just did like this as a temporary solution.
 
-    private double calculatePaymentAmount(SubscriptionType subscriptionType, boolean discountApplied) {
+    private double calculatePaymentAmount(SubscriptionType subscriptionType, boolean discountApplied)
+    {
         double amount;
-        switch (subscriptionType) {
+        switch (subscriptionType)
+        {
             case SD:
                 amount = 7.99;
                 break;
@@ -267,7 +271,8 @@ public class UserService {
             default:
                 throw new IllegalArgumentException("Unknown subscription type: " + subscriptionType);
         }
-        if (discountApplied) {
+        if (discountApplied)
+        {
             amount -= 2.00;
         }
         return amount;
