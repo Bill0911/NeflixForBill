@@ -1,20 +1,20 @@
 
 --
--- Database: `netflix`
+-- База данных: `netflix`
 --
 
 DELIMITER $$
 --
--- Procedures
+-- Процедуры
 --
-CREATE PROCEDURE `AddEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
+CREATE PROCEDURE `AddEpisode` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     INSERT INTO `episode` (`title`, `duration`, `series_id`)
     VALUES (p_title, p_duration, p_series_id);
 END$$
 
-CREATE PROCEDURE `AddGenre` (IN `p_title` VARCHAR(255))   BEGIN
-    INSERT INTO `genre` (`title`)
-    VALUES (p_title);
+CREATE PROCEDURE `AddGenre` (IN `p_name` VARCHAR(255))   BEGIN
+    INSERT INTO `genre` (`genre_name`)
+    VALUES (p_name);
 END$$
 
 CREATE PROCEDURE `AddGenreForMovie` (IN `p_genreId` INT, IN `p_movieId` INT)   BEGIN
@@ -33,13 +33,13 @@ CREATE PROCEDURE `AddGenreForUser` (IN `p_genreId` INT, IN `p_accountId` INT)   
 END$$
 
 CREATE PROCEDURE `AddLanguage` (IN `p_name` VARCHAR(255))   BEGIN
-    INSERT INTO `genre` (`name`)
+    INSERT INTO `language` (`name`)
     VALUES (p_name);
 END$$
 
-CREATE PROCEDURE `AddMovie` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_minimum_age` INT(11))   BEGIN
-    INSERT INTO `movie` (`title`, `duration`, `minimum_age`)
-    VALUES (p_title, p_duration, p_minimum_age);
+CREATE PROCEDURE `AddMovie` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(11))   BEGIN
+    INSERT INTO `movie` (`title`, `duration`, `sd_available`, `hd_available`, `uhd_available` , `minimum_age`)
+    VALUES (p_title, p_duration, p_sd_available, p_hd_available, p_uhd_available, p_minimum_age);
 END$$
 
 CREATE PROCEDURE `AddMoviesProfileWatchlist` (IN `p_profileId` INT, IN `p_movieId` INT)   BEGIN
@@ -48,7 +48,7 @@ CREATE PROCEDURE `AddMoviesProfileWatchlist` (IN `p_profileId` INT, IN `p_movieI
 END$$
 
 CREATE PROCEDURE `AddMovieViewCount` (IN `p_movieId` INT, IN `p_accountId` INT)   BEGIN
-    -- Check if the record exists in the movieviewcount table
+    
     IF EXISTS (
         SELECT 1 
         FROM movieviewcount 
@@ -63,6 +63,14 @@ CREATE PROCEDURE `AddMovieViewCount` (IN `p_movieId` INT, IN `p_accountId` INT) 
         INSERT INTO movieviewcount (`account_id`, `movie_id`, `number`, `last_viewed`)
         VALUES (p_accountId, p_movieId, 1, current_timestamp());
     END IF;
+
+    DELETE FROM moviesprofilewatchlist
+    WHERE profile_id IN (
+        SELECT profile_id
+        FROM profile
+        WHERE account_id = p_accountId
+    )
+    AND movie_id = p_movieId;
 END$$
 
 CREATE PROCEDURE `AddProflie` (IN `p_account_id` INT(11), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
@@ -96,6 +104,14 @@ CREATE PROCEDURE `AddSeriesViewCount` (IN `p_seriesId` INT, IN `p_accountId` INT
         INSERT INTO seriesviewcount (`account_id`, `series_id`, `number`, `last_viewed`)
         VALUES (p_accountId, p_seriesId, 1, current_timestamp());
     END IF;
+
+    DELETE FROM seriesprofilewatchlist
+    WHERE profile_id IN (
+        SELECT profile_id
+        FROM profile
+        WHERE account_id = p_accountId
+    )
+    AND series_id = p_seriesId;
 END$$
 
 CREATE PROCEDURE `AddUser` (IN `p_email` VARCHAR(255), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_language_id` INT(11))   BEGIN
@@ -282,7 +298,7 @@ CREATE PROCEDURE `GetMovieViewCount` (IN `p_account_id` INT, IN `p_movie_id` INT
     WHERE `movie_id` = p_movie_id AND `account_id` = p_account_id;
 END$$
 
-CREATE PROCEDURE `GetPersonalizedOffer` (IN `userId` INT, IN `maxMovies` INT)   BEGIN
+CREATE PROCEDURE `GetPersonalizedOfferMovies` (IN `userId` INT, IN `maxMovies` INT)   BEGIN
     DECLARE done INT DEFAULT FALSE;
     DECLARE genreId INT;
     DECLARE genreViews INT;
@@ -339,6 +355,68 @@ CREATE PROCEDURE `GetPersonalizedOffer` (IN `userId` INT, IN `maxMovies` INT)   
     SELECT DISTINCT movie_id, title
     FROM TempPersonalizedOffer
     LIMIT maxMovies;
+
+    -- Drop the temporary table
+    DROP TEMPORARY TABLE TempPersonalizedOffer;
+END$$
+
+CREATE PROCEDURE `GetPersonalizedOfferSeries` (IN `userId` INT, IN `maxSeries` INT)   BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE genreId INT;
+    DECLARE genreViews INT;
+    DECLARE genreLimit INT;
+    DECLARE totalUserViews INT;
+
+    DECLARE cur CURSOR FOR
+    SELECT genre_id, total_views
+    FROM user_genre_count
+    WHERE user_id = userId;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    -- Step 1: Calculate total views across all genres for the user
+    SELECT SUM(total_views) INTO totalUserViews
+    FROM user_genre_count
+    WHERE user_id = userId;
+
+    -- Temporary table to store proportional movies for the user
+    CREATE TEMPORARY TABLE TempPersonalizedOffer (
+        series_id INT,
+        title VARCHAR(255)
+    );
+
+    -- Step 2: Loop through each genre
+    OPEN cur;
+    read_loop: LOOP
+        FETCH cur INTO genreId, genreViews;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        -- Calculate the proportional number of series for this genre
+        SET genreLimit = CEIL((genreViews * maxSeries) / totalUserViews);
+
+        -- Fetch random movies for this genre, ensuring no duplicates
+        INSERT INTO TempPersonalizedOffer (series_id, title)
+        SELECT s.series_id, s.title 
+        FROM series s
+        JOIN genreforseries gfs ON s.series_id = gfs.series_id
+        WHERE gfs.genre_id = genreId
+          AND NOT EXISTS (
+            SELECT 1
+            FROM TempPersonalizedOffer t
+            WHERE t.series_id = s.series_id
+        )
+        ORDER BY RAND()
+        LIMIT genreLimit;
+    END LOOP;
+
+    CLOSE cur;
+
+    -- Step 3: Return the final result, limiting to maxMovies
+    SELECT DISTINCT series_id, title
+    FROM TempPersonalizedOffer
+    LIMIT maxseries;
 
     -- Drop the temporary table
     DROP TEMPORARY TABLE TempPersonalizedOffer;
@@ -633,21 +711,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `account`
---
-
-CREATE TABLE `account` (
-  `account_id` int(11) UNSIGNED NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `subscription` varchar(10) NOT NULL,
-  `trial_start_date` date NOT NULL,
-  `discount` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `episode`
+-- Структура таблицы `episode`
 --
 
 CREATE TABLE `episode` (
@@ -657,10 +721,17 @@ CREATE TABLE `episode` (
   `series_id` int(11) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Дамп данных таблицы `episode`
+--
+
+INSERT INTO `episode` (`episode_id`, `title`, `duration`, `series_id`) VALUES
+(1, 'Introduction', '00:41:28', 1);
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `genre`
+-- Структура таблицы `genre`
 --
 
 CREATE TABLE `genre` (
@@ -669,7 +740,7 @@ CREATE TABLE `genre` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `genre`
+-- Дамп данных таблицы `genre`
 --
 
 INSERT INTO `genre` (`genre_id`, `genre_name`) VALUES
@@ -685,12 +756,13 @@ INSERT INTO `genre` (`genre_id`, `genre_name`) VALUES
 (19, 'biography'),
 (20, 'History'),
 (21, 'musical'),
-(29, 'War');
+(29, 'War'),
+(30, 'random');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `genreformovie`
+-- Структура таблицы `genreformovie`
 --
 
 CREATE TABLE `genreformovie` (
@@ -699,7 +771,7 @@ CREATE TABLE `genreformovie` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `genreformovie`
+-- Дамп данных таблицы `genreformovie`
 --
 
 INSERT INTO `genreformovie` (`genre_id`, `movie_id`) VALUES
@@ -707,12 +779,13 @@ INSERT INTO `genreformovie` (`genre_id`, `movie_id`) VALUES
 (5, 1),
 (7, 2),
 (8, 3),
+(8, 4),
 (17, 3);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `genreforseries`
+-- Структура таблицы `genreforseries`
 --
 
 CREATE TABLE `genreforseries` (
@@ -720,10 +793,18 @@ CREATE TABLE `genreforseries` (
   `series_id` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Дамп данных таблицы `genreforseries`
+--
+
+INSERT INTO `genreforseries` (`genre_id`, `series_id`) VALUES
+(2, 1),
+(30, 1);
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `genreforuser`
+-- Структура таблицы `genreforuser`
 --
 
 CREATE TABLE `genreforuser` (
@@ -731,10 +812,17 @@ CREATE TABLE `genreforuser` (
   `account_id` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Дамп данных таблицы `genreforuser`
+--
+
+INSERT INTO `genreforuser` (`genre_id`, `account_id`) VALUES
+(30, 2);
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `language`
+-- Структура таблицы `language`
 --
 
 CREATE TABLE `language` (
@@ -743,7 +831,7 @@ CREATE TABLE `language` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `language`
+-- Дамп данных таблицы `language`
 --
 
 INSERT INTO `language` (`language_id`, `name`) VALUES
@@ -752,12 +840,13 @@ INSERT INTO `language` (`language_id`, `name`) VALUES
 (3, 'lithuanian'),
 (4, 'russian'),
 (5, 'spanish'),
-(6, 'ukranian');
+(6, 'ukranian'),
+(7, 'mandarin');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `movie`
+-- Структура таблицы `movie`
 --
 
 CREATE TABLE `movie` (
@@ -771,18 +860,19 @@ CREATE TABLE `movie` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `movie`
+-- Дамп данных таблицы `movie`
 --
 
 INSERT INTO `movie` (`movie_id`, `title`, `duration`, `sd_available`, `hd_available`, `uhd_available`, `minimum_age`) VALUES
 (1, 'womp-womp, funny', '01:32:00', b'1', b'1', b'0', 14),
 (2, 'lordoftherings', '03:30:52', b'1', b'1', b'0', 12),
-(3, 'star wars', '00:31:16', b'1', b'1', b'0', 12);
+(3, 'star wars', '00:31:16', b'1', b'1', b'0', 12),
+(4, 'star trek', '03:01:28', b'1', b'1', b'1', 12);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `moviesprofilewatchlist`
+-- Структура таблицы `moviesprofilewatchlist`
 --
 
 CREATE TABLE `moviesprofilewatchlist` (
@@ -790,10 +880,17 @@ CREATE TABLE `moviesprofilewatchlist` (
   `movie_id` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Дамп данных таблицы `moviesprofilewatchlist`
+--
+
+INSERT INTO `moviesprofilewatchlist` (`profile_id`, `movie_id`) VALUES
+(3, 1);
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `movieviewcount`
+-- Структура таблицы `movieviewcount`
 --
 
 CREATE TABLE `movieviewcount` (
@@ -804,20 +901,21 @@ CREATE TABLE `movieviewcount` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `movieviewcount`
+-- Дамп данных таблицы `movieviewcount`
 --
 
 INSERT INTO `movieviewcount` (`account_id`, `movie_id`, `number`, `last_viewed`) VALUES
 (1, 1, 3, NULL),
 (1, 2, 2, NULL),
 (1, 3, 1, NULL),
+(1, 4, 1, '2025-01-04 15:14:25'),
 (3, 1, 1, NULL),
 (5, 2, 2, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `password_reset_tokens`
+-- Структура таблицы `password_reset_tokens`
 --
 
 CREATE TABLE `password_reset_tokens` (
@@ -830,7 +928,7 @@ CREATE TABLE `password_reset_tokens` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `payments`
+-- Структура таблицы `payments`
 --
 
 CREATE TABLE `payments` (
@@ -846,8 +944,8 @@ CREATE TABLE `payments` (
 -- --------------------------------------------------------
 
 --
--- Stand-in structure for view `paymentstatus`
--- (See below for the actual view)
+-- Дублирующая структура для представления `paymentstatus`
+-- (См. Ниже фактическое представление)
 --
 CREATE TABLE `paymentstatus` (
 `payment_id` bigint(20)
@@ -863,7 +961,7 @@ CREATE TABLE `paymentstatus` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `profile`
+-- Структура таблицы `profile`
 --
 
 CREATE TABLE `profile` (
@@ -875,17 +973,18 @@ CREATE TABLE `profile` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `profile`
+-- Дамп данных таблицы `profile`
 --
 
 INSERT INTO `profile` (`profile_id`, `account_id`, `profile_image`, `age`, `name`) VALUES
 (1, 2, 'pizdiets.png', 16, 'krutoy patsan'),
-(2, 2, 'abcdefg.png', 12, 'tupoy loshara');
+(2, 2, 'abcdefg.png', 12, 'tupoy loshara'),
+(3, 1, 'privet.jpg', 15, 'igor');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `series`
+-- Структура таблицы `series`
 --
 
 CREATE TABLE `series` (
@@ -895,16 +994,17 @@ CREATE TABLE `series` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `series`
+-- Дамп данных таблицы `series`
 --
 
 INSERT INTO `series` (`series_id`, `title`, `minimum_age`) VALUES
-(1, 'Sex education', 18);
+(1, 'Sex education', 18),
+(2, 'penguin', 18);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `seriesprofilewatchlist`
+-- Структура таблицы `seriesprofilewatchlist`
 --
 
 CREATE TABLE `seriesprofilewatchlist` (
@@ -912,24 +1012,38 @@ CREATE TABLE `seriesprofilewatchlist` (
   `series_id` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Дамп данных таблицы `seriesprofilewatchlist`
+--
+
+INSERT INTO `seriesprofilewatchlist` (`profile_id`, `series_id`) VALUES
+(2, 1);
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `seriesviewcount`
+-- Структура таблицы `seriesviewcount`
 --
 
 CREATE TABLE `seriesviewcount` (
   `account_id` int(11) UNSIGNED NOT NULL,
   `series_id` int(11) UNSIGNED NOT NULL,
-  `number` int(11) DEFAULT NULL,
+  `number` int(11) NOT NULL DEFAULT 0,
   `last_viewed` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Дамп данных таблицы `seriesviewcount`
+--
+
+INSERT INTO `seriesviewcount` (`account_id`, `series_id`, `number`, `last_viewed`) VALUES
+(1, 1, 1, '2025-01-04 14:26:27');
 
 -- --------------------------------------------------------
 
 --
--- Stand-in structure for view `subscriptioncosts`
--- (See below for the actual view)
+-- Дублирующая структура для представления `subscriptioncosts`
+-- (См. Ниже фактическое представление)
 --
 CREATE TABLE `subscriptioncosts` (
 `UserID` int(11) unsigned
@@ -941,7 +1055,7 @@ CREATE TABLE `subscriptioncosts` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user`
+-- Структура таблицы `user`
 --
 
 CREATE TABLE `user` (
@@ -961,7 +1075,7 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `user`
+-- Дамп данных таблицы `user`
 --
 
 INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `blocked`, `active`, `subscription`, `trial_start_date`, `language_id`, `role`, `failed_attempts`, `lock_time`, `discount`) VALUES
@@ -974,25 +1088,26 @@ INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `blocke
 (9, 'somepersonwhatever@hello.com', '$2a$10$DhZSCWySz9rypM/jM8mR6.yzaCPIpugVlITMSWx9whkmEp1ciPK42', 'something', b'0', b'0', 'SD', '2024-12-20 17:24:39', 2, 'JUNIOR', 0, NULL, b'0'),
 (10, 'iamsteve@hello.com', '$2a$10$92qxixAWTf94z9sK.Lf2iebtyLdBV9ckOx.xfzGLv4enlX5gdsis6', 'mastercard', b'0', b'0', 'SD', '2024-12-20 17:58:22', 3, 'JUNIOR', 0, NULL, b'0'),
 (15, 'test1@.com', '$2a$10$aP97IvFmxH8yLGuL1012Xe4sfLd6s1SdokAAKOhG3.tvWCTkmfD2.', 'some method', b'0', b'0', 'SD', '2024-12-20 22:46:29', 3, 'JUNIOR', 1, NULL, b'0'),
-(17, 'medior.fjodor@g.com', '$2a$10$gQuhxuEegp0Ypg.IrGiL8.bmQwV4sdMzXirKh7N0N4KbOXAq4xwFi', 'some money transfer method', b'0', b'0', 'SD', '2024-12-23 17:55:18', 3, 'JUNIOR', 0, NULL, b'0');
+(17, 'medior.fjodor@g.com', '$2a$10$gQuhxuEegp0Ypg.IrGiL8.bmQwV4sdMzXirKh7N0N4KbOXAq4xwFi', 'some money transfer method', b'0', b'0', 'SD', '2024-12-23 17:55:18', 3, 'JUNIOR', 0, NULL, b'0'),
+(18, 'unknown@gmain.com', '1234567890', 'doe not matter', b'0', b'0', 'SD', NULL, 6, 'JUNIOR', 0, NULL, b'0');
 
 -- --------------------------------------------------------
 
 --
--- Stand-in structure for view `user_genre_count`
--- (See below for the actual view)
+-- Дублирующая структура для представления `user_genre_count`
+-- (См. Ниже фактическое представление)
 --
 CREATE TABLE `user_genre_count` (
 `user_id` int(11) unsigned
 ,`genre_id` int(11) unsigned
 ,`genre_name` varchar(255)
-,`total_views` decimal(32,0)
+,`total_views` decimal(33,0)
 );
 
 -- --------------------------------------------------------
 
 --
--- Structure for view `paymentstatus`
+-- Структура для представления `paymentstatus`
 --
 DROP TABLE IF EXISTS `paymentstatus`;
 
@@ -1001,7 +1116,7 @@ CREATE VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`ac
 -- --------------------------------------------------------
 
 --
--- Structure for view `subscriptioncosts`
+-- Структура для представления `subscriptioncosts`
 --
 DROP TABLE IF EXISTS `subscriptioncosts`;
 
@@ -1010,111 +1125,107 @@ CREATE VIEW `subscriptioncosts`  AS SELECT `u`.`account_id` AS `UserID`, `u`.`em
 -- --------------------------------------------------------
 
 --
--- Structure for view `user_genre_count`
+-- Структура для представления `user_genre_count`
 --
 DROP TABLE IF EXISTS `user_genre_count`;
 
-CREATE VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, sum(`mvc`.`number`) AS `total_views` FROM (((`movieviewcount` `mvc` join `movie` `m` on(`mvc`.`movie_id` = `m`.`movie_id`)) join `genreformovie` `mg` on(`m`.`movie_id` = `mg`.`movie_id`)) join `genre` `g` on(`mg`.`genre_id` = `g`.`genre_id`)) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, sum(`mvc`.`number`) DESC ;
+CREATE VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) AS `total_views` FROM ((((((`genre` `g` left join `genreformovie` `mg` on(`g`.`genre_id` = `mg`.`genre_id`)) left join `movie` `m` on(`mg`.`movie_id` = `m`.`movie_id`)) left join `movieviewcount` `mvc` on(`m`.`movie_id` = `mvc`.`movie_id`)) left join `genreforseries` `gfs` on(`g`.`genre_id` = `gfs`.`genre_id`)) left join `series` `s` on(`gfs`.`series_id` = `s`.`series_id`)) left join `seriesviewcount` `svc` on(`s`.`series_id` = `svc`.`series_id` and `svc`.`account_id` = `mvc`.`account_id`)) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) DESC ;
 
 --
--- Indexes for dumped tables
+-- Индексы сохранённых таблиц
 --
 
 --
--- Indexes for table `account`
---
-ALTER TABLE `account`
-  ADD PRIMARY KEY (`account_id`);
-
---
--- Indexes for table `episode`
+-- Индексы таблицы `episode`
 --
 ALTER TABLE `episode`
   ADD PRIMARY KEY (`episode_id`),
   ADD KEY `FK_episode_series` (`series_id`);
 
 --
--- Indexes for table `genre`
+-- Индексы таблицы `genre`
 --
 ALTER TABLE `genre`
   ADD PRIMARY KEY (`genre_id`);
 
 --
--- Indexes for table `genreformovie`
+-- Индексы таблицы `genreformovie`
 --
 ALTER TABLE `genreformovie`
   ADD PRIMARY KEY (`genre_id`,`movie_id`),
   ADD KEY `movie_id` (`movie_id`);
 
 --
--- Indexes for table `genreforseries`
+-- Индексы таблицы `genreforseries`
 --
 ALTER TABLE `genreforseries`
   ADD PRIMARY KEY (`genre_id`,`series_id`),
   ADD KEY `series_id` (`series_id`);
 
 --
--- Indexes for table `genreforuser`
+-- Индексы таблицы `genreforuser`
 --
 ALTER TABLE `genreforuser`
   ADD PRIMARY KEY (`genre_id`,`account_id`),
   ADD KEY `account_id` (`account_id`);
 
 --
--- Indexes for table `language`
+-- Индексы таблицы `language`
 --
 ALTER TABLE `language`
   ADD PRIMARY KEY (`language_id`);
 
 --
--- Indexes for table `movie`
+-- Индексы таблицы `movie`
 --
 ALTER TABLE `movie`
   ADD PRIMARY KEY (`movie_id`);
 
 --
--- Indexes for table `moviesprofilewatchlist`
+-- Индексы таблицы `moviesprofilewatchlist`
 --
 ALTER TABLE `moviesprofilewatchlist`
+  ADD PRIMARY KEY (`profile_id`,`movie_id`),
   ADD KEY `fk_moviesprofilewatchlist_profile` (`profile_id`),
   ADD KEY `fk_moviesprofilewatchlist_movie` (`movie_id`);
 
 --
--- Indexes for table `movieviewcount`
+-- Индексы таблицы `movieviewcount`
 --
 ALTER TABLE `movieviewcount`
   ADD PRIMARY KEY (`account_id`,`movie_id`),
   ADD KEY `fk_movieviewcount_movie` (`movie_id`);
 
 --
--- Indexes for table `profile`
+-- Индексы таблицы `profile`
 --
 ALTER TABLE `profile`
   ADD PRIMARY KEY (`profile_id`),
   ADD KEY `account_id` (`account_id`);
 
 --
--- Indexes for table `series`
+-- Индексы таблицы `series`
 --
 ALTER TABLE `series`
   ADD PRIMARY KEY (`series_id`);
 
 --
--- Indexes for table `seriesprofilewatchlist`
+-- Индексы таблицы `seriesprofilewatchlist`
 --
 ALTER TABLE `seriesprofilewatchlist`
+  ADD PRIMARY KEY (`profile_id`,`series_id`),
   ADD KEY `fk_seriesprofilewatchlist_profile` (`profile_id`),
   ADD KEY `fk_seriesprofilewatchlist_series` (`series_id`);
 
 --
--- Indexes for table `seriesviewcount`
+-- Индексы таблицы `seriesviewcount`
 --
 ALTER TABLE `seriesviewcount`
   ADD PRIMARY KEY (`account_id`,`series_id`),
   ADD KEY `fk_seriesviewcount_series` (`series_id`);
 
 --
--- Indexes for table `user`
+-- Индексы таблицы `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`account_id`),
@@ -1122,105 +1233,119 @@ ALTER TABLE `user`
   ADD KEY `user_language` (`language_id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT для сохранённых таблиц
 --
 
 --
--- AUTO_INCREMENT for table `episode`
+-- AUTO_INCREMENT для таблицы `episode`
 --
 ALTER TABLE `episode`
-  MODIFY `episode_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `episode_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `genre`
+-- AUTO_INCREMENT для таблицы `genre`
 --
 ALTER TABLE `genre`
-  MODIFY `genre_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `genre_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
--- AUTO_INCREMENT for table `language`
+-- AUTO_INCREMENT для таблицы `language`
 --
 ALTER TABLE `language`
-  MODIFY `language_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `language_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT for table `movie`
+-- AUTO_INCREMENT для таблицы `movie`
 --
 ALTER TABLE `movie`
-  MODIFY `movie_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `movie_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `profile`
+-- AUTO_INCREMENT для таблицы `profile`
 --
 ALTER TABLE `profile`
-  MODIFY `profile_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `profile_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `series`
+-- AUTO_INCREMENT для таблицы `series`
 --
 ALTER TABLE `series`
-  MODIFY `series_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `series_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `user`
+-- AUTO_INCREMENT для таблицы `user`
 --
 ALTER TABLE `user`
-  MODIFY `account_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `account_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- Constraints for dumped tables
+-- Ограничения внешнего ключа сохраненных таблиц
 --
 
 --
--- Constraints for table `episode`
+-- Ограничения внешнего ключа таблицы `episode`
 --
 ALTER TABLE `episode`
   ADD CONSTRAINT `FK_episode_series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `genreformovie`
+-- Ограничения внешнего ключа таблицы `genreformovie`
 --
 ALTER TABLE `genreformovie`
   ADD CONSTRAINT `fk_genreformovie_genre` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_genreformovie_movie` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `genreforseries`
+-- Ограничения внешнего ключа таблицы `genreforseries`
 --
 ALTER TABLE `genreforseries`
   ADD CONSTRAINT `fk_genreforseries_genre` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_genreforseries_series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `moviesprofilewatchlist`
+-- Ограничения внешнего ключа таблицы `genreforuser`
+--
+ALTER TABLE `genreforuser`
+  ADD CONSTRAINT `fk_genreforuser_genre` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_genreforuser_user` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `moviesprofilewatchlist`
 --
 ALTER TABLE `moviesprofilewatchlist`
   ADD CONSTRAINT `fk_moviesprofilewatchlist_movie` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_moviesprofilewatchlist_profile` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`profile_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `movieviewcount`
+-- Ограничения внешнего ключа таблицы `movieviewcount`
 --
 ALTER TABLE `movieviewcount`
   ADD CONSTRAINT `fk_movieviewcount_movie` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_movieviewcount_user` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `seriesprofilewatchlist`
+-- Ограничения внешнего ключа таблицы `profile`
+--
+ALTER TABLE `profile`
+  ADD CONSTRAINT `fk_user` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `seriesprofilewatchlist`
 --
 ALTER TABLE `seriesprofilewatchlist`
   ADD CONSTRAINT `fk_seriesprofilewatchlist_profile` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`profile_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_seriesprofilewatchlist_series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `seriesviewcount`
+-- Ограничения внешнего ключа таблицы `seriesviewcount`
 --
 ALTER TABLE `seriesviewcount`
   ADD CONSTRAINT `fk_seriesviewcount_series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_seriesviewcount_user` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `user`
+-- Ограничения внешнего ключа таблицы `user`
 --
 ALTER TABLE `user`
   ADD CONSTRAINT `user_language` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
