@@ -97,13 +97,13 @@ public class UserController {
     public ResponseEntity<String> getUserById(@PathVariable Integer id) {
         try {
             User user = userService.getUserById(id);
-            return ResponseEntity.ok(user.toString());
-        } catch (RuntimeException e) {
+            return ResponseEntity.ok(user.getEmail() + ", " + user.getRole() + ",Is blocked?: " + user.isBlocked());
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 
-    @GetMapping("/{email}")
+    @GetMapping("/email/{email}")
     public ResponseEntity<String> getUserByEmail(@PathVariable String email) {
         try {
             User user = userService.getUserByEmail(email);
