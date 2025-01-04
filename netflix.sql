@@ -872,31 +872,6 @@ INSERT INTO `movieviewcount` (`account_id`, `movie_id`, `number`) VALUES
 (1, 2, 2),
 (1, 3, 1),
 (3, 1, 1),
-(5, 2, 2),
-(1, 1, 3),
-(1, 2, 2),
-(1, 3, 1),
-(3, 1, 1),
-(5, 2, 2),
-(1, 1, 3),
-(1, 2, 2),
-(1, 3, 1),
-(3, 1, 1),
-(5, 2, 2),
-(1, 1, 3),
-(1, 2, 2),
-(1, 3, 1),
-(3, 1, 1),
-(5, 2, 2),
-(1, 1, 3),
-(1, 2, 2),
-(1, 3, 1),
-(3, 1, 1),
-(5, 2, 2),
-(1, 1, 3),
-(1, 2, 2),
-(1, 3, 1),
-(3, 1, 1),
 (5, 2, 2);
 
 
@@ -990,12 +965,7 @@ CREATE TABLE `user` (
 -- Stand-in structure for view `user_genre_count`
 -- (See below for the actual view)
 --
-CREATE TABLE `user_genre_count` (
-`user_id` bigint(20) unsigned
-,`genre_id` int(11) unsigned
-,`genre_name` varchar(255)
-,`total_views` decimal(32,0)
-);
+
 
 -- the update statement will set the trial end date to 7 days after the trial start date
 --
@@ -1152,167 +1122,99 @@ CREATE TABLE `invitation` (
 -- --------------------------------------------------------
 
 --
--- Structure for view `user_genre_count`
---
-DROP TABLE IF EXISTS `user_genre_count`;
+-- 
 
 CREATE VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) AS `total_views` FROM ((((((`genre` `g` left join `genreformovie` `mg` on(`g`.`genre_id` = `mg`.`genre_id`)) left join `movie` `m` on(`mg`.`movie_id` = `m`.`movie_id`)) left join `movieviewcount` `mvc` on(`m`.`movie_id` = `mvc`.`movie_id`)) left join `genreforseries` `gfs` on(`g`.`genre_id` = `gfs`.`genre_id`)) left join `series` `s` on(`gfs`.`series_id` = `s`.`series_id`)) left join `seriesviewcount` `svc` on(`s`.`series_id` = `svc`.`series_id` and `svc`.`account_id` = `mvc`.`account_id`)) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) DESC ;
 
---
+-- 
 -- Indexes for dumped tables
---
 
---
--- Indexes for table `account`
---
-ALTER TABLE `account`
-  ADD PRIMARY KEY (`account_id`);
-
---
+-- 
 -- Indexes for table `episode`
---
+-- 
 ALTER TABLE `episode`
-  ADD PRIMARY KEY (`episode_id`),
-  ADD KEY `FK_episode_series` (`series_id`);
+  ADD PRIMARY KEY (`episode_id`);
 
---
+-- 
 -- Indexes for table `genre`
---
+-- 
 ALTER TABLE `genre`
   ADD PRIMARY KEY (`genre_id`);
 
---
--- Indexes for table `genreformovie`
---
-ALTER TABLE `genreformovie`
-  ADD PRIMARY KEY (`genre_id`,`movie_id`),
-  ADD KEY `movie_id` (`movie_id`);
 
---
--- Indexes for table `genreforseries`
---
-ALTER TABLE `genreforseries`
-  ADD PRIMARY KEY (`genre_id`,`series_id`),
-  ADD KEY `series_id` (`series_id`);
-
---
--- Indexes for table `genreforuser`
---
-ALTER TABLE `genreforuser`
-  ADD PRIMARY KEY (`genre_id`,`account_id`),
-  ADD KEY `account_id` (`account_id`);
-
---
+-- 
 -- Indexes for table `language`
---
+-- 
 ALTER TABLE `language`
   ADD PRIMARY KEY (`language_id`);
 
---
+-- 
 -- Indexes for table `movie`
---
+-- 
 ALTER TABLE `movie`
   ADD PRIMARY KEY (`movie_id`);
 
---
+-- 
 -- Indexes for table `profile`
---
+-- 
 ALTER TABLE `profile`
   ADD PRIMARY KEY (`profile_id`);
 
---
+-- 
 -- Indexes for table `series`
---
+-- 
 ALTER TABLE `series`
   ADD PRIMARY KEY (`series_id`);
 
---
+-- 
 -- Indexes for table `user`
---
+-- 
 ALTER TABLE `user`
-  ADD UNIQUE KEY `email` (`email`),
-  ADD KEY `account_id` (`account_id`);
+  ADD PRIMARY KEY (`account_id`);
 
 
---Fjodor--
+-- Joins --
+
+-- 
+-- Indexes for table `genreformovie`
+-- 
+ALTER TABLE `genreformovie`
+  ADD PRIMARY KEY (`genre_id`,`movie_id`);
+
+-- 
+-- Indexes for table `genreforseries`
+-- 
+ALTER TABLE `genreforseries`
+  ADD PRIMARY KEY (`genre_id`,`series_id`);
+
+-- 
+-- Indexes for table `genreforuser`
+-- 
+ALTER TABLE `genreforuser`
+  ADD PRIMARY KEY (`genre_id`,`account_id`);
+
 -- Индексы таблицы `moviesprofilewatchlist`
 
 ALTER TABLE `moviesprofilewatchlist`
-  ADD PRIMARY KEY (`profile_id`,`movie_id`),
-  ADD KEY `fk_moviesprofilewatchlist_profile` (`profile_id`),
-  ADD KEY `fk_moviesprofilewatchlist_movie` (`movie_id`);
+  ADD PRIMARY KEY (`profile_id`,`movie_id`);
 
---
+-- 
 -- Индексы таблицы `movieviewcount`
---
+-- 
 ALTER TABLE `movieviewcount`
-  ADD PRIMARY KEY (`account_id`,`movie_id`),
-  ADD KEY `fk_movieviewcount_movie` (`movie_id`);
+  ADD PRIMARY KEY (`account_id`,`movie_id`);
 
---`seriesprofilewatchlist`
+-- `seriesprofilewatchlist`
 
 ALTER TABLE `seriesprofilewatchlist`
-  ADD PRIMARY KEY (`profile_id`,`series_id`),
-  ADD KEY `fk_seriesprofilewatchlist_profile` (`profile_id`),
-  ADD KEY `fk_seriesprofilewatchlist_series` (`series_id`);
+  ADD PRIMARY KEY (`profile_id`,`series_id`);
 
---
+-- 
 -- Индексы таблицы `seriesviewcount`
---
+-- 
 ALTER TABLE `seriesviewcount`
-  ADD PRIMARY KEY (`account_id`,`series_id`),
-  ADD KEY `fk_seriesviewcount_series` (`series_id`);
---/Fjodor--
-
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `episode`
---
-ALTER TABLE `episode`
-  MODIFY `episode_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `language`
---
-ALTER TABLE `language`
-  MODIFY `language_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT for table `movie`
---
-ALTER TABLE `movie`
-  MODIFY `movie_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `profile`
---
-ALTER TABLE `profile`
-  MODIFY `profile_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `series`
---
-ALTER TABLE `series`
-  MODIFY `series_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `user`
---
--- Drop the foreign key constraint
-ALTER TABLE `payments` DROP FOREIGN KEY `payments_ibfk_1`;
-
--- Modify the `account_id` column
-ALTER TABLE `user`
-  MODIFY `account_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
-
--- Re-add the foreign key constraint
-ALTER TABLE `payments`
-  ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`);
-
+  ADD PRIMARY KEY (`account_id`,`series_id`);
+-- /Fjodor --
 
 
 -- Foreign keys for tables
@@ -1320,63 +1222,63 @@ ALTER TABLE `payments`
 ALTER TABLE `episode`
   ADD CONSTRAINT `FK_episode_series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
+-- 
 -- Ограничения внешнего ключа таблицы `genreformovie`
---
+-- 
 ALTER TABLE `genreformovie`
   ADD CONSTRAINT `fk_genreformovie_genre` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_genreformovie_movie` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
+-- 
 -- Ограничения внешнего ключа таблицы `genreforseries`
---
+-- 
 ALTER TABLE `genreforseries`
   ADD CONSTRAINT `fk_genreforseries_genre` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_genreforseries_series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
+-- 
 -- Ограничения внешнего ключа таблицы `genreforuser`
---
+-- 
 ALTER TABLE `genreforuser`
   ADD CONSTRAINT `fk_genreforuser_genre` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`genre_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_genreforuser_user` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
+-- 
 -- Ограничения внешнего ключа таблицы `moviesprofilewatchlist`
---
+-- 
 ALTER TABLE `moviesprofilewatchlist`
   ADD CONSTRAINT `fk_moviesprofilewatchlist_movie` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_moviesprofilewatchlist_profile` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`profile_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
+-- 
 -- Ограничения внешнего ключа таблицы `movieviewcount`
---
+-- 
 ALTER TABLE `movieviewcount`
   ADD CONSTRAINT `fk_movieviewcount_movie` FOREIGN KEY (`movie_id`) REFERENCES `movie` (`movie_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_movieviewcount_user` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
+-- 
 -- Ограничения внешнего ключа таблицы `profile`
---
+-- 
 ALTER TABLE `profile`
   ADD CONSTRAINT `fk_user` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
+-- 
 -- Ограничения внешнего ключа таблицы `seriesprofilewatchlist`
---
+-- 
 ALTER TABLE `seriesprofilewatchlist`
   ADD CONSTRAINT `fk_seriesprofilewatchlist_profile` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`profile_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_seriesprofilewatchlist_series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
+-- 
 -- Ограничения внешнего ключа таблицы `seriesviewcount`
---
+-- 
 ALTER TABLE `seriesviewcount`
   ADD CONSTRAINT `fk_seriesviewcount_series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_seriesviewcount_user` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
+
 -- Ограничения внешнего ключа таблицы `user`
---
+
 ALTER TABLE `user`
   ADD CONSTRAINT `user_language` FOREIGN KEY (`language_id`) REFERENCES `language` (`language_id`) ON DELETE CASCADE ON UPDATE CASCADE;
