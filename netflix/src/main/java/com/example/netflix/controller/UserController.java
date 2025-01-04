@@ -140,8 +140,12 @@ public class UserController {
     }
 
     @PostMapping("/invite")
-    public void inviteUser(@RequestParam Integer userId, @RequestParam Integer invitedAccountId)
-    {
-        userService.inviteUser(userId, invitedAccountId);
+    public ResponseEntity<String> inviteUser(@RequestParam Integer userId, @RequestParam Integer invitedAccountId) {
+        try {
+            userService.inviteUser(userId, invitedAccountId);
+            return ResponseEntity.ok("Invitation sent successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 }

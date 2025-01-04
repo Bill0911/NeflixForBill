@@ -5,15 +5,10 @@ import com.example.netflix.entity.SubscriptionType;
 import com.example.netflix.entity.User;
 import com.example.netflix.repository.PaymentRepository;
 import com.example.netflix.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,22 +20,18 @@ public class PaymentService {
     private UserRepository userRepository;
 
     public Payment processPayment(Integer userId, SubscriptionType subscriptionType, boolean discountApplied) {
-        // Check if user exists
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
-        // Calculate payment amount based on subscription type and discount
         double paymentAmount = calculatePaymentAmount(subscriptionType, discountApplied);
 
-        // Check if a payment record already exists for this user
         Optional<Payment> existingPaymentOpt = paymentRepository.findByUserAccountId(userId);
 
         Payment payment;
         if (existingPaymentOpt.isPresent()) {
-            // Update the existing payment record
             payment = existingPaymentOpt.get();
             payment.setSubscriptionType(subscriptionType);
             payment.setPaymentAmount(paymentAmount);
-            payment.setDiscountApplied(discountApplied);
+            payment.setDiscountApplied(discountApplied || user.isDiscount());
             payment.setPaid(true);
             payment.setPaymentDate(LocalDateTime.now());
             payment.setNextBillingDate(LocalDateTime.now().plusMonths(1));
@@ -49,7 +40,7 @@ public class PaymentService {
             payment.setUser(user);
             payment.setSubscriptionType(subscriptionType);
             payment.setPaymentAmount(paymentAmount);
-            payment.setDiscountApplied(discountApplied);
+            payment.setDiscountApplied(discountApplied || user.isDiscount());
             payment.setPaid(true);
             payment.setPaymentDate(LocalDateTime.now());
             payment.setNextBillingDate(LocalDateTime.now().plusMonths(1));

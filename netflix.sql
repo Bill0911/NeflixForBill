@@ -706,6 +706,16 @@ ON SCHEDULE EVERY 1 DAY
 STARTS CURRENT_TIMESTAMP
 DO
 CALL `InsertExpiredTrialsIntoPayments`();
+
+-- Create the invitation table
+CREATE TABLE `invitation` 
+    `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `inviter_id` BIGINT NOT NULL,
+    `invitee_id` BIGINT NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`inviter_id`) REFERENCES `user`(`account_id`),
+    FOREIGN KEY (`invitee_id`) REFERENCES `user`(`account_id`)
+);
 -- ----------------------------------END OF PAYMENTS TABLE--------------------------------------------
 
 -- --------------------------------------------------------
