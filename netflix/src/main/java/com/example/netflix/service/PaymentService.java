@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @Service
 public class PaymentService {
-
     @Autowired
     private PaymentRepository paymentRepository;
 
@@ -21,40 +20,56 @@ public class PaymentService {
     private UserRepository userRepository;
 
     public Payment processPayment(Integer userId, SubscriptionType subscriptionType, boolean discountApplied) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (!userOptional.isPresent()) {
-            throw new IllegalArgumentException("User not found");
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+
+        double paymentAmount = calculatePaymentAmount(subscriptionType, discountApplied);
+
+        Optional<Payment> existingPaymentOpt = paymentRepository.findByUserAccountId(userId);
+
+        Payment payment;
+        if (existingPaymentOpt.isPresent()) {
+            payment = existingPaymentOpt.get();
+            payment.setSubscriptionType(subscriptionType);
+            payment.setPaymentAmount(paymentAmount);
+            payment.setDiscountApplied(discountApplied || user.isDiscount());
+            payment.setPaid(true);
+            payment.setPaymentDate(LocalDateTime.now());
+            payment.setNextBillingDate(LocalDateTime.now().plusMonths(1));
+        } else {
+            payment = new Payment();
+            payment.setUser(user);
+            payment.setSubscriptionType(subscriptionType);
+            payment.setPaymentAmount(paymentAmount);
+            payment.setDiscountApplied(discountApplied || user.isDiscount());
+            payment.setPaid(true);
+            payment.setPaymentDate(LocalDateTime.now());
+            payment.setNextBillingDate(LocalDateTime.now().plusMonths(1));
         }
 
-        User user = userOptional.get();
+        paymentRepository.save(payment);
 
-        double paymentAmount = 0.0;
-        switch (subscriptionType) {
+        return payment;
+    }
+
+    private double calculatePaymentAmount(SubscriptionType subscriptionType, boolean discountApplied) {
+        double amount;
+        switch (subscriptionType)
+        {
             case SD:
-                paymentAmount = 7.99;
+                amount = 7.99;
                 break;
             case HD:
-                paymentAmount = 10.99;
+                amount = 10.99;
                 break;
             case UHD:
-                paymentAmount = 13.99;
+                amount = 13.99;
                 break;
             default:
-                break;
+                throw new IllegalArgumentException("Unknown subscription type: " + subscriptionType);
         }
-
         if (discountApplied) {
-            paymentAmount -= 2.00;
+            amount -= 2.00;
         }
-
-        Payment payment = new Payment();
-        payment.setUser(user);
-        payment.setSubscriptionType(subscriptionType);
-        payment.setPaymentAmount(paymentAmount);
-        payment.setDiscountApplied(discountApplied);
-        payment.setPaid(true);
-        payment.setPaymentDate(LocalDateTime.now());
-
-        return paymentRepository.save(payment);
+        return amount;
     }
 }
