@@ -942,7 +942,7 @@ CREATE TABLE `seriesviewcount` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 -- --------------------------------------------------------
 --
--- Table structure for table `payments`
+-- Table structure for table 
 --
 CREATE TABLE `user` (
   `account_id` bigint(20) UNSIGNED NOT NULL,
@@ -958,12 +958,9 @@ CREATE TABLE `user` (
   `role` enum('JUNIOR','MEDIOR','SENIOR') DEFAULT 'JUNIOR',
   `failed_attempts` int(11) DEFAULT 0,
   `lock_time` datetime DEFAULT NULL,
-  `discount` bit(1) DEFAULT b'0',
-  PRIMARY KEY (`account_id`)
+  `discount` bit(1) DEFAULT b'0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 --
--- Stand-in structure for view `user_genre_count`
--- (See below for the actual view)
 --
 
 
