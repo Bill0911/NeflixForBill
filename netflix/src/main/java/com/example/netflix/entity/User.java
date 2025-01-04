@@ -27,6 +27,9 @@ public class User {
     @Column(name = "trial_start_date", nullable = false)
     private LocalDateTime trialStartDate = LocalDateTime.now(); // Default to current time
 
+    @Column(name = "trial_end_date", nullable = false)
+    private LocalDateTime trialEndDate = LocalDateTime.now().plusDays(7);
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.JUNIOR; // Default role
@@ -193,6 +196,16 @@ public class User {
     public boolean isDiscount ()
     {
         return discount;
+    }
+
+    public LocalDateTime getTrialEndDate ()
+    {
+        return trialEndDate;
+    }
+
+    public void setTrialEndDate (LocalDateTime trialEndDate)
+    {
+        this.trialEndDate = trialEndDate;
     }
 
     public void setDiscount (boolean discount)
