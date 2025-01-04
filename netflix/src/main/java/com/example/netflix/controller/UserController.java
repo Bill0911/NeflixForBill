@@ -93,23 +93,21 @@ public class UserController {
         }
     }
 
-    @GetMapping("/lang")
-    public ResponseEntity<String> getLanguage(@RequestHeader("Authorization") String token) {
+    @GetMapping("/{id}")
+    public ResponseEntity<String> getUserById(@PathVariable Integer id) {
         try {
-            int id = jwtUtil.extractId(extractToken(token));
-            String language = userService.getLanguageName(id);
-            return ResponseEntity.ok("Language: " + language);
+            User user = userService.getUserById(id);
+            return ResponseEntity.ok(user.toString());
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 
-    @PostMapping("/lang")
-    public ResponseEntity<String> setLanguage(@RequestParam Integer languageId, @RequestHeader("Authorization") String token) {
+    @GetMapping("/{email}")
+    public ResponseEntity<String> getUserByEmail(@PathVariable String email) {
         try {
-            int id = jwtUtil.extractId(extractToken(token));
-            String language = userService.changeLanguage(languageId, id);
-            return ResponseEntity.ok("Language set to " + language);
+            User user = userService.getUserByEmail(email);
+            return ResponseEntity.ok(user.toString());
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }

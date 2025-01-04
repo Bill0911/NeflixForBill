@@ -119,12 +119,17 @@ public class UserService {
         return user; // Return full User object
     }
 
-    public String getLanguageName(Integer accountId) {
+    public User getUserById(Integer accountId) {
         Optional<User> user = userRepository.findByAccountId(accountId);
         if (user.isPresent()) {
-            return user.get().getLanguage().getName();
+            return user.get();
         }
         throw new RuntimeException("Invalid id");
+    }
+
+    public User getUserByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.orElse(null);
     }
 
     public Profile addProfile(ProfileRequest profileRequest, Integer accountId)
