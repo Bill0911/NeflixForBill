@@ -2,14 +2,13 @@ package com.example.netflix.service;
 
 import com.example.netflix.entity.*;
 import com.example.netflix.dto.ProfileRequest;
-import com.example.netflix.repository.LanguageRepository;
-import com.example.netflix.repository.ProfileRepository;
-import com.example.netflix.repository.UserRepository;
+import com.example.netflix.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
@@ -27,12 +26,20 @@ public class UserService {
     private final ProfileRepository profileRepository;
 
     @Autowired
+    private final InvitationRepository invitationRepository;
+
+    @Autowired
+    private final PaymentRepository paymentRepository;
+
+    @Autowired
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, InvitationRepository invitationRepository, PaymentRepository paymentRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.languageRepository = languageRepository;
         this.profileRepository = profileRepository;
+        this.invitationRepository = invitationRepository;
+        this.paymentRepository = paymentRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -189,12 +196,83 @@ public class UserService {
             throw new IllegalArgumentException("User cannot invite themselves");
         }
 
+        if (invitationRepository.existsByInviterAndInvitee(user, invitedUser)) {
+            throw new IllegalArgumentException("User has already invited this user");
+        }
+
         if (user.isActive() && invitedUser.isActive() && !user.isDiscount() && !invitedUser.isDiscount()) {
             user.setDiscount(true);
             invitedUser.setDiscount(true);
             userRepository.save(user);
             userRepository.save(invitedUser);
+
+            Invitation invitation = new Invitation();
+            invitation.setInviter(user);
+            invitation.setInvitee(invitedUser);
+            invitationRepository.save(invitation);
+
+            processPayment(user);
+            processPayment(invitedUser);
         }
     }
+
+    private void processPayment(User user) {
+        // Calculate payment amount based on subscription type and discount
+        double paymentAmount = calculatePaymentAmount(user.getSubscription(), user.isDiscount());
+
+        // Check if a payment record already exists for this user
+        Optional<Payment> existingPaymentOpt = paymentRepository.findByUserAccountId(user.getAccountId());
+
+        Payment payment;
+        if (existingPaymentOpt.isPresent()) {
+            // Update the existing payment record
+            payment = existingPaymentOpt.get();
+            payment.setSubscriptionType(user.getSubscription());
+            payment.setPaymentAmount(paymentAmount);
+            payment.setDiscountApplied(user.isDiscount());
+            payment.setPaid(true);
+            payment.setPaymentDate(LocalDateTime.now());
+            payment.setNextBillingDate(LocalDateTime.now().plusMonths(1));
+        } else {
+            payment = new Payment();
+            payment.setUser(user);
+            payment.setSubscriptionType(user.getSubscription());
+            payment.setPaymentAmount(paymentAmount);
+            payment.setDiscountApplied(user.isDiscount());
+            payment.setPaid(true);
+            payment.setPaymentDate(LocalDateTime.now());
+            payment.setNextBillingDate(LocalDateTime.now().plusMonths(1));
+        }
+
+        paymentRepository.save(payment);
+    }
+    
+    //I know this code right here is quite controversial
+    // as I already implemented these in payment service
+    // but for some reasons it does not update table after getting 200 OK,
+    // so I just did like this as a temporary solution.
+
+    private double calculatePaymentAmount(SubscriptionType subscriptionType, boolean discountApplied) {
+        double amount;
+        switch (subscriptionType) {
+            case SD:
+                amount = 7.99;
+                break;
+            case HD:
+                amount = 10.99;
+                break;
+            case UHD:
+                amount = 13.99;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown subscription type: " + subscriptionType);
+        }
+        if (discountApplied) {
+            amount -= 2.00;
+        }
+        return amount;
+    }
+
+
 }
 
