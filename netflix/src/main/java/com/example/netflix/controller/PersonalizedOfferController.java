@@ -1,6 +1,6 @@
 package com.example.netflix.controller;
 
-import com.example.netflix.dto.MovieInPersonalizedOffer;
+import com.example.netflix.dto.PersonalizedOfferItem;
 import com.example.netflix.entity.Movie;
 import com.example.netflix.entity.Series;
 import com.example.netflix.entity.UserGenreCount;
@@ -30,9 +30,9 @@ public class PersonalizedOfferController {
     }
 
     @GetMapping("/personalized-offer")
-    public List<MovieInPersonalizedOffer> getPersonalizedOffer(@RequestHeader("Authorization") String token) {
+    public List<PersonalizedOfferItem> getPersonalizedOffer(@RequestHeader("Authorization") String token) {
         Integer userId = jwtUtil.extractId(token.substring(7));
         System.out.println("The results are NOT YET retrieved");
-        return personalizedOfferService.getPersonalizedOffer(userId, 24);
+        return personalizedOfferService.getPersonalizedOfferMovies(userId, 20);
     }
 }
