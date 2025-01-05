@@ -1,10 +1,12 @@
 package com.example.netflix.service;
 
 import com.example.netflix.entity.Movie;
+import com.example.netflix.entity.Profile;
 import com.example.netflix.repository.MovieRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MovieService {
@@ -15,34 +17,28 @@ public class MovieService {
         this.movieRepository = movieRepository;
     }
 
-    public List<Movie> getAllMovies() {
-        return movieRepository.findAll();
-    }
-
-    public Movie getMovieById(Integer movieId) {
-        return movieRepository.findById(movieId)
-                .orElseThrow(() -> new RuntimeException("Movie not found with ID: " + movieId));
-    }
-
     public Movie addMovie(Movie movie) {
         return movieRepository.save(movie);
     }
 
-    public Movie updateMovie(Integer movieId, Movie updatedMovie) {
-        Movie movie = movieRepository.findById(movieId)
-                .orElseThrow(() -> new RuntimeException("Movie not found with ID: " + movieId));
-        movie.setTitle(updatedMovie.getTitle());
-        movie.setDuration(updatedMovie.getDuration());
-        movie.setMinimumAge(updatedMovie.getMinimumAge());
-        return movieRepository.save(movie);
+    public Movie getMovieById(Integer id) {
+        Optional<Movie> movie = movieRepository.findByMovieId(id);
+        return movie.orElse(null);
     }
 
-    public void deleteMovie(Integer movieId) {
-        movieRepository.deleteById(movieId);
+    public List<Movie> getManyMovies() {
+        return movieRepository.findMany();
     }
 
-    public void patchMovie(Integer movieId, Movie patchData) {
-        System.out.println(patchData.getTitle() + ", " + patchData.getDuration() + ", SD:" + patchData.isSdAvailable() + ", HD:" + patchData.isHdAvailable() + ", UHD:" + patchData.isUhdAvailable() + ", " + patchData.getMinimumAge());
-        movieRepository.patchById(movieId, patchData.getTitle(), patchData.getDuration(), patchData.isSdAvailable(), patchData.isHdAvailable(), patchData.isUhdAvailable(), patchData.getMinimumAge());
+    public void deleteMovieById(Integer movieId) {
+        movieRepository.deleteByMovieId(movieId);
+    }
+
+    public void patchMovieById(Integer movieId, Movie patchData) {
+        movieRepository.patchByMovieId(movieId, patchData.getTitle(), patchData.getDuration(), patchData.isSdAvailable(), patchData.isHdAvailable(), patchData.isUhdAvailable(), patchData.getMinimumAge());
+    }
+
+    public void updateMovieById(Integer movieId, Movie patchData) {
+        movieRepository.updateByMovieId(movieId, patchData.getTitle(), patchData.getDuration(), patchData.isSdAvailable(), patchData.isHdAvailable(), patchData.isUhdAvailable(), patchData.getMinimumAge());
     }
 }

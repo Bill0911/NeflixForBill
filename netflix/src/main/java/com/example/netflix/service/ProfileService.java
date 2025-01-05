@@ -56,8 +56,8 @@ public class ProfileService {
         return profileRepository.findMany();
     }
 
-    public void deleteProfileById(Integer accountId) {
-        profileRepository.deleteByProfileId(accountId);
+    public void deleteProfileById(Integer id) {
+        profileRepository.deleteByProfileId(id);
     }
 
     public void patchProfileById(Integer id, Profile user) {

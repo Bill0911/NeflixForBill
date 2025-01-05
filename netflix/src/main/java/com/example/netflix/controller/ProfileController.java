@@ -50,7 +50,7 @@ public class ProfileController {
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<String> patchUserById(@PathVariable Integer id, @RequestBody Profile profile) {
+    public ResponseEntity<String> patchProfileById(@PathVariable Integer id, @RequestBody Profile profile) {
         try {
             profileService.patchProfileById(id, profile);
             return ResponseEntity.ok("Profile has been patched successfully");
@@ -60,7 +60,7 @@ public class ProfileController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<String> putUserById(@PathVariable Integer id, @RequestBody Profile profile) {
+    public ResponseEntity<String> putProfileById(@PathVariable Integer id, @RequestBody Profile profile) {
         try {
             profileService.updateProfileById(id, profile);
             return ResponseEntity.ok("Profile has been deleted successfully");
