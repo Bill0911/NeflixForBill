@@ -20,6 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 
+    @Modifying
+    @Transactional
+    @Query(value = "CALL AddUser(:email, :password, :paymentMethod, :languageId)", nativeQuery = true)
+    void save(@Param("email") String email, @Param("password") String password, @Param("paymentMethod") String paymentMethod, @Param("languageId") Integer languageId);
+
     @Query(value = "CALL GetUserByEmail(:email)", nativeQuery = true)
     Optional<User> findByEmail(@Param("email") String email);
 
