@@ -121,10 +121,7 @@ public class UserService {
 
     public User getUserById(Integer accountId) {
         Optional<User> user = userRepository.findByAccountId(accountId);
-        if (user.isPresent()) {
-            return user.get();
-        }
-        throw new RuntimeException("Invalid id");
+        return user.orElse(null);
     }
 
     public User getUserByEmail(String email) {

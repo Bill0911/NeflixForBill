@@ -97,7 +97,7 @@ public class UserController {
     public ResponseEntity<String> getUserById(@PathVariable Integer id) {
         try {
             User user = userService.getUserById(id);
-            return ResponseEntity.ok(user.getEmail() + ", " + user.getRole() + ",Is blocked?: " + user.isBlocked());
+            return ResponseEntity.ok(user.toString());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
