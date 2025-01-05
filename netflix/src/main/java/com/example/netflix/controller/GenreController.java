@@ -48,9 +48,9 @@ public class GenreController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<String> patchGenre(@PathVariable Integer id, @RequestBody GenreDTO patchData) {
+    public ResponseEntity<String> patchGenre(@PathVariable Integer id, @RequestBody GenreDTO genre) {
         try {
-            genreService.updateGenre(id, patchData.getGenreName());
+            genreService.updateGenre(id, genre.getGenreName());
             return ResponseEntity.ok("Genre " + id + " has been patched");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Failed to patch genre with ID" + id + ": " + e.getMessage());
