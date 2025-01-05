@@ -95,6 +95,16 @@ public class UserController {
         }
     }
 
+    @PostMapping()
+    public ResponseEntity<Object> addUser(@RequestBody User user) {
+        try {
+            userService.addUser(user);
+            return ResponseEntity.ok("User has been created");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Integer id) {
         return ResponseEntity.ok(userService.getUserById(id));
@@ -111,7 +121,7 @@ public class UserController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Object> deleteUserById(@PathVariable @RequestBody Integer id) {
+    public ResponseEntity<Object> deleteUserById(@PathVariable Integer id) {
         try {
             userService.deleteUserById(id);
             return ResponseEntity.ok("User has been deleted successfully");

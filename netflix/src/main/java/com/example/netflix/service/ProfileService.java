@@ -47,6 +47,10 @@ public class ProfileService {
         return methodResponse;
     }
 
+    public void addProfile(Profile profile) {
+        profileRepository.addProfile(profile.getUser(), profile.getProfileImage(), profile.getAge(), profile.getName());
+    }
+
     public Profile getProfileById(Integer id) {
         Optional<Profile> profile = profileRepository.findByProfileId(id);
         return profile.orElse(null);

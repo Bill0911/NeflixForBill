@@ -17,8 +17,8 @@ public class MovieService {
         this.movieRepository = movieRepository;
     }
 
-    public Movie addMovie(Movie movie) {
-        return movieRepository.save(movie);
+    public void addMovie(Movie movie) {
+        movieRepository.addMovie(movie.getTitle(), movie.getDuration(), movie.isSdAvailable(), movie.isHdAvailable(), movie.isUhdAvailable(), movie.getMinimumAge());
     }
 
     public Movie getMovieById(Integer id) {
