@@ -7,6 +7,7 @@ import com.example.netflix.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Flow;
 
@@ -25,20 +26,45 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "CALL GetUserById(:accountId)", nativeQuery = true)
     Optional<User> findByAccountId(@Param("accountId") Integer accountId);
 
+    @Query(value = "CALL GetManyUsers()", nativeQuery = true)
+    List<User> findMany();
+
     @Modifying
     @Transactional
-    @Query(value = "CALL PatchUser(:accountId)", nativeQuery = true)
+    @Query(value = "CALL DeleteUser(:accountId)", nativeQuery = true)
+    void deleteByAccountId(@Param("accountId") Integer accountId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "CALL PatchUser(:accountId, :password, :paymentMethod, :active, :blocked, :subscription, :trialStartDate, :trialEndDate, :languageId, :role, :failedAttempts, :lockTime, :discount)", nativeQuery = true)
     void patchByAccountId(@Param("accountId") Integer accountId,
                           @Param("password") String password,
-                          @Param("password") String paymentMethod,
-                          @Param("password") Boolean active,
-                          @Param("password") Boolean blocked,
-                          @Param("password") SubscriptionType subscription,
-                          @Param("password") LocalDateTime trialStartDate,
-                          @Param("password") LocalDateTime trialEndDate,
-                          @Param("password") Integer languageId,
-                          @Param("password") Role role,
-                          @Param("password") Integer failedAttempts,
-                          @Param("password") LocalDateTime lockTime,
-                          @Param("password") Boolean discount);
+                          @Param("paymentMethod") String paymentMethod,
+                          @Param("active") Boolean active,
+                          @Param("blocked") Boolean blocked,
+                          @Param("subscription") SubscriptionType subscription,
+                          @Param("trialStartDate") LocalDateTime trialStartDate,
+                          @Param("trialEndDate") LocalDateTime trialEndDate,
+                          @Param("languageId") Integer languageId,
+                          @Param("role") Role role,
+                          @Param("failedAttempts") Integer failedAttempts,
+                          @Param("lockTime") LocalDateTime lockTime,
+                          @Param("discount") Boolean discount);
+
+    @Modifying
+    @Transactional
+    @Query(value = "CALL UpdateUser(:accountId, :password, :paymentMethod, :active, :blocked, :subscription, :trialStartDate, :trialEndDate, :languageId, :`role`, :failedAttempts, :lockTime, :discount)", nativeQuery = true)
+    void updateByAccountId(@Param("accountId") Integer accountId,
+                          @Param("password") String password,
+                          @Param("paymentMethod") String paymentMethod,
+                          @Param("active") Boolean active,
+                          @Param("blocked") Boolean blocked,
+                          @Param("subscription") SubscriptionType subscription,
+                          @Param("trialStartDate") LocalDateTime trialStartDate,
+                          @Param("trialEndDate") LocalDateTime trialEndDate,
+                          @Param("languageId") Integer languageId,
+                          @Param("role") Role role,
+                          @Param("failedAttempts") Integer failedAttempts,
+                          @Param("lockTime") LocalDateTime lockTime,
+                          @Param("discount") Boolean discount);
 }

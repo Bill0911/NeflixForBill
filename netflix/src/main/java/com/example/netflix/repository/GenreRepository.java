@@ -22,8 +22,8 @@ public interface GenreRepository extends JpaRepository<Genre, Integer>
     @Query(value = "CALL GetGenreById(:genreId)", nativeQuery = true)
     Optional<Genre> findByGenreId(@Param("genreId") Integer genreId);
 
-    @Query(value = "CALL GetAllGenres", nativeQuery = true)
-    List<Genre> findAllGenres();
+    @Query(value = "CALL GetManyGenres", nativeQuery = true)
+    List<Genre> findMany();
 
     @Modifying
     @Transactional

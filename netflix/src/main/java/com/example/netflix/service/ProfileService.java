@@ -22,31 +22,6 @@ public class ProfileService {
         this.movieRepository = movieRepository;
     }
 
-    public MethodResponse belongsToUser(Integer profileId, Integer accountId)
-    {
-        MethodResponse methodResponse = new MethodResponse();
-
-        Optional<User> userOptional = userRepository.findByAccountId(accountId);
-        Optional<Profile> profileOptional = profileRepository.findByProfileId(profileId);
-
-        if(userOptional.isEmpty() || profileOptional.isEmpty()) {
-            methodResponse.setMessage("No such profile");
-            return methodResponse;
-        }
-
-        for (Profile profile : userOptional.get().getProfiles()) {
-            if (Objects.equals(profile.getProfileId(), profileId)) {
-                methodResponse.setMessage("Profile belongs to user!");
-                methodResponse.setSuccess(true);
-                return methodResponse;
-            }
-        }
-
-        methodResponse.setMessage("Profile does not belong to user");
-
-        return methodResponse;
-    }
-
     public MethodResponse fitsMovieAgeRestrictions(Integer profileId, Integer movieId)
     {
         MethodResponse methodResponse = new MethodResponse();

@@ -302,6 +302,11 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetManySeriesViewCounts` ()   BEGIN
     SELECT * FROM `seriesviewcount` LIMIT 49;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetManyUsers` ()   BEGIN
+    SELECT * FROM `user` LIMIT 49;
+END$$
+
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetMovieById` (IN `p_movie_id` INT)   BEGIN
     SELECT * FROM `movie` WHERE `movie_id` = p_movie_id;
 END$$

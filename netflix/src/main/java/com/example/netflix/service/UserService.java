@@ -1,5 +1,6 @@
 package com.example.netflix.service;
 
+import com.example.netflix.dto.MethodResponse;
 import com.example.netflix.entity.*;
 import com.example.netflix.dto.ProfileRequest;
 import com.example.netflix.repository.*;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -60,19 +62,6 @@ public class UserService {
         user.setActive(true); // Set active to true (1)
         userRepository.save(user);
         System.out.println("User activated: " + user.isActive()); // Debug statement
-    }
-
-    public String changeLanguage(Integer languageId, Integer accountId) {
-        Optional<User> userOptional = userRepository.findByAccountId(accountId);
-        Optional<Language> languageOptional = languageRepository.findById(languageId);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            Language language = languageOptional.get();
-            user.setLanguage(language);
-            userRepository.save(user);
-            return language.getName();
-        }
-        return "none";
     }
 
     public User loginUser(String email, String password) {
@@ -129,27 +118,20 @@ public class UserService {
         return user.orElse(null);
     }
 
-    public Profile addProfile(ProfileRequest profileRequest, Integer accountId)
-    {
-        Optional<User> userOptional = userRepository.findByAccountId(accountId);
+    public List<User> getManyUsers() {
+        return userRepository.findMany();
+    }
 
-        Profile profile = new Profile();
-        profile.setProfileImage(profileRequest.getProfileImage());
-        profile.setAge(profileRequest.getAge());
-        profile.setName(profileRequest.getName());
+    public void deleteUserById(Integer accountId) {
+        userRepository.deleteByAccountId(accountId);
+    }
 
-        if (userOptional.isPresent() && userOptional.get().getProfiles().size() <= 3) {
-            profile.setUser(userOptional.get());
+    public void patchUserById(Integer accountId, User user) {
+        userRepository.patchByAccountId(accountId, user.getPassword(), user.getPaymentMethod(), user.isActive(), user.isBlocked(), user.getSubscription(), user.getTrialStartDate(), user.getTrialEndDate(), user.getAccountId(), user.getRole(), user.getFailedLoginAttempts(), user.getLockTime(), user.isDiscount());
+    }
 
-            System.out.println("Image: " + profile.getProfileImage() + " ,Age: " + profile.getAge());
-            System.out.println("User: " + profile.getUser());
-
-            profileRepository.save(profile);
-
-            return profile;
-        }
-
-        return null;
+    public void updateUserById(Integer accountId, User user) {
+        userRepository.updateByAccountId(accountId, user.getPassword(), user.getPaymentMethod(), user.isActive(), user.isBlocked(), user.getSubscription(), user.getTrialStartDate(), user.getTrialEndDate(), user.getAccountId(), user.getRole(), user.getFailedLoginAttempts(), user.getLockTime(), user.isDiscount());
     }
 
     public boolean isRoleForAccount(Integer accountId, Role role) {

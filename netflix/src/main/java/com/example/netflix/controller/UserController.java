@@ -12,7 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 @RestController
@@ -55,7 +57,7 @@ public class UserController {
     }
 
     @GetMapping("/activate")
-    public ResponseEntity<String> activateUser(@RequestParam String token)
+    public ResponseEntity<Object> activateUser(@RequestParam String token)
     {
         try
         {
@@ -78,7 +80,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest)
+    public ResponseEntity<Object> loginUser(@RequestBody LoginRequest loginRequest)
     {
         try {
             User user = userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
@@ -86,7 +88,7 @@ public class UserController {
             System.out.println("Token generated successfully for user with email: " + loginRequest.getEmail());
             return ResponseEntity.ok(token);
         }
-        catch (RuntimeException e)
+        catch (Exception e)
         {
             System.out.println("Login failed for email: " + loginRequest.getEmail() + " - " + e.getMessage());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login failed: " + e.getMessage());
@@ -94,32 +96,46 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getUserById(@PathVariable Integer id) {
+    public ResponseEntity<User> getUserById(@PathVariable Integer id) {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(userService.getUserByEmail(email));
+    }
+
+    @GetMapping()
+    public ResponseEntity<Object> getManyUsers() {
+        return ResponseEntity.ok(userService.getManyUsers());
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Object> deleteUserById(@PathVariable @RequestBody Integer id) {
         try {
-            User user = userService.getUserById(id);
-            return ResponseEntity.ok(user.toString());
+            userService.deleteUserById(id);
+            return ResponseEntity.ok("User has been deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<String> getUserByEmail(@PathVariable String email) {
+    @PatchMapping("{id}")
+    public ResponseEntity<String> patchUserById(@PathVariable Integer id, @RequestBody User user) {
         try {
-            User user = userService.getUserByEmail(email);
-            return ResponseEntity.ok(user.toString());
-        } catch (RuntimeException e) {
+            userService.patchUserById(id, user);
+            return ResponseEntity.ok("User has been patched successfully");
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 
-    @PostMapping("/add-profile")
-    public ResponseEntity<String> addProfile(@RequestBody ProfileRequest profileRequest, @RequestHeader("Authorization") String token) {
+    @PutMapping("{id}")
+    public ResponseEntity<String> putUserById(@PathVariable Integer id, @RequestBody User user) {
         try {
-            int id = jwtUtil.extractId(extractToken(token));
-            Profile profile = userService.addProfile(profileRequest, id);
-            return ResponseEntity.ok(profile.getName() + " has been added successfully");
-        } catch (RuntimeException e) {
+            userService.updateUserById(id, user);
+            return ResponseEntity.ok("User has been deleted successfully");
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }

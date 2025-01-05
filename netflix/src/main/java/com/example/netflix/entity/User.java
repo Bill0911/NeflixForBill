@@ -1,9 +1,7 @@
 package com.example.netflix.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -21,7 +19,7 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column()
     private SubscriptionType subscription = SubscriptionType.SD; // Default subscription
 
     @Column(name = "trial_start_date", nullable = false)
@@ -31,7 +29,7 @@ public class User {
     private LocalDateTime trialEndDate = LocalDateTime.now().plusDays(7);
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column()
     private Role role = Role.JUNIOR; // Default role
 
     @Column(name = "active", columnDefinition = "bit(1) DEFAULT 0")
@@ -40,16 +38,12 @@ public class User {
     @Column(name = "blocked", columnDefinition = "bit(1) DEFAULT 0")
     private boolean isBlocked = false;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Profile> profiles;
-
     @Column(name = "payment_method", nullable = false)
     private String paymentMethod;
 
-    @ManyToOne
-    @JoinColumn(name = "language_id", nullable = false)  // Foreign key to Language table
-    private Language language;
+
+    @Column(name = "language_id", nullable = false)  // Foreign key to Language table
+    private Integer language;
 
     @Column(name = "failed_attempts", nullable = false)
     private int failedLoginAttempts = 0;
@@ -153,11 +147,11 @@ public class User {
         this.paymentMethod = paymentMethod;
     }
 
-    public Language getLanguage() {
+    public Integer getLanguage() {
         return language;
     }
 
-    public void setLanguage(Language language) {
+    public void setLanguage(Integer language) {
         this.language = language;
     }
 
@@ -179,18 +173,6 @@ public class User {
 
     public void incrementFailedAttempts () {
         this.failedLoginAttempts++;
-    }
-
-    public List<Profile> getProfiles() {
-        return profiles;
-    }
-
-    public void setProfiles(List<Profile> profiles) {
-        this.profiles = profiles;
-    }
-
-    public void addProfile(Profile profile) {
-        this.profiles.add(profile);
     }
 
     public boolean isDiscount ()
