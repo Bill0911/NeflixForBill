@@ -14,7 +14,18 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface MovieRepository extends JpaRepository<Movie, Integer> {
+public interface MovieRepository extends JpaRepository<Movie, Integer> {\
+
+    @Modifying
+    @Transactional
+    @Query(value = "CALL AddMovie(:title, :duration, :sd_available, :hd_available, :uhd_available, :minimum_age)", nativeQuery = true)
+    void addMovie(@Param("title") String title,
+                  @Param("duration") LocalTime duration,
+                  @Param("sd_available") Boolean sd_available,
+                  @Param("hd_available") Boolean hd_available,
+                  @Param("uhd_available") Boolean uhd_available,
+                  @Param("minimum_age") Integer minimum_age);
+
     @Query(value = "CALL GetMovieById(:movieId)", nativeQuery = true)
     Optional<Movie> findByMovieId(@Param("movieId") Integer movieId);
 

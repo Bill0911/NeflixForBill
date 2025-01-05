@@ -29,6 +29,16 @@ public class ProfileController {
         this.jwtUtil = jwtUtil;
     }
 
+    @PostMapping()
+    public ResponseEntity<String> addProfile(@RequestBody Profile profile) {
+        try {
+            profileService.addProfile(profile);
+            return ResponseEntity.ok("Profile has been created");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Profile> getProfileById(@PathVariable Integer id) {
         return ResponseEntity.ok(profileService.getProfileById(id));
@@ -40,7 +50,7 @@ public class ProfileController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Object> deleteProfileById(@PathVariable @RequestBody Integer id) {
+    public ResponseEntity<Object> deleteProfileById(@PathVariable Integer id) {
         try {
             profileService.deleteProfileById(id);
             return ResponseEntity.ok("Profile has been deleted successfully");

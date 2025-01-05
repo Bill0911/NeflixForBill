@@ -108,6 +108,9 @@ public class UserService {
         return user; // Return full User object
     }
 
+    public void addUser(User user) {
+        userRepository.addUser(user.getEmail(), user.getPassword(), user.getPaymentMethod(), user.getLanguage());
+    }
     public User getUserById(Integer accountId) {
         Optional<User> user = userRepository.findByAccountId(accountId);
         return user.orElse(null);

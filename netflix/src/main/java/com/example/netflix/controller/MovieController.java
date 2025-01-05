@@ -30,14 +30,23 @@ public class MovieController {
 
 
     @PostMapping
-    public ResponseEntity<Movie> addMovie(@RequestBody Movie movie) {
-        return ResponseEntity.ok(movieService.addMovie(movie));
+    public ResponseEntity<Object> addMovie(@RequestBody Movie movie) {
+        try {
+            movieService.addMovie(movie);
+            return ResponseEntity.ok("Movie has been created");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMovieById(@PathVariable Integer id) {
-        movieService.deleteMovieById(id);
-        return ResponseEntity.ok("Movie deleted successfully");
+        try {
+            movieService.deleteMovieById(id);
+            return ResponseEntity.ok("Movie deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
     @PatchMapping("/{id}")
