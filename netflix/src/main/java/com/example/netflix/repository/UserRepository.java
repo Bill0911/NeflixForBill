@@ -53,7 +53,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "CALL UpdateUser(:accountId, :password, :paymentMethod, :active, :blocked, :subscription, :trialStartDate, :trialEndDate, :languageId, :`role`, :failedAttempts, :lockTime, :discount)", nativeQuery = true)
+    @Query(value = "CALL UpdateUser(:accountId, :password, :paymentMethod, :active, :blocked, :subscription, :trialStartDate, :trialEndDate, :languageId, :role, :failedAttempts, :lockTime, :discount)", nativeQuery = true)
     void updateByAccountId(@Param("accountId") Integer accountId,
                           @Param("password") String password,
                           @Param("paymentMethod") String paymentMethod,

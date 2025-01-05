@@ -41,7 +41,6 @@ public class User {
     @Column(name = "payment_method", nullable = false)
     private String paymentMethod;
 
-
     @Column(name = "language_id", nullable = false)  // Foreign key to Language table
     private Integer language;
 

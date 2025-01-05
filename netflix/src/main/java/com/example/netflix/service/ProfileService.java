@@ -7,6 +7,7 @@ import com.example.netflix.repository.ProfileRepository;
 import com.example.netflix.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -44,5 +45,26 @@ public class ProfileService {
         methodResponse.setMessage("You cannot watch movie due to age restrictions");
 
         return methodResponse;
+    }
+
+    public Profile getProfileById(Integer id) {
+        Optional<Profile> profile = profileRepository.findByProfileId(id);
+        return profile.orElse(null);
+    }
+
+    public List<Profile> getManyProfiles() {
+        return profileRepository.findMany();
+    }
+
+    public void deleteProfileById(Integer accountId) {
+        profileRepository.deleteByProfileId(accountId);
+    }
+
+    public void patchProfileById(Integer id, Profile user) {
+        profileRepository.patchByProfileId(id, user.getUser(), user.getProfileImage(), user.getAge(), user.getName());
+    }
+
+    public void updateProfileById(Integer id, Profile user) {
+        profileRepository.updateByProfileId(id, user.getUser(), user.getProfileImage(), user.getAge(), user.getName());
     }
 }
