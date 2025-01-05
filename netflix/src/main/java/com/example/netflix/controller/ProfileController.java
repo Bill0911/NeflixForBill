@@ -30,31 +30,29 @@ public class ProfileController {
     public ResponseEntity<String> watchMovie(@RequestParam Integer profileId, @RequestParam Integer movieId, @RequestHeader("Authorization") String token) {
         String jwt = token.substring(7);
         int id = jwtUtil.extractId(jwt);
-        MethodResponse belongsToUser = profileService.belongsToUser(profileId, id);
         MethodResponse fitsMovieAgeRestrictions = profileService.fitsMovieAgeRestrictions(profileId, movieId);
 
-        if (belongsToUser.isSuccess() && fitsMovieAgeRestrictions.isSuccess())
+        if (fitsMovieAgeRestrictions.isSuccess())
         {
             movieViewCountService.incrementMovieViewCount(id, movieId);
             return ResponseEntity.ok("Movie has been watched!");
         }
 
-        return ResponseEntity.ok("Movie has not been watched: " + belongsToUser.getMessage() + " | " + fitsMovieAgeRestrictions.getMessage());
+        return ResponseEntity.ok("Movie has not been watched" + fitsMovieAgeRestrictions.getMessage());
     }
 
     @PostMapping("/watch-series")
     public ResponseEntity<String> watchSeries(@RequestParam Integer profileId, @RequestParam Integer seriesId, @RequestHeader("Authorization") String token) {
         String jwt = token.substring(7);
         int id = jwtUtil.extractId(jwt);
-        MethodResponse belongsToUser = profileService.belongsToUser(profileId, id);
         MethodResponse fitsMovieAgeRestrictions = profileService.fitsMovieAgeRestrictions(profileId, seriesId);
 
-        if (belongsToUser.isSuccess() && fitsMovieAgeRestrictions.isSuccess())
+        if (fitsMovieAgeRestrictions.isSuccess())
         {
             seriesViewCountService.addSeriesToViewCount(id, seriesId);
             return ResponseEntity.ok("Series has been watched!");
         }
 
-        return ResponseEntity.ok("Series has not been watched: " + belongsToUser.getMessage() + " | " + fitsMovieAgeRestrictions.getMessage());
+        return ResponseEntity.ok("Series has not been watched: " + fitsMovieAgeRestrictions.getMessage());
     }
 }
