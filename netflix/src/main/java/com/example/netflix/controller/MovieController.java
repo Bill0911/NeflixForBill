@@ -2,6 +2,7 @@ package com.example.netflix.controller;
 
 import com.example.netflix.entity.Movie;
 import com.example.netflix.service.MovieService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,40 +18,46 @@ public class MovieController {
         this.movieService = movieService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Movie>> getAllMovies() {
-        return ResponseEntity.ok(movieService.getAllMovies());
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Movie> getMovieById(@PathVariable Integer id) {
         return ResponseEntity.ok(movieService.getMovieById(id));
     }
+
+    @GetMapping
+    public ResponseEntity<Object> getAllMovies() {
+        return ResponseEntity.ok(movieService.getManyMovies());
+    }
+
 
     @PostMapping
     public ResponseEntity<Movie> addMovie(@RequestBody Movie movie) {
         return ResponseEntity.ok(movieService.addMovie(movie));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Movie> updateMovie(@PathVariable Integer id, @RequestBody Movie updatedMovie) {
-        return ResponseEntity.ok(movieService.updateMovie(id, updatedMovie));
-    }
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteMovie(@PathVariable Integer id) {
-        movieService.deleteMovie(id);
+    public ResponseEntity<String> deleteMovieById(@PathVariable Integer id) {
+        movieService.deleteMovieById(id);
         return ResponseEntity.ok("Movie deleted successfully");
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> patchMovie(@PathVariable Integer id, @RequestBody Movie patchData) {
+    public ResponseEntity<Object> patchMovieById(@PathVariable Integer id, @RequestBody Movie movie) {
         try {
-            movieService.patchMovie(id, patchData);
-            return ResponseEntity.ok(patchData);
-        }
-        catch (RuntimeException e) {
-            return ResponseEntity.ok("Movie patch error: " + e.getMessage());
+            movieService.patchMovieById(id, movie);
+            return ResponseEntity.ok("Movie has been patched successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> putMovieById(@PathVariable Integer id, @RequestBody Movie updatedMovie) {
+        try {
+            movieService.updateMovieById(id, updatedMovie);
+            return ResponseEntity.ok("Movie has been updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
+    }
+
 }

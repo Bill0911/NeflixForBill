@@ -7,6 +7,7 @@ import com.example.netflix.repository.ProfileRepository;
 import com.example.netflix.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -20,31 +21,6 @@ public class ProfileService {
         this.userRepository = userRepository;
         this.profileRepository = profileRepository;
         this.movieRepository = movieRepository;
-    }
-
-    public MethodResponse belongsToUser(Integer profileId, Integer accountId)
-    {
-        MethodResponse methodResponse = new MethodResponse();
-
-        Optional<User> userOptional = userRepository.findByAccountId(accountId);
-        Optional<Profile> profileOptional = profileRepository.findByProfileId(profileId);
-
-        if(userOptional.isEmpty() || profileOptional.isEmpty()) {
-            methodResponse.setMessage("No such profile");
-            return methodResponse;
-        }
-
-        for (Profile profile : userOptional.get().getProfiles()) {
-            if (Objects.equals(profile.getProfileId(), profileId)) {
-                methodResponse.setMessage("Profile belongs to user!");
-                methodResponse.setSuccess(true);
-                return methodResponse;
-            }
-        }
-
-        methodResponse.setMessage("Profile does not belong to user");
-
-        return methodResponse;
     }
 
     public MethodResponse fitsMovieAgeRestrictions(Integer profileId, Integer movieId)
@@ -69,5 +45,26 @@ public class ProfileService {
         methodResponse.setMessage("You cannot watch movie due to age restrictions");
 
         return methodResponse;
+    }
+
+    public Profile getProfileById(Integer id) {
+        Optional<Profile> profile = profileRepository.findByProfileId(id);
+        return profile.orElse(null);
+    }
+
+    public List<Profile> getManyProfiles() {
+        return profileRepository.findMany();
+    }
+
+    public void deleteProfileById(Integer id) {
+        profileRepository.deleteByProfileId(id);
+    }
+
+    public void patchProfileById(Integer id, Profile user) {
+        profileRepository.patchByProfileId(id, user.getUser(), user.getProfileImage(), user.getAge(), user.getName());
+    }
+
+    public void updateProfileById(Integer id, Profile user) {
+        profileRepository.updateByProfileId(id, user.getUser(), user.getProfileImage(), user.getAge(), user.getName());
     }
 }
