@@ -15,10 +15,9 @@ public class Profile {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id", nullable = false   )
-    @JsonBackReference
-    private User account;
+
+    @JoinColumn(name = "account_id", nullable = false)
+    private Integer account;
 
     @Column(name = "profile_image", length = 255)
     private String profileImage;
@@ -35,11 +34,11 @@ public class Profile {
         this.profileId = profileId;
     }
 
-    public User getUser() {
+    public Integer getUser() {
         return account;
     }
 
-    public void setUser(User user) {
+    public void setUser(Integer user) {
         this.account = user;
     }
 

@@ -1,5 +1,6 @@
 package com.example.netflix.service;
 
+import com.example.netflix.entity.Movie;
 import com.example.netflix.entity.Series;
 import com.example.netflix.repository.SeriesRepository;
 import org.springframework.stereotype.Service;
@@ -16,43 +17,28 @@ public class SeriesService {
         this.seriesRepository = seriesRepository;
     }
 
-    public List<Series> getAllSeries() {
-        return seriesRepository.findAll();
+    public void addSeries(Series series) {
+        seriesRepository.addSeries(series.getTitle(), series.getMinimumAge());
     }
 
-    public Optional<Series> getSeriesById(Integer id) {
-        return seriesRepository.findById(id);
+    public Series getSeriesById(Integer id) {
+        Optional<Series> series = seriesRepository.findBySeriesId(id);
+        return series.orElse(null);
     }
 
-    public Series createSeries(Series series) {
-        return seriesRepository.save(series);
+    public List<Series> getManySeries() {
+        return seriesRepository.findMany();
     }
 
-    public Series updateSeries(Integer id, Series updatedSeries) {
-        return seriesRepository.findById(id)
-                .map(existingSeries -> {
-                    existingSeries.setTitle(updatedSeries.getTitle());
-                    existingSeries.setMinimumAge(updatedSeries.getMinimumAge());
-                    return seriesRepository.save(existingSeries);
-                })
-                .orElseThrow(() -> new RuntimeException("Series not found with ID: " + id));
+    public void deleteSeriesById(Integer id) {
+        seriesRepository.deleteBySeriesId(id);
     }
 
-    public void deleteSeries(Integer id) {
-        seriesRepository.deleteById(id);
+    public void patchSeriesById(Integer id, Series patchData) {
+        seriesRepository.patchBySeriesId(id, patchData.getTitle(), patchData.getMinimumAge());
     }
 
-    public Series patchSeries(Integer id, Series partialSeries) {
-        return seriesRepository.findById(id)
-                .map(existingSeries -> {
-                    if (partialSeries.getTitle() != null) {
-                        existingSeries.setTitle(partialSeries.getTitle());
-                    }
-                    if (partialSeries.getMinimumAge() != null) {
-                        existingSeries.setMinimumAge(partialSeries.getMinimumAge());
-                    }
-                    return seriesRepository.save(existingSeries);
-                })
-                .orElseThrow(() -> new RuntimeException("Series not found with ID: " + id));
+    public void updateSeriesById(Integer id, Series series) {
+        seriesRepository.updateBySeriesId(id, series.getTitle(), series.getMinimumAge());
     }
 }

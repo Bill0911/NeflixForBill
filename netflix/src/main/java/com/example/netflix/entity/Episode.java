@@ -18,9 +18,9 @@ public class Episode {
     @Column(name = "duration", columnDefinition = "TIME DEFAULT '00:00:00'")
     private LocalTime duration;
 
-    @ManyToOne
+
     @JoinColumn(name = "series_id", insertable = false, updatable = false)
-    private Series series;
+    private Integer series;
 
     public Episode() {
         this.duration = LocalTime.of(0, 0, 0);
@@ -55,11 +55,11 @@ public class Episode {
         this.duration = duration;
     }
 
-    public Series getSeries() {
+    public Integer getSeries() {
         return series;
     }
 
-    public void setSeries(Series series) {
+    public void setSeries(Integer series) {
         this.series = series;
     }
 }

@@ -1,32 +1,70 @@
 <!DOCTYPE html>
-  <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <title>User Registration and Login</title>
-    <script src="/js/js/register.js"></script>
-  </head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/css.css" type="text/css">
+  <title>Netflix Clone - Register</title>
+</head>
   <body>
-    <div>
-      <h1>User Registration</h1>
-      <form id="registerForm" method="post">
-        <label for="registerName">Name:</label>
-        <input type="text" id="registerName" name="name" required><br>
-        <label for="registerEmail">Email:</label>
-        <input type="email" id="registerEmail" name="email" required><br>
-        <label for="registerPassword">Password:</label>
-        <input type="password" id="registerPassword" name="password" required><br>
-        <button type="submit">Register</button>
+  <div class="grid-container">
+    <header>
+      <div class="logo">
+        <img src="../img/logo.png" alt="Netflix Logo">
+      </div>
+    </header>
+    <main>
+      <form id="registerForm" class="form-style">
+        <h1>Create Your Account</h1>
+        <div class="content">
+          <label for="email">Email</label>
+          <input type="email" name="email" id="email" placeholder="Enter your email" required>
+        </div>
+        <div class="content">
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password" placeholder="Enter your password" required minlength="8">
+        </div>
+        <div class="content">
+          <label for="subscription">Subscription Type</label>
+          <select name="subscription" id="subscription" required>
+            <option value="">Select a subscription</option>
+            <option value="SD">SD</option>
+            <option value="HD">HD</option>
+            <option value="ULTRA_HD">Ultra HD</option>
+          </select>
+        </div>
+        <div class="content">
+          <label for="paymentMethod">Payment Method</label>
+          <input type="text" name="paymentMethod" id="paymentMethod" placeholder="Enter your payment method" required>
+        </div>
+        <div class="content">
+          <label>
+            I agree to the <a href="#terms">Terms and Conditions</a>.
+            <input type="checkbox" name="terms" id="terms" required>
+          </label>
+        </div>
+        <div class="content">
+          <input type="submit" value="Register">
+        </div>
+        <div class="content">
+          <p>
+            Already have a Netflix Account? <a href="home.html">Login Here</a>.
+          </p>
+        </div>
       </form>
-      <p id="registerResult"></p>
-
-      <h1>User Login</h1>
-      <form id="loginForm" method="post">
-        <label for="loginEmail">Email:</label>
-        <input type="email" id="loginEmail" name="email" required><br>
-        <label for="loginPassword">Password:</label>
-        <input type="password" id="loginPassword" name="password" required><br>
-        <button type="submit">Login</button>
-      </form>
-      <p id="loginResult"></p>
-    </div>
+    </main>
+    <footer>
+      <div class="footer-links">
+        <a href="#help">Help Center</a>
+        <a href="#terms">Terms of Use</a>
+        <a href="#privacy">Privacy</a>
+        <a href="#cookies">Cookie Preferences</a>
+        <a href="#corporate">Corporate Information</a>
+      </div>
+      <div class="footer-text">
+        © 2024 Netflix Clone | Powered by <span>HTML</span>, <span>CSS</span>, and <span>JavaScript</span>.
+      </div>
+    </footer>
+  </div>
   </body>
 </html>
