@@ -31,7 +31,7 @@ public class MovieViewCountController {
             movieViewCountService.addMovieViewCount(accountId, movieId);
             return ResponseEntity.ok("Movie - User relation has been created");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error: " + e.getMessage());
         }
     }
 
@@ -51,27 +51,27 @@ public class MovieViewCountController {
             movieViewCountService.deleteMovieViewCount(accountId, movieId);
             return ResponseEntity.ok("Movie - User relation has been deleted");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error: " + e.getMessage());
         }
     }
 
     @PatchMapping()
-    public ResponseEntity<String> patchMovieViewCount(MovieViewCount movieViewCount) {
+    public ResponseEntity<Object> patchMovieViewCount(@RequestBody MovieViewCount movieViewCount) {
         try {
             movieViewCountService.patchMovieViewCount(movieViewCount);
-            return ResponseEntity.ok("Movie - User has been patched successfully");
+            return ResponseEntity.ok(movieViewCount);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error: " + e.getMessage());
         }
     }
 
     @PutMapping()
-    public ResponseEntity<String> putMovieViewCount(MovieViewCount movieViewCount) {
+    public ResponseEntity<Object> putMovieViewCount(@RequestBody MovieViewCount movieViewCount) {
         try {
             movieViewCountService.updateMovieViewCount(movieViewCount);
-            return ResponseEntity.ok("Movie - User has been updated successfully");
+            return ResponseEntity.ok(movieViewCount);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error: " + e.getMessage());
         }
     }
 }

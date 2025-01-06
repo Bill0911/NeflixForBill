@@ -18,10 +18,11 @@ public class MovieViewCount {
     @Column(name = "movie_id", nullable = false)
     private Integer movie;
 
-    @Column(nullable = false)
-    private int number;
 
-    @Column(name = "last_viewed")
+    @Column(name = "number", nullable = false)
+    private Integer number;
+
+    @Column
     private LocalDateTime lastViewed;
 
     public Integer getUser() {
@@ -40,11 +41,11 @@ public class MovieViewCount {
         this.movie = movie;
     }
 
-    public int getNumber() {
+    public Integer getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(Integer number) {
         this.number = number;
     }
 
