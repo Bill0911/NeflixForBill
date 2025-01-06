@@ -22,10 +22,10 @@ public interface SeriesRepository extends JpaRepository<Series, Integer> {
                   @Param("minimum_age") Integer minimum_age);
 
     @Query(value = "CALL GetSeriesById(:seriesId)", nativeQuery = true)
-    Optional<Movie> findBySeriesId(@Param("seriesId") Integer movieId);
+    Optional<Series> findBySeriesId(@Param("seriesId") Integer movieId);
 
     @Query(value = "CALL GetManySeries()", nativeQuery = true)
-    List<Movie> findMany();
+    List<Series> findMany();
 
     @Modifying
     @Transactional
