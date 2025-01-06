@@ -316,18 +316,15 @@ CREATE PROCEDURE `GetPersonalizedOfferMovies` (IN `userId` BIGINT(20), IN `maxMo
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
-    -- Step 1: Calculate total views across all genres for the user
     SELECT SUM(total_views) INTO totalUserViews
     FROM user_genre_count
     WHERE user_id = userId;
 
-    -- Temporary table to store proportional movies for the user
     CREATE TEMPORARY TABLE TempPersonalizedOffer (
         movie_id INT,
         title VARCHAR(255)
     );
 
-    -- Step 2: Loop through each genre
     OPEN cur;
     read_loop: LOOP
         FETCH cur INTO genreId, genreViews;
