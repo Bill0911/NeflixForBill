@@ -6,7 +6,7 @@ public enum AgeGroup
     NINE(9),
     TWELVE(12),
     SIXTEEN(16),
-    SIXTEEN_PLUS(18);
+    SIXTEEN_PLUS(17);
 
     private final int age;
 

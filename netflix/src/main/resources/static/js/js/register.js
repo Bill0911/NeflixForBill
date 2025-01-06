@@ -1,42 +1,46 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const baseUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`;
+document.getElementById('registerForm').addEventListener('submit', async function (e) {
+    e.preventDefault(); // Prevent default form submission
 
-    document.getElementById('registerForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        const user = {
-            name: document.getElementById('registerName').value,
-            email: document.getElementById('registerEmail').value,
-            password: document.getElementById('registerPassword').value
-        };
+    // Collect form data
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const subscription = document.getElementById('subscription').value;
+    const paymentMethod = document.getElementById('paymentMethod').value;
+    const language = document.getElementById('language').value;
+    const termsAccepted = document.getElementById('terms').checked;
 
-        const response = await fetch(`${baseUrl}/api/users/register`, {
+    if (!termsAccepted) {
+        alert('You must agree to the Terms and Conditions.');
+        return;
+    }
+
+    // API endpoint for registration
+    const apiEndpoint = '/api/users/register';
+
+    try {
+        const response = await fetch(apiEndpoint, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(user)
+            body: JSON.stringify({
+                email,
+                password,
+                subscription,
+                paymentMethod,
+                languageId: language,
+            }),
         });
 
-        const result = await response.text();
-        document.getElementById('registerResult').innerText = result;
-    });
-
-    document.getElementById('loginForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        const loginRequest = {
-            email: document.getElementById('loginEmail').value,
-            password: document.getElementById('loginPassword').value
-        };
-
-        const response = await fetch(`${baseUrl}/api/users/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(loginRequest)
-        });
-
-        const result = await response.text();
-        document.getElementById('loginResult').innerText = result;
-    });
+        if (response.ok) {
+            const data = await response.json();
+            alert('Registration successful! Check your email for the activation link.');
+        } else {
+            const error = await response.json();
+            alert(`Registration failed: ${error.error || 'Unknown error'}`);
+        }
+    } catch (err) {
+        console.error('Error occurred during registration:', err);
+        alert('Something went wrong. Please try again.');
+    }
 });

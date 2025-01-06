@@ -1,6 +1,7 @@
 package com.example.netflix.service;
 
 import com.example.netflix.entity.Episode;
+import com.example.netflix.entity.Episode;
 import com.example.netflix.repository.EpisodeRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,47 +17,28 @@ public class EpisodeService {
         this.episodeRepository = episodeRepository;
     }
 
-    public List<Episode> getAllEpisodes() {
-        return episodeRepository.findAll();
+    public void addEpisode(Episode episode) {
+        episodeRepository.addEpisode(episode.getTitle(), episode.getDuration(), episode.getEpisodeId());
     }
 
-    public Optional<Episode> getEpisodeById(Integer id) {
-        return episodeRepository.findById(id);
+    public Episode getEpisodeById(Integer id) {
+        Optional<Episode> episode = episodeRepository.findByEpisodeId(id);
+        return episode.orElse(null);
     }
 
-    public Episode addEpisode(Episode episode) {
-        return episodeRepository.save(episode);
+    public List<Episode> getManyEpisodes() {
+        return episodeRepository.findMany();
     }
 
-    public Episode updateEpisode(Integer id, Episode updatedEpisode) {
-        return episodeRepository.findById(id)
-                .map(existingEpisode -> {
-                    existingEpisode.setTitle(updatedEpisode.getTitle());
-                    existingEpisode.setDuration(updatedEpisode.getDuration());
-                    existingEpisode.setSeries(updatedEpisode.getSeries());
-                    return episodeRepository.save(existingEpisode);
-                })
-                .orElseThrow(() -> new RuntimeException("Episode not found with ID: " + id));
+    public void deleteEpisodeById(Integer id) {
+        episodeRepository.deleteByEpisodeId(id);
     }
 
-    public void deleteEpisode(Integer id) {
-        episodeRepository.deleteById(id);
+    public void patchEpisodeById(Integer id, Episode episode) {
+        episodeRepository.patchByEpisodeId(id, episode.getTitle(), episode.getDuration(), episode.getEpisodeId());
     }
 
-    public Episode patchEpisode(Integer id, Episode patchData) {
-        return episodeRepository.findById(id)
-                .map(existingEpisode -> {
-                    if (patchData.getTitle() != null) {
-                        existingEpisode.setTitle(patchData.getTitle());
-                    }
-                    if (patchData.getDuration() != null) {
-                        existingEpisode.setDuration(patchData.getDuration());
-                    }
-                    if (patchData.getSeries() != null) {
-                        existingEpisode.setSeries(patchData.getSeries());
-                    }
-                    return episodeRepository.save(existingEpisode);
-                })
-                .orElseThrow(() -> new RuntimeException("Episode not found with ID: " + id));
+    public void updateEpisodeById(Integer id, Episode episode) {
+        episodeRepository.updateByEpisodeId(id, episode.getTitle(), episode.getDuration(), episode.getEpisodeId());
     }
 }

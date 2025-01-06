@@ -1,0 +1,194 @@
+/* General Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 1fr;
+    min-height: 100vh;
+    background-image: url('../img/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #fff;
+}
+
+header {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    padding: 25px;
+    grid-row: 1;
+}
+
+header .logo img {
+    max-width: 150px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    grid-row: 2;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 500px;
+    width: 100%;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: left;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.8s ease-in-out;
+    background-color: rgba(0, 0, 0, 0.75); /* Default form background */
+}
+
+form h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #e50914;
+    text-align: center;
+    border-bottom: 2px solid #e50914;
+    padding-bottom: 10px;
+}
+
+form a {
+    color: #e50914;
+}
+
+form .content {
+    margin-bottom: 15px;
+}
+
+form .content label {
+    font-size: 1.2rem;
+    color: #fff;
+    margin-bottom: 8px;
+    display: block;
+    font-weight: bold;
+}
+
+form .content input,
+form .content select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e9e9e9;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #000;
+    background-color: #fff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+form .content input:focus,
+form .content select:focus {
+    border-color: #e50914;
+    box-shadow: 0px 0px 8px rgba(229, 9, 20, 0.5);
+    outline: none;
+}
+
+form .content input::placeholder {
+    color: #aaa;
+}
+
+form .content input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+form .content input[type="submit"] {
+    background-color: #e50914;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+form .content input[type="submit"]:hover {
+    background-color: #f6121d;
+    transform: scale(1.05);
+}
+
+form .content p {
+    font-size: 1rem;
+    color: #ccc;
+    text-align: center;
+}
+
+form .content p a {
+    color: #e50914;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+form .content p a:hover {
+    color: #f6121d;
+    text-decoration: underline;
+}
+
+/* Footer Styling */
+footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    grid-row: 3;
+    padding: 20px;
+    margin-top: 4em;
+    background-color: rgba(0, 0, 0, 0.85);
+    width: 100%;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+footer .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+footer .footer-links a {
+    color: #e50914;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+footer .footer-links a:hover {
+    color: #f6121d;
+    text-decoration: underline;
+}
+
+footer .footer-text {
+    font-size: 0.8rem;
+    color: #ccc;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

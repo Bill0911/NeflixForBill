@@ -19,7 +19,7 @@ public class GenreService {
     }
 
     public List<Genre> getAllGenres() {
-        return genreRepository.findAllGenres();
+        return genreRepository.findMany();
     }
 
     public Optional<Genre> getGenreById(Integer id) {
