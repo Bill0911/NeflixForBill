@@ -11,40 +11,18 @@ import java.time.LocalDateTime;
 public class SeriesViewCount {
 
     @Id
-    @Column(name = "account_id")
-    private Integer userId;
-
-    @Id
-    @Column(name = "series_id")
-    private Integer seriesId;
-
     @JoinColumn(name = "account_id", insertable = false, updatable = false)
     private Integer user;
 
+    @Id
     @JoinColumn(name = "series_id", insertable = false, updatable = false)
     private Integer series;
 
     @Column(nullable = false)
-    private int number;
+    private Integer number;
 
     @Column(name = "last_viewed")
     private LocalDateTime lastViewed;
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Integer getSeriesId() {
-        return seriesId;
-    }
-
-    public void setSeriesId(Integer seriesId) {
-        this.seriesId = seriesId;
-    }
 
     public Integer getUser() {
         return user;
@@ -62,11 +40,11 @@ public class SeriesViewCount {
         this.series = series;
     }
 
-    public int getNumber() {
+    public Integer getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(Integer number) {
         this.number = number;
     }
 

@@ -36,13 +36,7 @@ public class SeriesViewCountController {
 //        return ResponseEntity.ok("Series added to view count");
 //    }
 
-    @PostMapping("/increment-view-count")
-    public ResponseEntity<Void> incrementViewCount(@RequestParam Integer accountId, @RequestParam Integer seriesId, @RequestParam Integer episodeId) {
-        seriesViewCountService.incrementViewCount(accountId, seriesId, episodeId);
-        return ResponseEntity.ok().build();
-    }
-
-        @PostMapping("/{accountId}/{seriesId}")
+    @PostMapping("/{accountId}/{seriesId}")
     public ResponseEntity<String> addSeriesViewCount(@PathVariable Integer accountId,  @PathVariable Integer seriesId) {
         try {
             userService.getUserById(accountId);
@@ -59,7 +53,7 @@ public class SeriesViewCountController {
         return ResponseEntity.ok(seriesViewCountService.getSeriesViewCount(accountId, seriesId));
     }
 
-    @GetMapping()
+    @GetMapping("/many")
     public ResponseEntity<Object> getManySeriesViewCounts() {
         return ResponseEntity.ok(seriesViewCountService.getManySeriesViewCounts());
     }
