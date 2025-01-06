@@ -10,6 +10,7 @@ import com.example.netflix.repository.UserRepository;
 import com.example.netflix.repository.EpisodeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,51 +28,31 @@ public class SeriesViewCountService {
         this.episodeRepository = episodeRepository;
     }
 
-    public void incrementViewCount(Integer accountId, Integer seriesId, Integer episodeId) {
-        Optional<User> userOpt = userRepository.findById(accountId);
-        Optional<Series> seriesOpt = seriesRepository.findById(seriesId);
-        Optional<Episode> episodeOpt = episodeRepository.findById(episodeId);
-
-        if (userOpt.isPresent() && seriesOpt.isPresent() && episodeOpt.isPresent()) {
-            User user = userOpt.get();
-            Series series = seriesOpt.get();
-            Episode episode = episodeOpt.get();
-
-            SeriesViewCount seriesViewCount = seriesViewCountRepository.findByUser_AccountIdAndSeries_SeriesIdAndEpisode_EpisodeId(accountId, seriesId, episodeId)
-                    .orElse(new SeriesViewCount());
-
-            seriesViewCount.setUser(user);
-            seriesViewCount.setSeries(series);
-            seriesViewCount.incrementViewCount();
-            seriesViewCountRepository.save(seriesViewCount);
-
-            // Logic to broadcast the next episode
-
-            /*
-            nextEpisodeOpt.ifPresent(nextEpisode -> {
-                SeriesViewCount nextSeriesViewCount = new SeriesViewCount();
-                nextSeriesViewCount.setUser(user);
-                nextSeriesViewCount.setSeries(series);
-                nextSeriesViewCount.setEpisode(nextEpisode);
-                nextSeriesViewCount.setNumber(0);
-                seriesViewCountRepository.save(nextSeriesViewCount);
-
-            });
-
-             */
-        } else {
-            if (userOpt.isEmpty()) {
-                System.out.println("User not found with accountId: " + accountId);
-            }
-            if (seriesOpt.isEmpty()) {
-                System.out.println("Series not found with seriesId: " + seriesId);
-            }
-            if (episodeOpt.isEmpty()) {
-                System.out.println("Episode not found with episodeId: " + episodeId);
-            }
-        }
+    public void addSeriesViewCount(Integer accountId, Integer seriesId) {
+        seriesViewCountRepository.add(accountId, seriesId);
     }
 
+    public SeriesViewCount getSeriesViewCount(Integer accountId, Integer seriesId) {
+        return seriesViewCountRepository.find(accountId, seriesId).orElse(null);
+    }
+
+    public List<SeriesViewCount> getManySeriesViewCounts() {
+        return seriesViewCountRepository.findMany();
+    }
+
+    public void deleteSeriesViewCount(Integer accountId, Integer seriesId) {
+        seriesViewCountRepository.delete(accountId, seriesId);
+    }
+
+    public void patchSeriesViewCount(SeriesViewCount seriesViewCount) {
+        System.out.println("CHECKPOINT - 3");
+        seriesViewCountRepository.patch(seriesViewCount.getUser(), seriesViewCount.getSeries(), seriesViewCount.getNumber(), seriesViewCount.getLastViewed());
+        System.out.println("CHECKPOINT - 4");
+    }
+
+    public void updateSeriesViewCount(SeriesViewCount seriesViewCount) {
+        seriesViewCountRepository.update(seriesViewCount.getUser(), seriesViewCount.getSeries(), seriesViewCount.getNumber(), seriesViewCount.getLastViewed());
+    }
 
 /*
     public void addSeriesToViewCount(Integer accountId, Integer seriesId) {
@@ -109,4 +90,5 @@ public class SeriesViewCountService {
     }
 
  */
+
 }

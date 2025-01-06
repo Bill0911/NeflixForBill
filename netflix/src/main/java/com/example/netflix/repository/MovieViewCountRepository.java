@@ -18,7 +18,6 @@ public interface MovieViewCountRepository extends JpaRepository<MovieViewCount, 
     @Transactional
     @Query(value = "CALL AddMovieViewCount(:accountId, :movieId)", nativeQuery = true)
     void add(@Param("accountId") Integer accountId, @Param("movieId") Integer movieId);
-;
 
     @Query(value = "CALL GetMovieViewCount(:accountId, :movieId)", nativeQuery = true)
     Optional<MovieViewCount> find(@Param("accountId") Integer accountId, @Param("movieId") Integer movieId);
@@ -46,6 +45,4 @@ public interface MovieViewCountRepository extends JpaRepository<MovieViewCount, 
                 @Param("movieId") Integer movieId,
                 @Param("number") Integer number,
                 @Param("lastViewed") LocalDateTime lastViewed);
-
-
 }
