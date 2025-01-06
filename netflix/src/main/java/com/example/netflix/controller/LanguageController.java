@@ -1,7 +1,9 @@
 package com.example.netflix.controller;
 
 import com.example.netflix.entity.Language;
+import com.example.netflix.entity.Movie;
 import com.example.netflix.service.LanguageService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,34 +19,53 @@ public class LanguageController {
         this.languageService = languageService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Language>> getAllLanguages() {
-        return ResponseEntity.ok(languageService.getAllLanguages());
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Language> getLanguageById(@PathVariable Integer id) {
         return ResponseEntity.ok(languageService.getLanguageById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<Language> addLanguage(@RequestBody Language language) {
-        return ResponseEntity.ok(languageService.addLanguage(language));
+    @GetMapping
+    public ResponseEntity<Object> getAllLanguage() {
+        return ResponseEntity.ok(languageService.getManyLanguages());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Language> updateLanguage(@PathVariable Integer id, @RequestBody Language updatedLanguage) {
-        return ResponseEntity.ok(languageService.updateLanguage(id, updatedLanguage));
+    @PostMapping
+    public ResponseEntity<Object> addLanguage(@RequestBody String name) {
+        try {
+            languageService.addLanguage(name);
+            return ResponseEntity.ok("Language has been created");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteLanguage(@PathVariable Integer id) {
-        languageService.deleteLanguage(id);
-        return ResponseEntity.ok("Language deleted successfully");
+    public ResponseEntity<String> deleteLanguageById(@PathVariable Integer id) {
+        try {
+            languageService.deleteLanguageById(id);
+            return ResponseEntity.ok("Language deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Language> patchLanguage(@PathVariable Integer id, @RequestBody Language patchData) {
-        return ResponseEntity.ok(languageService.patchLanguage(id, patchData));
+    public ResponseEntity<Object> patchLanguageById(@PathVariable Integer id, @RequestBody Language patchLanguage) {
+        try {
+            languageService.patchLanguageById(id, patchLanguage);
+            return ResponseEntity.ok("Language has been patched successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> putLanguageById(@PathVariable Integer id, @RequestBody Language updatedLanguage) {
+        try {
+            languageService.updateLanguageById(id, updatedLanguage);
+            return ResponseEntity.ok("Language has been updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 }
