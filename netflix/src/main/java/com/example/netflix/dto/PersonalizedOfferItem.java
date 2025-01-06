@@ -20,7 +20,7 @@ public class PersonalizedOfferItem
         return id;
     }
 
-    public void setId(int movieId)
+    public void setId(int id)
     {
         this.id = id;
     }

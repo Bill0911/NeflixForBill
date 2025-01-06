@@ -37,11 +37,12 @@ public class PersonalizedOfferService
 
         List<Object[]> results = personalizedOfferRepository.getPersonalizedOffer(userId, maxMovies);
 
-        System.out.print("The results are retrieved");
+        System.out.println("The results are retrieved");
 
         List<PersonalizedOfferItem> personalizedMovies = new ArrayList<>();
         for (Object[] result : results) {
             PersonalizedOfferItem movie = new PersonalizedOfferItem();
+            System.out.println(result[0] + " <-> " + result[1]);
             movie.setId((Integer) result[0]);
             movie.setTitle((String) result[1]);
             personalizedMovies.add(movie);

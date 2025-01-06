@@ -3,6 +3,8 @@ package com.example.netflix.entity;
 import com.example.netflix.id.MovieViewCountId;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "movieviewcount")
 @IdClass(MovieViewCountId.class)
@@ -18,6 +20,9 @@ public class MovieViewCount {
 
     @Column(nullable = false)
     private int number;
+
+    @Column(name = "last_viewed")
+    private LocalDateTime lastViewed;
 
     public Integer getUser() {
         return user;
@@ -45,5 +50,15 @@ public class MovieViewCount {
 
     public void incrementViewCount() {
         this.number++;
+    }
+
+    public LocalDateTime getLastViewed()
+    {
+        return lastViewed;
+    }
+
+    public void setLastViewed(LocalDateTime lastViewed)
+    {
+        this.lastViewed = lastViewed;
     }
 }
