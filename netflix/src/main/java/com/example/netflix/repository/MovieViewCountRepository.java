@@ -33,7 +33,7 @@ public interface MovieViewCountRepository extends JpaRepository<MovieViewCount, 
 
     @Modifying
     @Transactional
-    @Query(value = "CALL PatchMovieViewCount(:accountId, :movieId)", nativeQuery = true)
+    @Query(value = "CALL PatchMovieViewCount(:accountId, :movieId, :number, :lastViewed)", nativeQuery = true)
     void patch(@Param("accountId") Integer accountId,
                @Param("movieId") Integer movieId,
                @Param("number") Integer number,
@@ -41,7 +41,7 @@ public interface MovieViewCountRepository extends JpaRepository<MovieViewCount, 
 
     @Modifying
     @Transactional
-    @Query(value = "CALL UpdateMovieViewCount(:accountId, :movieId)", nativeQuery = true)
+    @Query(value = "CALL UpdateMovieViewCount(:accountId, :movieId, :number, :lastViewed)", nativeQuery = true)
     void update(@Param("accountId") Integer accountId,
                 @Param("movieId") Integer movieId,
                 @Param("number") Integer number,
