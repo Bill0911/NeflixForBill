@@ -39,12 +39,13 @@ public class SeriesController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Series> updateSeries(@PathVariable Integer id, @RequestBody Series series) {
+    public ResponseEntity<Object> updateSeries(@PathVariable Integer id, @RequestBody Series series) {
         try {
             seriesService.updateSeriesById(id, series);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok("tried");
     }
 
     @DeleteMapping("/{id}")
@@ -54,11 +55,12 @@ public class SeriesController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Series> patchSeries(@PathVariable Integer id, @RequestBody Series series) {
+    public ResponseEntity<Object> patchSeries(@PathVariable Integer id, @RequestBody Series series) {
         try {
             seriesService.patchSeriesById(id, series);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok("Tried");
     }
 }

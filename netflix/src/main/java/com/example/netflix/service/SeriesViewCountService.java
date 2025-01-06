@@ -42,12 +42,12 @@ public class SeriesViewCountService {
 
             seriesViewCount.setUser(user);
             seriesViewCount.setSeries(series);
-            seriesViewCount.setEpisode(episode);
             seriesViewCount.incrementViewCount();
             seriesViewCountRepository.save(seriesViewCount);
 
             // Logic to broadcast the next episode
-            Optional<Episode> nextEpisodeOpt = episodeRepository.findFirstBySeries_SeriesIdOrderByEpisodeIdAsc(seriesId);
+
+            /*
             nextEpisodeOpt.ifPresent(nextEpisode -> {
                 SeriesViewCount nextSeriesViewCount = new SeriesViewCount();
                 nextSeriesViewCount.setUser(user);
@@ -55,7 +55,10 @@ public class SeriesViewCountService {
                 nextSeriesViewCount.setEpisode(nextEpisode);
                 nextSeriesViewCount.setNumber(0);
                 seriesViewCountRepository.save(nextSeriesViewCount);
+
             });
+
+             */
         } else {
             if (userOpt.isEmpty()) {
                 System.out.println("User not found with accountId: " + accountId);
@@ -69,6 +72,8 @@ public class SeriesViewCountService {
         }
     }
 
+
+/*
     public void addSeriesToViewCount(Integer accountId, Integer seriesId) {
         Optional<User> userOpt = userRepository.findById(accountId);
         Optional<Series> seriesOpt = seriesRepository.findById(seriesId);
@@ -102,4 +107,6 @@ public class SeriesViewCountService {
             }
         }
     }
+
+ */
 }
