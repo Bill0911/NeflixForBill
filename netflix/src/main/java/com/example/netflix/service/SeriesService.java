@@ -17,28 +17,28 @@ public class SeriesService {
         this.seriesRepository = seriesRepository;
     }
 
-    public void addMovie(Series series) {
+    public void addSeries(Series series) {
         seriesRepository.addSeries(series.getTitle(), series.getMinimumAge());
     }
 
-    public Movie getMovieById(Integer id) {
-        Optional<Movie> movie = seriesRepository.findBySeriesId(id);
-        return movie.orElse(null);
+    public Series getSeriesById(Integer id) {
+        Optional<Series> series = seriesRepository.findBySeriesId(id);
+        return series.orElse(null);
     }
 
-    public List<Movie> getManyMovies() {
+    public List<Series> getManySeries() {
         return seriesRepository.findMany();
     }
 
-    public void deleteMovieById(Integer id) {
+    public void deleteSeriesById(Integer id) {
         seriesRepository.deleteBySeriesId(id);
     }
 
-    public void patchMovieById(Integer id, Series patchData) {
+    public void patchSeriesById(Integer id, Series patchData) {
         seriesRepository.patchBySeriesId(id, patchData.getTitle(), patchData.getMinimumAge());
     }
 
-    public void updateMovieById(Integer id, Series patchData) {
-        seriesRepository.updateBySeriesId(id, patchData.getTitle(), patchData.getMinimumAge());
+    public void updateSeriesById(Integer id, Series series) {
+        seriesRepository.updateBySeriesId(id, series.getTitle(), series.getMinimumAge());
     }
 }
