@@ -36,7 +36,9 @@ public class MovieViewCountService {
     }
 
     public void patchMovieViewCount(MovieViewCount movieViewCount) {
+        System.out.println("CHECKPOINT - 3");
         movieViewCountRepository.patch(movieViewCount.getUser(), movieViewCount.getMovie(), movieViewCount.getNumber(), movieViewCount.getLastViewed());
+        System.out.println("CHECKPOINT - 4");
     }
 
     public void updateMovieViewCount(MovieViewCount movieViewCount) {

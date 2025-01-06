@@ -58,9 +58,12 @@ public class MovieViewCountController {
     @PatchMapping()
     public ResponseEntity<Object> patchMovieViewCount(@RequestBody MovieViewCount movieViewCount) {
         try {
+            System.out.println("CHECKPOINT - 1");
             movieViewCountService.patchMovieViewCount(movieViewCount);
+            System.out.println("CHECKPOINT - 2");
             return ResponseEntity.ok(movieViewCount);
         } catch (Exception e) {
+            System.out.println("CHECKPOINT - error1");
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error: " + e.getMessage());
         }
     }

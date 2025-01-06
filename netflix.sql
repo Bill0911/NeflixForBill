@@ -48,7 +48,7 @@ CREATE PROCEDURE `AddMoviesProfileWatchlist` (IN `p_profileId` INT, IN `p_movieI
     VALUES (p_profileId, p_movieId);
 END$$
 
-CREATE PROCEDURE `AddMovieViewCount` (IN `p_movieId` INT, IN `p_accountId` INT)   BEGIN
+CREATE PROCEDURE `AddMovieViewCount` (IN `p_accountId` INT, IN `p_movieId` INT)   BEGIN
     
     IF EXISTS (
         SELECT 1 
@@ -89,7 +89,7 @@ CREATE PROCEDURE `AddSeriesProfileWatchlist` (IN `p_profileId` INT, IN `p_series
     VALUES (p_profileId, p_seriesId);
 END$$
 
-CREATE PROCEDURE `AddSeriesViewCount` (IN `p_seriesId` INT, IN `p_accountId` INT)   BEGIN
+CREATE PROCEDURE `AddSeriesViewCount` (IN `p_accountId` INT, IN `p_seriesId` INT)   BEGIN
     -- Check if the record exists in the seriesviewcount table
     IF EXISTS (
         SELECT 1 
@@ -251,6 +251,14 @@ END$$
 
 CREATE PROCEDURE `GetManyEpisodes` ()   BEGIN
     SELECT * FROM `episode` LIMIT 49;
+END$$
+
+CREATE PROCEDURE `GetManyMovies` ()   BEGIN
+    SELECT * FROM `movie` LIMIT 49;
+END$$
+
+CREATE PROCEDURE `GetManyLanguages` ()   BEGIN
+    SELECT * FROM `language` LIMIT 49;
 END$$
 
 CREATE PROCEDURE `GetManyGenreForMovies` ()   BEGIN
@@ -918,7 +926,8 @@ CREATE TABLE `moviesprofilewatchlist` (
 CREATE TABLE `movieviewcount` (
   `account_id` bigint(20) UNSIGNED NOT NULL,
   `movie_id` int(11) UNSIGNED NOT NULL,
-  `number` int(11) DEFAULT NULL
+  `number` int(11) DEFAULT NULL,
+  `last_viewed` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -1029,7 +1038,6 @@ CREATE TABLE `seriesprofilewatchlist` (
 CREATE TABLE `seriesviewcount` (
   `account_id` bigint(20) UNSIGNED NOT NULL,
   `series_id` int(11) UNSIGNED NOT NULL,
-  `episode_id` int(11) UNSIGNED NOT NULL,
   `number` int(11) DEFAULT NULL,
   `last_viewed` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
