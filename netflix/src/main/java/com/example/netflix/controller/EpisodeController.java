@@ -1,7 +1,9 @@
 package com.example.netflix.controller;
 
 import com.example.netflix.entity.Episode;
+import com.example.netflix.entity.Profile;
 import com.example.netflix.service.EpisodeService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,44 +19,53 @@ public class EpisodeController {
         this.episodeService = episodeService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Episode>> getAllEpisodes() {
-        return ResponseEntity.ok(episodeService.getAllEpisodes());
+    @PostMapping()
+    public ResponseEntity<String> addEpisode(@RequestBody Episode episode) {
+        try {
+            episodeService.addEpisode(episode);
+            return ResponseEntity.ok("Episode has been created");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Episode> getEpisodeById(@PathVariable Integer id) {
-        return episodeService.getEpisodeById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(episodeService.getEpisodeById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<Episode> addEpisode(@RequestBody Episode episode) {
-        return ResponseEntity.ok(episodeService.addEpisode(episode));
+    @GetMapping()
+    public ResponseEntity<Object> getManyEpisodes() {
+        return ResponseEntity.ok(episodeService.getManyEpisodes());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Episode> updateEpisode(@PathVariable Integer id, @RequestBody Episode episode) {
+    @DeleteMapping("{id}")
+    public ResponseEntity<Object> deleteEpisodeById(@PathVariable Integer id) {
         try {
-            return ResponseEntity.ok(episodeService.updateEpisode(id, episode));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            episodeService.deleteEpisodeById(id);
+            return ResponseEntity.ok("Episode has been deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteEpisode(@PathVariable Integer id) {
-        episodeService.deleteEpisode(id);
-        return ResponseEntity.ok("Episode deleted successfully.");
+    @PatchMapping("{id}")
+    public ResponseEntity<String> patchEpisodeById(@PathVariable Integer id, @RequestBody Episode episode) {
+        try {
+            episodeService.patchEpisodeById(id, episode);
+            return ResponseEntity.ok("Episode has been patched successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<Episode> patchEpisode(@PathVariable Integer id, @RequestBody Episode patchData) {
+    @PutMapping("{id}")
+    public ResponseEntity<String> putEpisodeById(@PathVariable Integer id, @RequestBody Episode episode) {
         try {
-            return ResponseEntity.ok(episodeService.patchEpisode(id, patchData));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            episodeService.updateEpisodeById(id, episode);
+            return ResponseEntity.ok("Episode has been deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 }
