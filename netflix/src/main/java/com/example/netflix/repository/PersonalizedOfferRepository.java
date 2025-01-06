@@ -12,6 +12,6 @@ import java.util.List;
 @Repository
 public interface PersonalizedOfferRepository extends JpaRepository<Movie, Integer>
 {
-    @Query(value = "CALL GetPersonalizedOffer(:userId, :maxMovies)", nativeQuery = true)
+    @Query(value = "CALL GetPersonalizedOfferMovies(:userId, :maxMovies)", nativeQuery = true)
     List<Object[]> getPersonalizedOffer(@Param("userId") int userId, @Param("maxMovies") int maxMovies);
 }

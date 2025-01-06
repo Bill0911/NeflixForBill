@@ -40,8 +40,11 @@ public class UserController {
     {
         try
         {
+            System.out.println("CHECKPOINT - 1");
             User registeredUser = userService.register(user);
+            System.out.println("CHECKPOINT - 2");
             String token = jwtUtil.generateActivationToken(registeredUser.getEmail());
+            System.out.println("CHECKPOINT - 3");
             String activationLink = "http://localhost:8081/api/users/activate?token=" + token;
 
             return ResponseEntity.ok(Map.of(
@@ -50,6 +53,7 @@ public class UserController {
         }
         catch (RuntimeException e)
         {
+            System.out.println("CHECKPOINT - error");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
                     "error", e.getMessage()
             ));

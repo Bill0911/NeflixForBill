@@ -46,10 +46,16 @@ public class UserService {
     }
 
     public User register(User user) {
+        System.out.println("CHECKPOINT - 5");
         String encodedPassword = passwordEncoder.encode(user.getPassword());
+        System.out.println("CHECKPOINT - 6");
         user.setPassword(encodedPassword);
+        System.out.println("CHECKPOINT - 7");
         user.setActive(false);
+        System.out.println("CHECKPOINT - 8");
         User savedUser = userRepository.save(user);
+        System.out.println("CHECKPOINT - 9");
+
         // Debug statement to check the encoded password
         System.out.println("Encoded password during registration: " + encodedPassword);
         return savedUser;

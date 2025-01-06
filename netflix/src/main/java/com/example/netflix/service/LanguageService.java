@@ -5,6 +5,7 @@ import com.example.netflix.repository.LanguageRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LanguageService {
@@ -19,34 +20,28 @@ public class LanguageService {
         return languageRepository.findAll();
     }
 
-    public Language getLanguageById(Integer languageId) {
-        return languageRepository.findById(languageId)
-                .orElseThrow(() -> new RuntimeException("Language not found with ID: " + languageId));
+    public List<Language> getManyLanguages() {
+        return languageRepository.findMany();
     }
 
-    public Language addLanguage(Language language) {
-        return languageRepository.save(language);
+    public Language getLanguageById(Integer id) {
+        Optional<Language> language = languageRepository.findByLanguageId(id);
+        return language.orElse(null);
     }
 
-    public Language updateLanguage(Integer languageId, Language updatedLanguage) {
-        Language language = languageRepository.findById(languageId)
-                .orElseThrow(() -> new RuntimeException("Language not found with ID: " + languageId));
-        language.setName(updatedLanguage.getName());
-        return languageRepository.save(language);
+    public void addLanguage(String name) {
+        languageRepository.addLanguage(name);
     }
 
-    public void deleteLanguage(Integer languageId) {
+    public void updateLanguageById(Integer languageId, Language patchData) {
+        languageRepository.updateLanguageById(languageId, patchData.getName());
+    }
+
+    public void deleteLanguageById(Integer languageId) {
         languageRepository.deleteById(languageId);
     }
 
-    public Language patchLanguage(Integer languageId, Language patchData) {
-        Language language = languageRepository.findById(languageId)
-                .orElseThrow(() -> new RuntimeException("Language not found with ID: " + languageId));
-
-        if (patchData.getName() != null) {
-            language.setName(patchData.getName());
-        }
-
-        return languageRepository.save(language);
+    public void patchLanguageById(Integer languageId, Language patchData) {
+        languageRepository.patchByLanguageId(languageId, patchData.getName());
     }
 }
