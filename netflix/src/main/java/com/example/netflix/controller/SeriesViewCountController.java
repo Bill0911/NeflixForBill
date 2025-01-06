@@ -17,14 +17,14 @@ public class SeriesViewCountController {
         this.jwtUtil = jwtUtil;
     }
 
-    @PostMapping("/add-to-view-count")
-    public ResponseEntity<String> addToViewCount(@RequestParam Integer seriesId, @RequestHeader("Authorization") String token) {
-        String jwt = token.substring(7);
-        int id = jwtUtil.extractId(jwt);
-
-        seriesViewCountService.addSeriesToViewCount(id, seriesId);
-        return ResponseEntity.ok("Series added to view count");
-    }
+//    @PostMapping("/add-to-view-count")
+//    public ResponseEntity<String> addToViewCount(@RequestParam Integer seriesId, @RequestHeader("Authorization") String token) {
+//        String jwt = token.substring(7);
+//        int id = jwtUtil.extractId(jwt);
+//
+//        seriesViewCountService.addSeriesToViewCount(id, seriesId);
+//        return ResponseEntity.ok("Series added to view count");
+//    }
 
     @PostMapping("/increment-view-count")
     public ResponseEntity<Void> incrementViewCount(@RequestParam Integer accountId, @RequestParam Integer seriesId, @RequestParam Integer episodeId) {
