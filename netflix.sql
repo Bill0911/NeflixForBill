@@ -454,9 +454,13 @@ CREATE PROCEDURE `GetSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_serie
     WHERE `series_id` = p_series_id AND `account_id` = p_account_id;
 END$$
 
-CREATE PROCEDURE `GetUserByEmail` (IN `p_email` VARCHAR(255))   BEGIN
-    SELECT * FROM `user` WHERE `email` = p_email;
-END$$
+-- -----this procedure right here solves the issue of mismatching collation ---
+CREATE PROCEDURE GetUserByEmail(IN email VARCHAR(255))
+BEGIN
+    SELECT * FROM user WHERE email = email LIMIT 1;
+END $$
+-- -----this procedure right here solves the issue of mismatching collation ---
+
 
 CREATE PROCEDURE `GetUserById` (IN `p_account_id` BIGINT(20))   BEGIN
     SELECT * FROM `user` WHERE `account_id` = p_account_id;
@@ -960,25 +964,6 @@ CREATE TABLE `payments` (
   `payment_amount` double NOT NULL,
   `next_billing_date` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Stand-in structure for view `paymentstatus`
--- (See below for the actual view)
---
-CREATE TABLE `paymentstatus` (
-`payment_id` bigint(20)
-,`account_id` bigint(20) unsigned
-,`email` varchar(255)
-,`subscription_type` enum('SD','HD','UHD')
-,`payment_amount` double
-,`is_paid` bit(1)
-,`is_discount_applied` bit(1)
-,`payment_date` datetime
-,`next_billing_date` datetime
-);
-
 -- --------------------------------------------------------
 
 --
@@ -1046,20 +1031,6 @@ CREATE TABLE `seriesviewcount` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
-
---
--- Stand-in structure for view `subscriptioncosts`
--- (See below for the actual view)
---
-CREATE TABLE `subscriptioncosts` (
-`UserID` bigint(20) unsigned
-,`Email` varchar(255)
-,`SubscriptionType` enum('SD','HD','UHD')
-,`SubscriptionCost` decimal(5,2)
-);
-
--- --------------------------------------------------------
-
 --
 -- Table structure for table `user`
 --
@@ -1101,41 +1072,14 @@ INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `active
 
 -- --------------------------------------------------------
 
---
--- Stand-in structure for view `user_genre_count`
--- (See below for the actual view)
---
-CREATE TABLE `user_genre_count` (
-`user_id` bigint(20) unsigned
-,`genre_id` int(11) unsigned
-,`genre_name` varchar(255)
-,`total_views` decimal(33,0)
-);
-
--- --------------------------------------------------------
-
---
--- Structure for view `paymentstatus`
---
-DROP TABLE IF EXISTS `paymentstatus`;
 
 CREATE VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`account_id` AS `account_id`, `u`.`email` AS `email`, `p`.`subscription_type` AS `subscription_type`, `p`.`payment_amount` AS `payment_amount`, `p`.`is_paid` AS `is_paid`, `p`.`is_discount_applied` AS `is_discount_applied`, `p`.`payment_date` AS `payment_date`, `p`.`next_billing_date` AS `next_billing_date` FROM (`payments` `p` join `user` `u` on(`p`.`account_id` = `u`.`account_id`)) ;
 
--- --------------------------------------------------------
-
---
--- Structure for view `subscriptioncosts`
---
-DROP TABLE IF EXISTS `subscriptioncosts`;
 
 CREATE VIEW `subscriptioncosts`  AS SELECT `u`.`account_id` AS `UserID`, `u`.`email` AS `Email`, `u`.`subscription` AS `SubscriptionType`, CASE WHEN to_days(curdate()) - to_days(`u`.`trial_start_date`) <= 7 THEN 0 ELSE CASE WHEN `u`.`subscription` = 'SD' THEN 7.99 WHEN `u`.`subscription` = 'HD' THEN 10.99 WHEN `u`.`subscription` = 'UHD' THEN 13.99 ELSE 0 END- CASE WHEN `u`.`discount` = 1 THEN 2 ELSE 0 END END AS `SubscriptionCost` FROM `user` AS `u` ;
 
 -- --------------------------------------------------------
 
---
--- Structure for view `user_genre_count`
---
-DROP TABLE IF EXISTS `user_genre_count`;
 
 CREATE VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) AS `total_views` FROM ((((((`genre` `g` left join `genreformovie` `mg` on(`g`.`genre_id` = `mg`.`genre_id`)) left join `movie` `m` on(`mg`.`movie_id` = `m`.`movie_id`)) left join `movieviewcount` `mvc` on(`m`.`movie_id` = `mvc`.`movie_id`)) left join `genreforseries` `gfs` on(`g`.`genre_id` = `gfs`.`genre_id`)) left join `series` `s` on(`gfs`.`series_id` = `s`.`series_id`)) left join `seriesviewcount` `svc` on(`s`.`series_id` = `svc`.`series_id` and `svc`.`account_id` = `mvc`.`account_id`)) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) DESC ;
 
