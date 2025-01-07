@@ -1240,8 +1240,8 @@ ALTER TABLE `seriesprofilewatchlist`
 --
 ALTER TABLE `seriesviewcount`
   ADD PRIMARY KEY (`account_id`,`series_id`),
-  ADD KEY `fk_seriesviewcount_series` (`series_id`),
-  ADD KEY `FKeh1b2xgu8esqripye7l4o90rq` (`episode_id`);
+  ADD KEY `fk_seriesviewcount_user` (`account_id`),
+  ADD KEY `fk_seriesviewcount_series` (`series_id`);
 
 --
 -- Indexes for table `user`
@@ -1383,7 +1383,6 @@ ALTER TABLE `seriesprofilewatchlist`
 -- Constraints for table `seriesviewcount`
 --
 ALTER TABLE `seriesviewcount`
-  ADD CONSTRAINT `FKeh1b2xgu8esqripye7l4o90rq` FOREIGN KEY (`episode_id`) REFERENCES `episode` (`episode_id`),
   ADD CONSTRAINT `fk_seriesviewcount_series` FOREIGN KEY (`series_id`) REFERENCES `series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_seriesviewcount_user` FOREIGN KEY (`account_id`) REFERENCES `user` (`account_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
