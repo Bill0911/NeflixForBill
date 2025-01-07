@@ -1,12 +1,7 @@
 package com.example.netflix.service;
 
 import com.example.netflix.entity.GenreForSeries;
-import com.example.netflix.entity.Genre;
-import com.example.netflix.entity.Series;
-import com.example.netflix.id.GenreForSeriesId;
 import com.example.netflix.repository.GenreForSeriesRepository;
-import com.example.netflix.repository.GenreRepository;
-import com.example.netflix.repository.SeriesRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,43 +9,37 @@ import java.util.List;
 @Service
 public class GenreForSeriesService {
 
-    private final GenreForSeriesRepository genreForSeriesRepository;
-    private final SeriesRepository seriesRepository;
-    private final GenreRepository genreRepository;
+    private final GenreForSeriesRepository seriesProfileWatchlistRepository;
 
-    public GenreForSeriesService(GenreForSeriesRepository genreForSeriesRepository, SeriesRepository seriesRepository, GenreRepository genreRepository) {
-        this.genreForSeriesRepository = genreForSeriesRepository;
-        this.seriesRepository = seriesRepository;
-        this.genreRepository = genreRepository;
+
+    public GenreForSeriesService(GenreForSeriesRepository seriesProfileWatchlistRepository)
+    {
+        this.seriesProfileWatchlistRepository = seriesProfileWatchlistRepository;
     }
 
-    public List<GenreForSeries> getAll() {
-        return genreForSeriesRepository.findAll();
+    public void addGenreForSeries(Integer id1, Integer id2) {
+        seriesProfileWatchlistRepository.add(id1, id2);
     }
 
-    public GenreForSeries addGenreForSeries(Integer seriesId, Integer genreId) {
-        Series series = seriesRepository.findById(seriesId).orElseThrow(() -> new RuntimeException("Series not found"));
-        Genre genre = genreRepository.findById(genreId).orElseThrow(() -> new RuntimeException("Genre not found"));
-
-        GenreForSeries genreForSeries = new GenreForSeries();
-        genreForSeries.setSeries(series);
-        genreForSeries.setGenre(genre);
-
-        return genreForSeriesRepository.save(genreForSeries);
+    public GenreForSeries getGenreForSeries(Integer id1, Integer id2) {
+        return seriesProfileWatchlistRepository.find(id1, id2).orElse(null);
     }
 
-    public void deleteGenreForSeries(Integer seriesId, Integer genreId) {
-        genreForSeriesRepository.deleteById(new GenreForSeriesId(seriesId, genreId));
+    public List<GenreForSeries> getManyGenreForSeriess() {
+        return seriesProfileWatchlistRepository.findMany();
     }
 
-    public GenreForSeries patchGenreForSeries(Integer seriesId, Integer oldGenreId, Integer newGenreId) {
-        GenreForSeriesId id = new GenreForSeriesId(seriesId, oldGenreId);
-        GenreForSeries genreForSeries = genreForSeriesRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("GenreForSeries relationship not found"));
+    public void deleteGenreForSeries(Integer id1, Integer id2) {
+        seriesProfileWatchlistRepository.delete(id1, id2);
+    }
 
-        Genre newGenre = genreRepository.findById(newGenreId).orElseThrow(() -> new RuntimeException("New Genre not found"));
+    public void patchGenreForSeries(Integer id1, Integer id2, Integer newId1, Integer newId2) {
+        System.out.println("CHECKPOINT - 3");
+        seriesProfileWatchlistRepository.patch(id1, id2, newId1, newId2);
+        System.out.println("CHECKPOINT - 4");
+    }
 
-        genreForSeries.setGenre(newGenre);
-        return genreForSeriesRepository.save(genreForSeries);
+    public void updateGenreForSeries(Integer id1, Integer id2, Integer newId1, Integer newId2) {
+        seriesProfileWatchlistRepository.update(id1, id2, newId1, newId2);
     }
 }

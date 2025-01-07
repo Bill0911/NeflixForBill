@@ -1,6 +1,6 @@
 package com.example.netflix.controller;
 
-import com.example.netflix.service.MovieService;
+import com.example.netflix.service.SeriesService;
 import com.example.netflix.service.SeriesProfileWatchlistService;
 import com.example.netflix.service.ProfileService;
 import org.springframework.http.HttpStatus;
@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/series-watchlist")
 public class SeriesProfileWatchlistController {
     private ProfileService profileService;
-    private MovieService movieService;
+    private SeriesService seriesService;
     private SeriesProfileWatchlistService seriesProfileWatchlistService;
 
-    public SeriesProfileWatchlistController(ProfileService profileService, MovieService movieService, SeriesProfileWatchlistService seriesProfileWatchlistService) {
+    public SeriesProfileWatchlistController(ProfileService profileService, SeriesService seriesService, SeriesProfileWatchlistService seriesProfileWatchlistService) {
         this.profileService = profileService;
-        this.movieService = movieService;
+        this.seriesService = seriesService;
         this.seriesProfileWatchlistService = seriesProfileWatchlistService;
     }
 
@@ -24,7 +24,7 @@ public class SeriesProfileWatchlistController {
     public ResponseEntity<Object> addSeriesProfileWatchlist(@PathVariable Integer id1, @PathVariable Integer id2) {
         try {
             profileService.getProfileById(id1);
-            movieService.getMovieById(id2);
+            seriesService.getSeriesById(id2);
             seriesProfileWatchlistService.addSeriesProfileWatchlist(id1, id2);
             return ResponseEntity.ok("Profile - series relation has been created");
         } catch (Exception e) {
