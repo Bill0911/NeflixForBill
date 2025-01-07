@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 public class SeriesViewCount {
 
     @Id
-    @JoinColumn(name = "account_id", insertable = false, updatable = false)
+    @Column(name = "account_id", insertable = false, updatable = false)
     private Integer user;
 
     @Id
-    @JoinColumn(name = "series_id", insertable = false, updatable = false)
+    @Column(name = "series_id", insertable = false, updatable = false)
     private Integer series;
 
     @Column(nullable = false)

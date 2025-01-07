@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @IdClass(MovieViewCountId.class)
 public class MovieViewCount {
 
-    @Id
+
     @Column(name = "account_id", nullable = false)
     private Integer user;
 

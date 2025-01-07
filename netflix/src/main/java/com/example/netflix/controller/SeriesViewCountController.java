@@ -44,7 +44,7 @@ public class SeriesViewCountController {
             seriesViewCountService.addSeriesViewCount(accountId, seriesId);
             return ResponseEntity.ok("Series - User relation has been created");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 
@@ -64,7 +64,7 @@ public class SeriesViewCountController {
             seriesViewCountService.deleteSeriesViewCount(accountId, seriesId);
             return ResponseEntity.ok("Series - User relation has been deleted");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 
@@ -77,7 +77,7 @@ public class SeriesViewCountController {
             return ResponseEntity.ok(seriesViewCount);
         } catch (Exception e) {
             System.out.println("CHECKPOINT - error1");
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 
@@ -87,7 +87,7 @@ public class SeriesViewCountController {
             seriesViewCountService.updateSeriesViewCount(seriesViewCount);
             return ResponseEntity.ok(seriesViewCount);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 }

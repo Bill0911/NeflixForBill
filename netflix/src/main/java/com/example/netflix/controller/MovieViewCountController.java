@@ -31,7 +31,7 @@ public class MovieViewCountController {
             movieViewCountService.addMovieViewCount(accountId, movieId);
             return ResponseEntity.ok("Movie - User relation has been created");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 
@@ -51,7 +51,7 @@ public class MovieViewCountController {
             movieViewCountService.deleteMovieViewCount(accountId, movieId);
             return ResponseEntity.ok("Movie - User relation has been deleted");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 
@@ -64,7 +64,7 @@ public class MovieViewCountController {
             return ResponseEntity.ok(movieViewCount);
         } catch (Exception e) {
             System.out.println("CHECKPOINT - error1");
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 
@@ -74,7 +74,7 @@ public class MovieViewCountController {
             movieViewCountService.updateMovieViewCount(movieViewCount);
             return ResponseEntity.ok(movieViewCount);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 

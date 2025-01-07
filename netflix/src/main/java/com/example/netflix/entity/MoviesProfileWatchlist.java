@@ -11,11 +11,11 @@ import jakarta.persistence.*;
 public class MoviesProfileWatchlist {
 
     @Id
-    @JoinColumn(name = "genre_id", insertable = false, updatable = false)
+    @Column(name = "profile_id", insertable = false, updatable = false)
     private Integer profile;
 
     @Id
-    @JoinColumn(name = "movie_id", insertable = false, updatable = false)
+    @Column(name = "movie_id", insertable = false, updatable = false)
     private Integer movie;
 
     public Integer getProfile() {
