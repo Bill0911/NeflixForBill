@@ -1,6 +1,5 @@
 package com.example.netflix.service;
 
-import com.example.netflix.entity.MovieViewCount;
 import com.example.netflix.entity.MoviesProfileWatchlist;
 import com.example.netflix.repository.MoviesProfileWatchlistRepository;
 import org.springframework.stereotype.Service;
