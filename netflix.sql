@@ -547,8 +547,8 @@ CREATE PROCEDURE `PatchMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255
     WHERE `movie_id` = p_movie_id;
 END$$
 
-CREATE PROCEDURE `PatchMovieProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_movie_id` INT, IN `p_new_profile_id` INT, IN `p_new_movie_id` INT)   BEGIN
-    UPDATE movieprofilewatchlist
+CREATE PROCEDURE `PatchMoviesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_movie_id` INT, IN `p_new_profile_id` INT, IN `p_new_movie_id` INT)   BEGIN
+    UPDATE moviesprofilewatchlist
     SET
         profile_id = IFNULL(p_new_profile_id, profile_id),
         movie_id = IFNULL(p_new_movie_id, movie_id)
