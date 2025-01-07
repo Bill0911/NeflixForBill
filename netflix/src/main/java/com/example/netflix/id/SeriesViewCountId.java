@@ -7,55 +7,45 @@ import jakarta.persistence.Embeddable;
 @Embeddable
 public class SeriesViewCountId implements Serializable {
 
-    private Integer userId;
-    private Integer seriesId;
-    private Integer episodeId;
+    private Integer user;
+    private Integer series;
 
     public SeriesViewCountId() {
     }
 
-    public SeriesViewCountId(Integer userId, Integer seriesId, Integer episodeId) {
-        this.userId = userId;
-        this.seriesId = seriesId;
-        this.episodeId = episodeId;
+    public SeriesViewCountId(Integer user, Integer series) {
+        this.user = user;
+        this.series = series;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getUser() {
+        return user;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUser(Integer user) {
+        this.user = user;
     }
 
-    public Integer getSeriesId() {
-        return seriesId;
+    public Integer getSeries() {
+        return series;
     }
 
-    public void setSeriesId(Integer seriesId) {
-        this.seriesId = seriesId;
+    public void setSeries(Integer series) {
+        this.series = series;
     }
 
-    public Integer getEpisodeId() {
-        return episodeId;
-    }
-
-    public void setEpisodeId(Integer episodeId) {
-        this.episodeId = episodeId;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SeriesViewCountId that = (SeriesViewCountId) o;
-        return Objects.equals(userId, that.userId) &&
-                Objects.equals(seriesId, that.seriesId) &&
-                Objects.equals(episodeId, that.episodeId);
+        return Objects.equals(user, that.user) &&
+                Objects.equals(series, that.series);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, seriesId, episodeId);
+        return Objects.hash(user, series);
     }
 }
