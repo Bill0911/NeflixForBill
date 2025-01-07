@@ -27,7 +27,7 @@ public interface LanguageRepository extends JpaRepository<Language, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "CALL DeleteLanguyage(:languageId)", nativeQuery = true)
+    @Query(value = "CALL DeleteLanguage(:languageId)", nativeQuery = true)
     void deleteLanguageById(@Param("languageId") Integer languageId);
 
     @Modifying

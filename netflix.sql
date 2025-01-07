@@ -252,6 +252,10 @@ CREATE PROCEDURE `GetManyEpisodes` ()   BEGIN
     SELECT * FROM `episode` LIMIT 49;
 END$$
 
+CREATE PROCEDURE `GetManyProfiles` ()   BEGIN
+    SELECT * FROM `profile` LIMIT 49;
+END$$
+
 CREATE PROCEDURE `GetManyMovies` ()   BEGIN
     SELECT * FROM `movie` LIMIT 49;
 END$$

@@ -15,7 +15,6 @@ public class Profile {
     @Column(name = "name")
     private String name;
 
-
     @JoinColumn(name = "account_id", nullable = false)
     private Integer account;
 
