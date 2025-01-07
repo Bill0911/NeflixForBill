@@ -1,6 +1,5 @@
 package com.example.netflix.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,8 +14,8 @@ public class Profile {
     @Column(name = "name")
     private String name;
 
-    @JoinColumn(name = "account_id", nullable = false)
-    private Integer account;
+    @Column(name = "account_id", nullable = false)
+    private Integer user;
 
     @Column(name = "profile_image", length = 255)
     private String profileImage;
@@ -34,11 +33,11 @@ public class Profile {
     }
 
     public Integer getUser() {
-        return account;
+        return user;
     }
 
     public void setUser(Integer user) {
-        this.account = user;
+        this.user = user;
     }
 
     public String getProfileImage() {
