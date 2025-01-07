@@ -63,6 +63,7 @@ public class UserService {
 
     @Transactional
     public void activateUser(String email) {
+        System.out.println("CHECKPOINT - 5");
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setActive(true); // Set active to true (1)
