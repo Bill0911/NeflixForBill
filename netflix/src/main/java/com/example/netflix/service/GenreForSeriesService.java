@@ -9,37 +9,37 @@ import java.util.List;
 @Service
 public class GenreForSeriesService {
 
-    private final GenreForSeriesRepository seriesProfileWatchlistRepository;
+    private final GenreForSeriesRepository genreForSeriesRepository;
 
 
-    public GenreForSeriesService(GenreForSeriesRepository seriesProfileWatchlistRepository)
+    public GenreForSeriesService(GenreForSeriesRepository genreForSeriesRepository)
     {
-        this.seriesProfileWatchlistRepository = seriesProfileWatchlistRepository;
+        this.genreForSeriesRepository = genreForSeriesRepository;
     }
 
     public void addGenreForSeries(Integer id1, Integer id2) {
-        seriesProfileWatchlistRepository.add(id1, id2);
+        genreForSeriesRepository.add(id1, id2);
     }
 
     public GenreForSeries getGenreForSeries(Integer id1, Integer id2) {
-        return seriesProfileWatchlistRepository.find(id1, id2).orElse(null);
+        return genreForSeriesRepository.find(id1, id2).orElse(null);
     }
 
-    public List<GenreForSeries> getManyGenreForSeriess() {
-        return seriesProfileWatchlistRepository.findMany();
+    public List<GenreForSeries> getManyGenreForSeries() {
+        return genreForSeriesRepository.findMany();
     }
 
     public void deleteGenreForSeries(Integer id1, Integer id2) {
-        seriesProfileWatchlistRepository.delete(id1, id2);
+        genreForSeriesRepository.delete(id1, id2);
     }
 
     public void patchGenreForSeries(Integer id1, Integer id2, Integer newId1, Integer newId2) {
         System.out.println("CHECKPOINT - 3");
-        seriesProfileWatchlistRepository.patch(id1, id2, newId1, newId2);
+        genreForSeriesRepository.patch(id1, id2, newId1, newId2);
         System.out.println("CHECKPOINT - 4");
     }
 
     public void updateGenreForSeries(Integer id1, Integer id2, Integer newId1, Integer newId2) {
-        seriesProfileWatchlistRepository.update(id1, id2, newId1, newId2);
+        genreForSeriesRepository.update(id1, id2, newId1, newId2);
     }
 }

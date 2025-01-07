@@ -1,7 +1,9 @@
 package com.example.netflix.service;
 
 import com.example.netflix.entity.GenreForUser;
+import com.example.netflix.entity.GenreForUser;
 import com.example.netflix.id.GenreForUserId;
+import com.example.netflix.repository.GenreForUserRepository;
 import com.example.netflix.repository.GenreForUserRepository;
 import org.springframework.stereotype.Service;
 
@@ -9,42 +11,37 @@ import java.util.List;
 
 @Service
 public class GenreForUserService {
-
     private final GenreForUserRepository genreForUserRepository;
 
-    public GenreForUserService(GenreForUserRepository genreForUserRepository) {
+
+    public GenreForUserService(GenreForUserRepository genreForUserRepository)
+    {
         this.genreForUserRepository = genreForUserRepository;
     }
 
-    public List<GenreForUser> getAllGenreForUsers() {
-        return genreForUserRepository.findAll();
+    public void addGenreForUser(Integer id1, Integer id2) {
+        genreForUserRepository.add(id1, id2);
     }
 
-    public GenreForUser getGenreForUserById(Integer accountId, Integer genreId) {
-        return genreForUserRepository.findById(new GenreForUserId(accountId, genreId))
-                .orElseThrow(() -> new RuntimeException("GenreForUser not found"));
+    public GenreForUser getGenreForUser(Integer id1, Integer id2) {
+        return genreForUserRepository.find(id1, id2).orElse(null);
     }
 
-    public GenreForUser addGenreForUser(GenreForUser genreForUser) {
-        return genreForUserRepository.save(genreForUser);
+    public List<GenreForUser> getManyGenreForUsers() {
+        return genreForUserRepository.findMany();
     }
 
-    public GenreForUser updateGenreForUser(GenreForUser genreForUser) {
-        return genreForUserRepository.save(genreForUser);
+    public void deleteGenreForUser(Integer id1, Integer id2) {
+        genreForUserRepository.delete(id1, id2);
     }
 
-    public void deleteGenreForUser(Integer accountId, Integer genreId) {
-        genreForUserRepository.deleteById(new GenreForUserId(accountId, genreId));
+    public void patchGenreForUser(Integer id1, Integer id2, Integer newId1, Integer newId2) {
+        System.out.println("CHECKPOINT - 3");
+        genreForUserRepository.patch(id1, id2, newId1, newId2);
+        System.out.println("CHECKPOINT - 4");
     }
 
-    public GenreForUser patchGenreForUser(Integer accountId, Integer genreId, GenreForUser patchData) {
-        GenreForUser genreForUser = genreForUserRepository.findById(new GenreForUserId(accountId, genreId))
-                .orElseThrow(() -> new RuntimeException("GenreForUser not found"));
-
-        if (patchData.getGenre() != null) {
-            genreForUser.setGenre(patchData.getGenre());
-        }
-
-        return genreForUserRepository.save(genreForUser);
+    public void updateGenreForUser(Integer id1, Integer id2, Integer newId1, Integer newId2) {
+        genreForUserRepository.update(id1, id2, newId1, newId2);
     }
 }

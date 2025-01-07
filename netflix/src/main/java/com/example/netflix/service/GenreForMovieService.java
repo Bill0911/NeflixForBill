@@ -1,57 +1,47 @@
 package com.example.netflix.service;
 
 import com.example.netflix.entity.GenreForMovie;
-import com.example.netflix.entity.Genre;
-import com.example.netflix.entity.Movie;
+import com.example.netflix.entity.GenreForMovie;
 import com.example.netflix.id.GenreForMovieId;
 import com.example.netflix.repository.GenreForMovieRepository;
-import com.example.netflix.repository.GenreRepository;
-import com.example.netflix.repository.MovieRepository;
+import com.example.netflix.repository.GenreForMovieRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class GenreForMovieService {
-
     private final GenreForMovieRepository genreForMovieRepository;
-    private final MovieRepository movieRepository;
-    private final GenreRepository genreRepository;
 
-    public GenreForMovieService(GenreForMovieRepository genreForMovieRepository, MovieRepository movieRepository, GenreRepository genreRepository) {
+
+    public GenreForMovieService(GenreForMovieRepository genreForMovieRepository)
+    {
         this.genreForMovieRepository = genreForMovieRepository;
-        this.movieRepository = movieRepository;
-        this.genreRepository = genreRepository;
     }
 
-    public List<GenreForMovie> getAll() {
-        return genreForMovieRepository.findAll();
+    public void addGenreForMovie(Integer id1, Integer id2) {
+        genreForMovieRepository.add(id1, id2);
     }
 
-    public GenreForMovie addGenreForMovie(Integer movieId, Integer genreId) {
-        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new RuntimeException("Movie not found"));
-        Genre genre = genreRepository.findById(genreId).orElseThrow(() -> new RuntimeException("Genre not found"));
-
-        GenreForMovie genreForMovie = new GenreForMovie();
-        genreForMovie.setMovie(movie);
-        genreForMovie.setGenre(genre);
-
-        return genreForMovieRepository.save(genreForMovie);
+    public GenreForMovie getGenreForMovie(Integer id1, Integer id2) {
+        return genreForMovieRepository.find(id1, id2).orElse(null);
     }
 
-    public void deleteGenreForMovie(Integer movieId, Integer genreId) {
-        GenreForMovieId id = new GenreForMovieId(movieId, genreId);
-        genreForMovieRepository.deleteById(id);
+    public List<GenreForMovie> getManyGenreForMovies() {
+        return genreForMovieRepository.findMany();
     }
 
-    public GenreForMovie patchGenreForMovie(Integer movieId, Integer oldGenreId, Integer newGenreId) {
-        GenreForMovieId id = new GenreForMovieId(movieId, oldGenreId);
-        GenreForMovie genreForMovie = genreForMovieRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("GenreForMovie relationship not found"));
+    public void deleteGenreForMovie(Integer id1, Integer id2) {
+        genreForMovieRepository.delete(id1, id2);
+    }
 
-        Genre newGenre = genreRepository.findById(newGenreId).orElseThrow(() -> new RuntimeException("New Genre not found"));
+    public void patchGenreForMovie(Integer id1, Integer id2, Integer newId1, Integer newId2) {
+        System.out.println("CHECKPOINT - 3");
+        genreForMovieRepository.patch(id1, id2, newId1, newId2);
+        System.out.println("CHECKPOINT - 4");
+    }
 
-        genreForMovie.setGenre(newGenre);
-        return genreForMovieRepository.save(genreForMovie);
+    public void updateGenreForMovie(Integer id1, Integer id2, Integer newId1, Integer newId2) {
+        genreForMovieRepository.update(id1, id2, newId1, newId2);
     }
 }

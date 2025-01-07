@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.*;
 public class GenreForSeriesController {
     private GenreService genreService;
     private SeriesService seriesService;
-    private GenreForSeriesService seriesGenreWatchlistService;
+    private GenreForSeriesService genreForSeriesService;
 
-    public GenreForSeriesController(GenreService genreService, SeriesService seriesService, GenreForSeriesService seriesGenreWatchlistService) {
+    public GenreForSeriesController(GenreService genreService, SeriesService seriesService, GenreForSeriesService genreForSeriesService) {
         this.genreService = genreService;
         this.seriesService = seriesService;
-        this.seriesGenreWatchlistService = seriesGenreWatchlistService;
+        this.genreForSeriesService = genreForSeriesService;
     }
 
     @PostMapping("/{id1}/{id2}")
@@ -25,7 +25,7 @@ public class GenreForSeriesController {
         try {
             genreService.getGenreById(id1);
             seriesService.getSeriesById(id2);
-            seriesGenreWatchlistService.addGenreForSeries(id1, id2);
+            genreForSeriesService.addGenreForSeries(id1, id2);
             return ResponseEntity.ok("Genre - series relation has been created");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
@@ -34,7 +34,7 @@ public class GenreForSeriesController {
 
     @GetMapping("/{id1}/{id2}")
     public ResponseEntity<Object> getGenreForSeries(@PathVariable Integer id1, @PathVariable Integer id2) {
-        if (seriesGenreWatchlistService.getGenreForSeries(id1, id2) == null) {
+        if (genreForSeriesService.getGenreForSeries(id1, id2) == null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("No such relation found");
         }
 
@@ -43,13 +43,13 @@ public class GenreForSeriesController {
 
     @GetMapping()
     public ResponseEntity<Object> getManyGenreForSeriess() {
-        return ResponseEntity.ok(seriesGenreWatchlistService.getManyGenreForSeriess());
+        return ResponseEntity.ok(genreForSeriesService.getManyGenreForSeries());
     }
 
     @DeleteMapping("/{id1}/{id2}")
     public ResponseEntity<Object> deleteGenreForSeries(@PathVariable Integer id1, @PathVariable Integer id2) {
         try {
-            seriesGenreWatchlistService.deleteGenreForSeries(id1, id2);
+            genreForSeriesService.deleteGenreForSeries(id1, id2);
             return ResponseEntity.ok("Genre - Series relation has been deleted");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
@@ -65,7 +65,7 @@ public class GenreForSeriesController {
             if (newId2 == 0) {
                 newId2 = null;
             }
-            seriesGenreWatchlistService.patchGenreForSeries(id1, id2, newId1, newId2);
+            genreForSeriesService.patchGenreForSeries(id1, id2, newId1, newId2);
             return ResponseEntity.ok(id1 + " -> " + newId1 + " | " + id2 + " -> " + newId2);
         } catch (Exception e) {
             System.out.println("CHECKPOINT - error1");
@@ -76,7 +76,7 @@ public class GenreForSeriesController {
     @PutMapping("/{id1}/{id2}/{newId1}/{newId2}")
     public ResponseEntity<Object> putGenreForSeries(@PathVariable Integer id1, @PathVariable Integer id2, @PathVariable Integer newId1, @PathVariable Integer newId2) {
         try {
-            seriesGenreWatchlistService.updateGenreForSeries(id1, id2, newId1, newId2);
+            genreForSeriesService.updateGenreForSeries(id1, id2, newId1, newId2);
             return ResponseEntity.ok(id1 + " -> " + newId1 + " | " + id2 + " -> " + newId2);
         } catch (Exception e) {
             System.out.println("CHECKPOINT - error1");

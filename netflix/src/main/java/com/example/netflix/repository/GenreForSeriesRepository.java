@@ -21,7 +21,7 @@ public interface GenreForSeriesRepository extends JpaRepository<GenreForSeries, 
     @Query(value = "CALL GetGenreForSeries(:id1, :id2)", nativeQuery = true)
     Optional<GenreForSeries> find(@Param("id1") Integer id1, @Param("id2") Integer id2);
 
-    @Query(value = "CALL GetManyGenreForSeriess()", nativeQuery = true)
+    @Query(value = "CALL GetManyGenreForSeries()", nativeQuery = true)
     List<GenreForSeries> findMany();
 
     @Modifying
