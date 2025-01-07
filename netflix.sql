@@ -73,7 +73,7 @@ CREATE PROCEDURE `AddMovieViewCount` (IN `p_accountId` INT, IN `p_movieId` INT) 
     AND movie_id = p_movieId;
 END$$
 
-CREATE PROCEDURE `AddProflie` (IN `p_account_id` BIGINT(20), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
+CREATE PROCEDURE `AddProfile` (IN `p_account_id` BIGINT(20), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
     INSERT INTO `profile` (`account_id`, `profile_image`, `age`, `name`)
     VALUES (p_account_id, p_profile_image, p_age, p_name);
 END$$
@@ -252,9 +252,9 @@ CREATE PROCEDURE `GetManyEpisodes` ()   BEGIN
     SELECT * FROM `episode` LIMIT 49;
 END$$
 
-CREATE PROCEDURE `GetManyProfiles` ()   BEGIN
-    SELECT * FROM `profile` LIMIT 49;
-END$$
+    CREATE PROCEDURE `GetManyProfiles` ()   BEGIN
+        SELECT * FROM `profile` LIMIT 49;
+    END$$
 
 CREATE PROCEDURE `GetManyMovies` ()   BEGIN
     SELECT * FROM `movie` LIMIT 49;
