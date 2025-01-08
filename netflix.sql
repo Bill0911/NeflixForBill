@@ -1192,6 +1192,7 @@ ALTER TABLE `seriesviewcount`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`account_id`),
+  ADD UNIQUE KEY `email` (`email`),
   ADD KEY `user_language` (`language_id`);
 
 --
