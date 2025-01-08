@@ -454,13 +454,10 @@ CREATE PROCEDURE `GetSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_serie
     WHERE `series_id` = p_series_id AND `account_id` = p_account_id;
 END$$
 
--- -----this procedure right here solves the issue of mismatching collation ---
-CREATE PROCEDURE GetUserByEmail(IN email VARCHAR(255))
+CREATE PROCEDURE GetUserByEmail(IN p_email VARCHAR(255))
 BEGIN
-    SELECT * FROM user WHERE email = email LIMIT 1;
+    SELECT * FROM user WHERE email = p_email LIMIT 1;
 END $$
--- -----this procedure right here solves the issue of mismatching collation ---
-
 
 CREATE PROCEDURE `GetUserById` (IN `p_account_id` BIGINT(20))   BEGIN
     SELECT * FROM `user` WHERE `account_id` = p_account_id;

@@ -47,7 +47,7 @@ public class UserService {
 
     public User register(User user) {
         System.out.println("CHECKPOINT - 5");
-        if (userRepository.findByEmail(user.getEmail()) != null) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new RuntimeException("This email is taken");
         }
         String encodedPassword = passwordEncoder.encode(user.getPassword());
