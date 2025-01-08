@@ -455,9 +455,9 @@ CREATE PROCEDURE `GetSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_serie
 END$$
 
 -- ---------special case -------
-CREATE PROCEDURE GetUserByEmail(IN email VARCHAR(255))
+CREATE PROCEDURE GetUserByEmail(IN p_email VARCHAR(255))
 BEGIN
-    SELECT * FROM user WHERE email = email LIMIT 1;
+    SELECT * FROM user WHERE email = p_email LIMIT 1;
 END $$
 -- ---------special case -------
 

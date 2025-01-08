@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 public class SeriesProfileWatchlist {
 
     @Id
-    @Column(name = "genre_id", insertable = false, updatable = false)
+    @Column(name = "profile_id", insertable = false, updatable = false)
     private Integer profile;
 
     @Id
