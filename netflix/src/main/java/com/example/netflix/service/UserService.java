@@ -176,8 +176,7 @@ public User register(User user) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
+        userRepository.patchByAccountId(user.getAccountId(), passwordEncoder.encode(newPassword), null, null, null, null, null, null, null, null, 0, null,  null);;
     }
 
     public void inviteUser(Integer accountId, Integer invitedUserId) {
@@ -195,16 +194,16 @@ public User register(User user) {
             throw new IllegalArgumentException("User cannot invite themselves");
         }
 
+        //We will prob. need another crud procedures for that btw
         if (invitationRepository.existsByInviterAndInvitee(user, invitedUser)) {
             throw new IllegalArgumentException("User has already invited this user");
         }
 
         if (user.isActive() && invitedUser.isActive() && !user.isDiscount() && !invitedUser.isDiscount()) {
-            user.setDiscount(true);
-            invitedUser.setDiscount(true);
-            userRepository.save(user);
-            userRepository.save(invitedUser);
+            userRepository.patchByAccountId(user.getAccountId(), null, null, null, null, null, null, null, null, null, null, null,  true);
+            userRepository.patchByAccountId(invitedUser.getAccountId(), null, null, null, null, null, null, null, null, null, null, null,  true);
 
+            //We will prob. need another crud procedures for that btw
             Invitation invitation = new Invitation();
             invitation.setInviter(user);
             invitation.setInvitee(invitedUser);
