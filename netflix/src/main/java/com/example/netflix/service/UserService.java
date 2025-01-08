@@ -53,12 +53,12 @@ public class UserService {
         System.out.println("CHECKPOINT - 7");
         user.setActive(false);
         System.out.println("CHECKPOINT - 8");
-        User savedUser = userRepository.save(user);
+        addUser(user);
         System.out.println("CHECKPOINT - 9");
 
         // Debug statement to check the encoded password
         System.out.println("Encoded password during registration: " + encodedPassword);
-        return savedUser;
+        return user;
     }
 
     @Transactional
@@ -66,8 +66,9 @@ public class UserService {
         System.out.println("CHECKPOINT - 5");
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        user.setActive(true); // Set active to true (1)
-        userRepository.save(user);
+        Integer id = user.getAccountId();
+        user.setActive(true);
+        patchUserById(id, user);
         System.out.println("User activated: " + user.isActive()); // Debug statement
     }
 
