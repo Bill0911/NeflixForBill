@@ -47,6 +47,9 @@ public class UserService {
 
     public User register(User user) {
         System.out.println("CHECKPOINT - 5");
+        if (userRepository.findByEmail(user.getEmail()) != null) {
+            throw new RuntimeException("This email is taken");
+        }
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         System.out.println("CHECKPOINT - 6");
         user.setPassword(encodedPassword);
@@ -75,7 +78,7 @@ public class UserService {
     public User loginUser(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
+        Integer id = user.getAccountId();
         // Debug statement to check if the user is found
         System.out.println("User found: " + user.getEmail());
 
@@ -96,10 +99,8 @@ public class UserService {
 
             if (failedAttempts >= 3) {
                 user.setIsBlocked(true);
+                patchUserById(id, user);
             }
-
-            userRepository.save(user);
-
             // Debug statement to check failed attempts
             System.out.println("Failed attempts: " + failedAttempts);
 
@@ -108,7 +109,7 @@ public class UserService {
 
         // Reset failed attempts on successful login
         user.setFailedLoginAttempts(0);
-        userRepository.save(user);
+        patchUserById(id, user);
 
         // Debug statement to confirm successful login
         System.out.println("Login successful for user: " + user.getEmail());
