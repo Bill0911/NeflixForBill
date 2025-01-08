@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.management.relation.Role;
+
 @Service
 public class UserService {
 
@@ -45,23 +47,24 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User register(User user) {
-        System.out.println("CHECKPOINT - 5");
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new RuntimeException("This email is taken");
-        }
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        System.out.println("CHECKPOINT - 6");
-        user.setPassword(encodedPassword);
-        System.out.println("CHECKPOINT - 7");
-        System.out.println("CHECKPOINT - 8");
-        addUser(user);
-        System.out.println("CHECKPOINT - 9");
-
-        // Debug statement to check the encoded password
-        System.out.println("Encoded password during registration: " + encodedPassword);
-        return user;
+// UserService.java
+public User register(User user) {
+    System.out.println("CHECKPOINT - 5");
+    if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+        throw new RuntimeException("This email is taken");
     }
+    String encodedPassword = passwordEncoder.encode(user.getPassword());
+    System.out.println("CHECKPOINT - 6");
+    user.setPassword(encodedPassword);
+    System.out.println("CHECKPOINT - 7");
+    System.out.println("CHECKPOINT - 8");
+    userRepository.save(user); // Save the user directly using the repository
+    System.out.println("CHECKPOINT - 9");
+
+    // Debug statement to check the encoded password
+    System.out.println("Encoded password during registration: " + encodedPassword);
+    return user;
+}
 
     @Transactional
     public void activateUser(String email) {
@@ -147,7 +150,7 @@ public class UserService {
     }
 
     public boolean isRoleForAccount(Integer accountId, Role role) {
-        return userRepository.findByAccountId(accountId).map(user -> user.getRole() == role).orElse(false);
+        return userRepository.findByAccountId(accountId).map(user -> user.getRole().equals(role)).orElse(false);
     }
 
     private Date calculateExpiryDate(int expiryTimeInMinutes) {
