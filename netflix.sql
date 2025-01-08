@@ -454,13 +454,10 @@ CREATE PROCEDURE `GetSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_serie
     WHERE `series_id` = p_series_id AND `account_id` = p_account_id;
 END$$
 
--- -----this procedure right here solves the issue of mismatching collation ---
-CREATE PROCEDURE GetUserByEmail(IN email VARCHAR(255))
+CREATE PROCEDURE GetUserByEmail(IN p_email VARCHAR(255))
 BEGIN
-    SELECT * FROM user WHERE email = email LIMIT 1;
+    SELECT * FROM user WHERE email = p_email LIMIT 1;
 END $$
--- -----this procedure right here solves the issue of mismatching collation ---
-
 
 CREATE PROCEDURE `GetUserById` (IN `p_account_id` BIGINT(20))   BEGIN
     SELECT * FROM `user` WHERE `account_id` = p_account_id;
@@ -1043,8 +1040,8 @@ CREATE TABLE `user` (
   `active` bit(1) DEFAULT b'0',
   `blocked` bit(1) DEFAULT b'0',
   `subscription` enum('SD','HD','UHD') DEFAULT 'SD',
-  `trial_start_date` datetime DEFAULT NULL,
-  `trial_end_date` datetime DEFAULT NULL,
+  `trial_start_date` datetime DEFAULT current_timestamp(),
+  `trial_end_date` datetime DEFAULT (CURRENT_TIMESTAMP + INTERVAL 7 DAY),
   `language_id` int(11) UNSIGNED DEFAULT NULL,
   `role` enum('JUNIOR','MEDIOR','SENIOR') DEFAULT 'JUNIOR',
   `failed_attempts` int(11) DEFAULT 0,
@@ -1195,6 +1192,7 @@ ALTER TABLE `seriesviewcount`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`account_id`),
+  ADD UNIQUE KEY `email` (`email`),
   ADD KEY `user_language` (`language_id`);
 
 --

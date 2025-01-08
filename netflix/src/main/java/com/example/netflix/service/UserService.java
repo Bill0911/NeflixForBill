@@ -54,7 +54,6 @@ public class UserService {
         System.out.println("CHECKPOINT - 6");
         user.setPassword(encodedPassword);
         System.out.println("CHECKPOINT - 7");
-        user.setActive(false);
         System.out.println("CHECKPOINT - 8");
         addUser(user);
         System.out.println("CHECKPOINT - 9");
@@ -69,9 +68,11 @@ public class UserService {
         System.out.println("CHECKPOINT - 5");
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        System.out.println("CHECKPOINT - 6");
         Integer id = user.getAccountId();
-        user.setActive(true);
-        patchUserById(id, user);
+        System.out.println("CHECKPOINT - 7");
+        System.out.println("CHECKPOINT - 8");
+        userRepository.patchByAccountId(id, null, null, true, null, null, null, null, null, null, null, null,  null);
         System.out.println("User activated: " + user.isActive()); // Debug statement
     }
 
@@ -95,11 +96,11 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             // Increment failed attempts and block account if necessary
             int failedAttempts = user.getFailedLoginAttempts() + 1;
-            user.setFailedLoginAttempts(failedAttempts);
+            userRepository.patchByAccountId(id, null, null, null, null, null, null, null, null, null, failedAttempts, null,  null);
 
             if (failedAttempts >= 3) {
-                user.setIsBlocked(true);
-                patchUserById(id, user);
+                userRepository.patchByAccountId(id, null, null, null, true, null, null, null, null, null, null, LocalDateTime.now(),  null);
+                throw new RuntimeException("Invalid credentials. The account has been blocked :(");
             }
             // Debug statement to check failed attempts
             System.out.println("Failed attempts: " + failedAttempts);
@@ -108,8 +109,7 @@ public class UserService {
         }
 
         // Reset failed attempts on successful login
-        user.setFailedLoginAttempts(0);
-        patchUserById(id, user);
+        userRepository.patchByAccountId(id, null, null, null, null, null, null, null, null, null, 0, null,  null);
 
         // Debug statement to confirm successful login
         System.out.println("Login successful for user: " + user.getEmail());
@@ -178,8 +178,8 @@ public class UserService {
     }
 
     public void inviteUser(Integer accountId, Integer invitedUserId) {
-        Optional<User> userOptional = userRepository.findById(accountId);
-        Optional<User> invitedUserOptional = userRepository.findById(invitedUserId);
+        Optional<User> userOptional = userRepository.findByAccountId(accountId);
+        Optional<User> invitedUserOptional = userRepository.findByAccountId(invitedUserId);
 
         if (userOptional.isEmpty() || invitedUserOptional.isEmpty()) {
             throw new IllegalArgumentException("User not found");

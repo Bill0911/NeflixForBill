@@ -22,10 +22,10 @@ public class User {
     @Column()
     private SubscriptionType subscription = SubscriptionType.SD; // Default subscription
 
-    @Column(name = "trial_start_date", nullable = false)
+    @Column(name = "trial_start_date")
     private LocalDateTime trialStartDate = LocalDateTime.now(); // Default to current time
 
-    @Column(name = "trial_end_date", nullable = false)
+    @Column(name = "trial_end_date")
     private LocalDateTime trialEndDate = LocalDateTime.now().plusDays(7);
 
     @Enumerated(EnumType.STRING)
