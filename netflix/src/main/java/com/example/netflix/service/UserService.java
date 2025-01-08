@@ -69,8 +69,11 @@ public class UserService {
         System.out.println("CHECKPOINT - 5");
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        System.out.println("CHECKPOINT - 6");
         Integer id = user.getAccountId();
+        System.out.println("CHECKPOINT - 7");
         user.setActive(true);
+        System.out.println("CHECKPOINT - 8");
         patchUserById(id, user);
         System.out.println("User activated: " + user.isActive()); // Debug statement
     }
