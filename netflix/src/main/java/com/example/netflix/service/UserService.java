@@ -100,6 +100,7 @@ public class UserService {
 
             if (failedAttempts >= 3) {
                 userRepository.patchByAccountId(id, null, null, null, true, null, null, null, null, null, null, LocalDateTime.now(),  null);
+                throw new RuntimeException("Invalid credentials. The account has been blocked :(");
             }
             // Debug statement to check failed attempts
             System.out.println("Failed attempts: " + failedAttempts);
@@ -108,8 +109,7 @@ public class UserService {
         }
 
         // Reset failed attempts on successful login
-        user.setFailedLoginAttempts(0);
-        patchUserById(id, user);
+        userRepository.patchByAccountId(id, null, null, null, null, null, null, null, null, null, 0, null,  null);
 
         // Debug statement to confirm successful login
         System.out.println("Login successful for user: " + user.getEmail());
@@ -178,8 +178,8 @@ public class UserService {
     }
 
     public void inviteUser(Integer accountId, Integer invitedUserId) {
-        Optional<User> userOptional = userRepository.findById(accountId);
-        Optional<User> invitedUserOptional = userRepository.findById(invitedUserId);
+        Optional<User> userOptional = userRepository.findByAccountId(accountId);
+        Optional<User> invitedUserOptional = userRepository.findByAccountId(invitedUserId);
 
         if (userOptional.isEmpty() || invitedUserOptional.isEmpty()) {
             throw new IllegalArgumentException("User not found");
