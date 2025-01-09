@@ -16,14 +16,6 @@ public class GenreForUser {
     @Column(name = "genre_id")
     private Integer genreId;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id", insertable = false, updatable = false)
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "genre_id", insertable = false, updatable = false)
-    private Genre genre;
-
     // Getters and Setters
     public Integer getAccountId() {
         return accountId;
@@ -41,19 +33,4 @@ public class GenreForUser {
         this.genreId = genreId;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Genre getGenre() {
-        return genre;
-    }
-
-    public void setGenre(Genre genre) {
-        this.genre = genre;
-    }
 }

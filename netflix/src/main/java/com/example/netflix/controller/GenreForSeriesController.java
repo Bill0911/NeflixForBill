@@ -42,7 +42,7 @@ public class GenreForSeriesController {
     }
 
     @GetMapping()
-    public ResponseEntity<Object> getManyGenreForSeriess() {
+    public ResponseEntity<Object> getManyGenreForSeries() {
         return ResponseEntity.ok(genreForSeriesService.getManyGenreForSeries());
     }
 

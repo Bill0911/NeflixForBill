@@ -6,7 +6,7 @@ import com.example.netflix.id.SeriesProfileWatchlistId;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "seriesprofilewatchlist")
+@Table(name = "moviesprofilewatchlist")
 @IdClass(MoviesProfileWatchlistId.class)
 public class MoviesProfileWatchlist {
 

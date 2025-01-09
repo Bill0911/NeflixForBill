@@ -12,28 +12,26 @@ import jakarta.persistence.*;
 public class GenreForMovie {
 
     @Id
-    @ManyToOne
-    @JoinColumn(name = "movie_id")
-    private Movie movie;
+    @Column(name = "movie_id")
+    private Integer movie;
 
     @Id
-    @ManyToOne
-    @JoinColumn(name = "genre_id")
-    private Genre genre;
+    @Column(name = "genre_id")
+    private Integer genre;
 
-    public Movie getMovie() {
+    public Integer getMovie() {
         return movie;
     }
 
-    public void setMovie(Movie movie) {
+    public void setMovie(Integer movie) {
         this.movie = movie;
     }
 
-    public Genre getGenre() {
+    public Integer getGenre() {
         return genre;
     }
 
-    public void setGenre(Genre genre) {
+    public void setGenre(Integer genre) {
         this.genre = genre;
     }
 }

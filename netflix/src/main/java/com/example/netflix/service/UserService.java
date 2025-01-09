@@ -4,6 +4,7 @@ import com.example.netflix.dto.MethodResponse;
 import com.example.netflix.entity.*;
 import com.example.netflix.dto.ProfileRequest;
 import com.example.netflix.repository.*;
+import com.example.netflix.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,29 +37,37 @@ public class UserService {
     @Autowired
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, InvitationRepository invitationRepository, PaymentRepository paymentRepository, PasswordEncoder passwordEncoder) {
+    @Autowired
+    private final JwtUtil jwtUtil;
+
+    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, InvitationRepository invitationRepository, PaymentRepository paymentRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.languageRepository = languageRepository;
         this.profileRepository = profileRepository;
         this.invitationRepository = invitationRepository;
         this.paymentRepository = paymentRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     public User register(User user) {
         System.out.println("CHECKPOINT - 5");
+        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+        if (existingUser.isPresent()) {
+            System.out.println("CHECKPOINT - email exists");
+            throw new RuntimeException("This email is taken");
+        }
+        System.out.println("CHECKPOINT - email does not exist");
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         System.out.println("CHECKPOINT - 6");
         user.setPassword(encodedPassword);
         System.out.println("CHECKPOINT - 7");
-        user.setActive(false);
-        System.out.println("CHECKPOINT - 8");
-        User savedUser = userRepository.save(user);
+        userRepository.save(user); // Save the user directly using the repository
         System.out.println("CHECKPOINT - 9");
 
         // Debug statement to check the encoded password
         System.out.println("Encoded password during registration: " + encodedPassword);
-        return savedUser;
+        return user;
     }
 
     @Transactional
@@ -66,15 +75,18 @@ public class UserService {
         System.out.println("CHECKPOINT - 5");
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        user.setActive(true); // Set active to true (1)
-        userRepository.save(user);
+        System.out.println("CHECKPOINT - 6");
+        Integer id = user.getAccountId();
+        System.out.println("CHECKPOINT - 7");
+        System.out.println("CHECKPOINT - 8");
+        userRepository.patchByAccountId(id, null, null, true, null, null, null, null, null, null, null, null,  null);
         System.out.println("User activated: " + user.isActive()); // Debug statement
     }
 
     public User loginUser(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
+        Integer id = user.getAccountId();
         // Debug statement to check if the user is found
         System.out.println("User found: " + user.getEmail());
 
@@ -91,14 +103,12 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             // Increment failed attempts and block account if necessary
             int failedAttempts = user.getFailedLoginAttempts() + 1;
-            user.setFailedLoginAttempts(failedAttempts);
+            userRepository.patchByAccountId(id, null, null, null, null, null, null, null, null, null, failedAttempts, null,  null);
 
             if (failedAttempts >= 3) {
-                user.setIsBlocked(true);
+                userRepository.patchByAccountId(id, null, null, null, true, null, null, null, null, null, null, LocalDateTime.now(),  null);
+                throw new RuntimeException("Invalid credentials. The account has been blocked :(");
             }
-
-            userRepository.save(user);
-
             // Debug statement to check failed attempts
             System.out.println("Failed attempts: " + failedAttempts);
 
@@ -106,8 +116,7 @@ public class UserService {
         }
 
         // Reset failed attempts on successful login
-        user.setFailedLoginAttempts(0);
-        userRepository.save(user);
+        userRepository.patchByAccountId(id, null, null, null, null, null, null, null, null, null, 0, null,  null);
 
         // Debug statement to confirm successful login
         System.out.println("Login successful for user: " + user.getEmail());
@@ -144,8 +153,11 @@ public class UserService {
         userRepository.updateByAccountId(accountId, user.getPassword(), user.getPaymentMethod(), user.isActive(), user.isBlocked(), user.getSubscription(), user.getTrialStartDate(), user.getTrialEndDate(), user.getAccountId(), user.getRole(), user.getFailedLoginAttempts(), user.getLockTime(), user.isDiscount());
     }
 
-    public boolean isRoleForAccount(Integer accountId, Role role) {
-        return userRepository.findByAccountId(accountId).map(user -> user.getRole() == role).orElse(false);
+    public void enforceRoleRestriction (String token, Role role)
+    {
+        if (role.isLowerThan(jwtUtil.extractRole(token))) {
+            throw new RuntimeException("Your role is to low to access this endpoint");
+        }
     }
 
     private Date calculateExpiryDate(int expiryTimeInMinutes) {
@@ -171,13 +183,12 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
+        userRepository.patchByAccountId(user.getAccountId(), passwordEncoder.encode(newPassword), null, null, null, null, null, null, null, null, 0, null,  null);;
     }
 
     public void inviteUser(Integer accountId, Integer invitedUserId) {
-        Optional<User> userOptional = userRepository.findById(accountId);
-        Optional<User> invitedUserOptional = userRepository.findById(invitedUserId);
+        Optional<User> userOptional = userRepository.findByAccountId(accountId);
+        Optional<User> invitedUserOptional = userRepository.findByAccountId(invitedUserId);
 
         if (userOptional.isEmpty() || invitedUserOptional.isEmpty()) {
             throw new IllegalArgumentException("User not found");
@@ -190,16 +201,16 @@ public class UserService {
             throw new IllegalArgumentException("User cannot invite themselves");
         }
 
+        //We will prob. need another crud procedures for that btw
         if (invitationRepository.existsByInviterAndInvitee(user, invitedUser)) {
             throw new IllegalArgumentException("User has already invited this user");
         }
 
         if (user.isActive() && invitedUser.isActive() && !user.isDiscount() && !invitedUser.isDiscount()) {
-            user.setDiscount(true);
-            invitedUser.setDiscount(true);
-            userRepository.save(user);
-            userRepository.save(invitedUser);
+            userRepository.patchByAccountId(user.getAccountId(), null, null, null, null, null, null, null, null, null, null, null,  true);
+            userRepository.patchByAccountId(invitedUser.getAccountId(), null, null, null, null, null, null, null, null, null, null, null,  true);
 
+            //We will prob. need another crud procedures for that btw
             Invitation invitation = new Invitation();
             invitation.setInviter(user);
             invitation.setInvitee(invitedUser);
