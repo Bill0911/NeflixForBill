@@ -155,7 +155,7 @@ public class UserService {
 
     public void enforceRoleRestriction (String token, Role role)
     {
-        if (role.isLowerThan(jwtUtil.extractRole(token))) {
+        if (role.isHigherThan(jwtUtil.extractRole(token))) {
             throw new RuntimeException("Your role is to low to access this endpoint");
         }
     }
