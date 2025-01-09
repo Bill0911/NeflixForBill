@@ -344,10 +344,8 @@ CREATE PROCEDURE `GetPersonalizedOfferMovies` (IN `userId` BIGINT(20), IN `maxMo
             LEAVE read_loop;
         END IF;
 
-        -- Calculate the proportional number of movies for this genre
         SET genreLimit = CEIL((genreViews * maxMovies) / totalUserViews);
 
-        -- Fetch random movies for this genre, ensuring no duplicates
         INSERT INTO TempPersonalizedOffer (movie_id, title)
         SELECT m.movie_id, m.title 
         FROM movie m
@@ -364,12 +362,10 @@ CREATE PROCEDURE `GetPersonalizedOfferMovies` (IN `userId` BIGINT(20), IN `maxMo
 
     CLOSE cur;
 
-    -- Step 3: Return the final result, limiting to maxMovies
     SELECT DISTINCT movie_id, title
     FROM TempPersonalizedOffer
     LIMIT maxMovies;
 
-    -- Drop the temporary table
     DROP TEMPORARY TABLE TempPersonalizedOffer;
 END$$
 
@@ -387,18 +383,15 @@ CREATE PROCEDURE `GetPersonalizedOfferSeries` (IN `userId` BIGINT(20), IN `maxSe
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
-    -- Step 1: Calculate total views across all genres for the user
     SELECT SUM(total_views) INTO totalUserViews
     FROM user_genre_count
     WHERE user_id = userId;
 
-    -- Temporary table to store proportional movies for the user
     CREATE TEMPORARY TABLE TempPersonalizedOffer (
         series_id INT,
         title VARCHAR(255)
     );
 
-    -- Step 2: Loop through each genre
     OPEN cur;
     read_loop: LOOP
         FETCH cur INTO genreId, genreViews;
@@ -406,10 +399,8 @@ CREATE PROCEDURE `GetPersonalizedOfferSeries` (IN `userId` BIGINT(20), IN `maxSe
             LEAVE read_loop;
         END IF;
 
-        -- Calculate the proportional number of series for this genre
         SET genreLimit = CEIL((genreViews * maxSeries) / totalUserViews);
 
-        -- Fetch random movies for this genre, ensuring no duplicates
         INSERT INTO TempPersonalizedOffer (series_id, title)
         SELECT s.series_id, s.title 
         FROM series s
@@ -426,12 +417,10 @@ CREATE PROCEDURE `GetPersonalizedOfferSeries` (IN `userId` BIGINT(20), IN `maxSe
 
     CLOSE cur;
 
-    -- Step 3: Return the final result, limiting to maxMovies
     SELECT DISTINCT series_id, title
     FROM TempPersonalizedOffer
     LIMIT maxseries;
 
-    -- Drop the temporary table
     DROP TEMPORARY TABLE TempPersonalizedOffer;
 END$$
 
