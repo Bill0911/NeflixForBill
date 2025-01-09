@@ -47,24 +47,25 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-// UserService.java
-public User register(User user) {
-    System.out.println("CHECKPOINT - 5");
-    if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-        throw new RuntimeException("This email is taken");
-    }
-    String encodedPassword = passwordEncoder.encode(user.getPassword());
-    System.out.println("CHECKPOINT - 6");
-    user.setPassword(encodedPassword);
-    System.out.println("CHECKPOINT - 7");
-    System.out.println("CHECKPOINT - 8");
-    userRepository.save(user); // Save the user directly using the repository
-    System.out.println("CHECKPOINT - 9");
+    public User register(User user) {
+        System.out.println("CHECKPOINT - 5");
+        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+        if (existingUser.isPresent()) {
+            System.out.println("CHECKPOINT - email exists");
+            throw new RuntimeException("This email is taken");
+        }
+        System.out.println("CHECKPOINT - email does not exist");
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        System.out.println("CHECKPOINT - 6");
+        user.setPassword(encodedPassword);
+        System.out.println("CHECKPOINT - 7");
+        userRepository.save(user); // Save the user directly using the repository
+        System.out.println("CHECKPOINT - 9");
 
-    // Debug statement to check the encoded password
-    System.out.println("Encoded password during registration: " + encodedPassword);
-    return user;
-}
+        // Debug statement to check the encoded password
+        System.out.println("Encoded password during registration: " + encodedPassword);
+        return user;
+    }
 
     @Transactional
     public void activateUser(String email) {

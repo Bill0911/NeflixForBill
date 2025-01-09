@@ -457,7 +457,7 @@ END$$
 -- ---------special case -------
 CREATE PROCEDURE GetUserByEmail(IN p_email VARCHAR(255))
 BEGIN
-    SELECT * FROM user WHERE email = p_email LIMIT 1;
+    SELECT * FROM user WHERE email = p_email COLLATE utf8mb4_unicode_ci LIMIT 1;
 END $$
 -- ---------special case -------
 
