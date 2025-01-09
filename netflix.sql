@@ -1069,23 +1069,25 @@ INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `active
 CREATE VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`account_id` AS `account_id`, `u`.`email` AS `email`, `p`.`subscription_type` AS `subscription_type`, `p`.`payment_amount` AS `payment_amount`, `p`.`is_paid` AS `is_paid`, `p`.`is_discount_applied` AS `is_discount_applied`, `p`.`payment_date` AS `payment_date`, `p`.`next_billing_date` AS `next_billing_date` FROM (`payments` `p` join `user` `u` on(`p`.`account_id` = `u`.`account_id`)) ;
 
 
-CREATE VIEW subscription_cost AS
-SELECT *
-FROM (
-    SELECT 
-        u.account_id,
-        u.subscription,
-        CASE
-            WHEN u.role IN ('Junior', 'Medior', 'Senior') THEN 0
-            WHEN u.discount = b'1' THEN -2.00
-            WHEN u.subscription = 'SD' THEN 7.99
-            WHEN u.subscription = 'HD' THEN 10.99
-            WHEN u.subscription = 'UHD' THEN 13.99
-        END AS subscription_cost
-    FROM 
-        user u
-) subquery
-WHERE subscription_cost > 0;
+    CREATE VIEW subscription_cost AS
+    SELECT *
+    FROM (
+        SELECT 
+            u.account_id,
+            u.subscription,
+            u.email,
+            u.payment_method
+            CASE
+                WHEN u.role IN ('Junior', 'Medior', 'Senior') THEN 0
+                WHEN u.discount = b'1' THEN -2.00
+                WHEN u.subscription = 'SD' THEN 7.99
+                WHEN u.subscription = 'HD' THEN 10.99
+                WHEN u.subscription = 'UHD' THEN 13.99
+            END AS subscription_cost
+        FROM 
+            user u
+    ) subquery
+    WHERE subscription_cost > 0;
 
 
 CREATE VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) AS `total_views` FROM ((((((`genre` `g` left join `genreformovie` `mg` on(`g`.`genre_id` = `mg`.`genre_id`)) left join `movie` `m` on(`mg`.`movie_id` = `m`.`movie_id`)) left join `movieviewcount` `mvc` on(`m`.`movie_id` = `mvc`.`movie_id`)) left join `genreforseries` `gfs` on(`g`.`genre_id` = `gfs`.`genre_id`)) left join `series` `s` on(`gfs`.`series_id` = `s`.`series_id`)) left join `seriesviewcount` `svc` on(`s`.`series_id` = `svc`.`series_id` and `svc`.`account_id` = `mvc`.`account_id`)) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) DESC ;
@@ -1354,3 +1356,21 @@ DELIMITER $$
 CREATE EVENT `InsertExpiredTrialsDaily` ON SCHEDULE EVERY 1 DAY STARTS '2025-01-04 19:44:33' ON COMPLETION NOT PRESERVE ENABLE DO CALL `InsertExpiredTrialsIntoPayments`()$$
 
 DELIMITER ;
+
+
+START TRANSACTION;
+
+BEGIN
+    -- Query 1: Attempt to insert an order
+    INSERT INTO orders (user_id, product_id, quantity) VALUES (1, 101, 2);
+
+    -- Query 2: Attempt to update inventory (might fail due to insufficient stock)
+    UPDATE inventory SET stock = stock - 2 WHERE product_id = 101;
+
+    -- If everything works, commit the transaction
+    COMMIT;
+
+EXCEPTION
+    -- If an error occurs, rollback all changes
+    ROLLBACK;
+END;

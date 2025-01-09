@@ -162,7 +162,6 @@ public class UserService {
     public void enforceRoleRestriction (String token, Role requiredRole) throws AccessDeniedException {
         int id = jwtUtil.extractId(token.substring(7));
         Role authedUserRole = getUserById(id).getRole();
-        System.out.println("Id: " + id + ", Role: " + authedUserRole);
         if (authedUserRole.isLowerThan(requiredRole))
         {
             throw new AccessDeniedException("Access denied. Minimal required level - " + requiredRole);

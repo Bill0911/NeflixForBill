@@ -17,12 +17,24 @@ public class SubscriptionOverview implements Serializable {
     @Id
     private Integer accountId;
     private String subscription;
+
+    private String email;
+
+    private String paymentMethod;
     private Double subscriptionCost;
 
-    public SubscriptionOverview(Integer accountId, String subscription, Double subscriptionCost) {
+    public SubscriptionOverview(Integer accountId, String subscription, String email, String paymentMethod, Double subscriptionCost) {
         this.accountId = accountId;
         this.subscription = subscription;
+        this.email = email;
+        this.paymentMethod = paymentMethod;
         this.subscriptionCost = subscriptionCost;
+    }
+
+    public SubscriptionOverview(String email, String paymentMethod) {
+        this.email = email;
+
+        this.paymentMethod = paymentMethod;
     }
 
     public SubscriptionOverview() {
@@ -43,6 +55,22 @@ public class SubscriptionOverview implements Serializable {
 
     public void setSubscription(String subscription) {
         this.subscription = subscription;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
     public Double getSubscriptionCost() {
