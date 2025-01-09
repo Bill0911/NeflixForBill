@@ -86,7 +86,6 @@ public class UserService {
         System.out.println("CHECKPOINT - 7");
         System.out.println("CHECKPOINT - 8");
         userRepository.patchByAccountId(id, null, null, true, null, null, null, null, null, null, null, null,  null);
-        System.out.println("User activated: " + user.isActive()); // Debug statement
     }
 
     public User loginUser(String email, String password) {
