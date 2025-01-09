@@ -1064,7 +1064,26 @@ INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `active
 CREATE VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`account_id` AS `account_id`, `u`.`email` AS `email`, `p`.`subscription_type` AS `subscription_type`, `p`.`payment_amount` AS `payment_amount`, `p`.`is_paid` AS `is_paid`, `p`.`is_discount_applied` AS `is_discount_applied`, `p`.`payment_date` AS `payment_date`, `p`.`next_billing_date` AS `next_billing_date` FROM (`payments` `p` join `user` `u` on(`p`.`account_id` = `u`.`account_id`)) ;
 
 
-CREATE VIEW `subscriptioncosts`  AS SELECT `u`.`account_id` AS `UserID`, `u`.`email` AS `Email`, `u`.`subscription` AS `SubscriptionType`, CASE WHEN to_days(curdate()) - to_days(`u`.`trial_start_date`) <= 7 THEN 0 ELSE CASE WHEN `u`.`subscription` = 'SD' THEN 7.99 WHEN `u`.`subscription` = 'HD' THEN 10.99 WHEN `u`.`subscription` = 'UHD' THEN 13.99 ELSE 0 END- CASE WHEN `u`.`discount` = 1 THEN 2 ELSE 0 END END AS `SubscriptionCost` FROM `user` AS `u` ;
+CREATE OR REPLACE VIEW subscription_costs AS
+SELECT 
+    u.account_id,
+    u.role,
+    p.subscription_type,
+    CASE
+        WHEN u.role IN ('Junior', 'Medior', 'Senior') THEN 0
+        WHEN p.is_discount_applied = b'1' THEN -2
+        WHEN p.subscription_type = 'SD' THEN 10
+        WHEN p.subscription_type = 'HD' THEN 20
+        WHEN p.subscription_type = 'UHD' THEN 30
+    END AS subscription_cost,
+    p.payment_date,
+    p.next_billing_date
+FROM 
+    user u
+JOIN 
+    payments p ON u.account_id = p.account_id
+WHERE 
+    subscription_cost > 0;
 
 -- --------------------------------------------------------
 

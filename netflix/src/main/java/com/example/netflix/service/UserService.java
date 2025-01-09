@@ -153,11 +153,15 @@ public class UserService {
         userRepository.updateByAccountId(accountId, user.getPassword(), user.getPaymentMethod(), user.isActive(), user.isBlocked(), user.getSubscription(), user.getTrialStartDate(), user.getTrialEndDate(), user.getAccountId(), user.getRole(), user.getFailedLoginAttempts(), user.getLockTime(), user.isDiscount());
     }
 
-    public void enforceRoleRestriction (String token, Role role)
+    public void enforceRoleRestriction (String token, Role requiredRole)
     {
-        String extractedRole = jwtUtil.extractRole(token);
-        int id = jwtUtil.extractId(token);
-        System.out.println("Id: " + id + ", Role: " + extractedRole);
+        int id = jwtUtil.extractId(token.substring(7));
+        Role authedUserRole = getUserById(id).getRole();
+        System.out.println("Id: " + id + ", Role: " + authedUserRole);
+        if (authedUserRole.isLowerThan(requiredRole))
+        {
+            throw new RuntimeException("Access denied. Minimal required level - " + requiredRole);
+        }
     }
 
     private Date calculateExpiryDate(int expiryTimeInMinutes) {
