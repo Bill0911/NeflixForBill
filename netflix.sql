@@ -1076,7 +1076,7 @@ CREATE VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`ac
             u.account_id,
             u.subscription,
             u.email,
-            u.payment_method
+            u.payment_method,
             CASE
                 WHEN u.role IN ('Junior', 'Medior', 'Senior') THEN 0
                 WHEN u.discount = b'1' THEN -2.00
