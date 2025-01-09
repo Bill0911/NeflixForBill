@@ -35,7 +35,22 @@
         </div>
         <div class="content">
           <label for="paymentMethod">Payment Method</label>
-          <input type="text" name="paymentMethod" id="paymentMethod" placeholder="Enter your payment method" required>
+          <select name="paymentMethod" id="paymentMethod" required>
+            <option value="">Select a payment method</option>
+            <option value="paypal">PayPal</option>
+            <option value="ideal">iDEAL</option>
+            <option value="visa">Visa</option>
+            <option value="mastercard">MasterCard</option>
+          </select>
+        </div>
+        <div class="content">
+          <label for="role">Role</label>
+          <select name="role" id="role" required>
+            <option value="">Select a role</option>
+            <option value="junior">Junior</option>
+            <option value="medior">Medior</option>
+            <option value="senior">Senior</option>
+          </select>
         </div>
         <div class="content">
           <label>
