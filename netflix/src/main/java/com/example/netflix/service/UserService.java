@@ -186,38 +186,38 @@ public class UserService {
         userRepository.patchByAccountId(user.getAccountId(), passwordEncoder.encode(newPassword), null, null, null, null, null, null, null, null, 0, null,  null);;
     }
 
-    public void inviteUser(Integer accountId, Integer invitedUserId) {
-        Optional<User> userOptional = userRepository.findByAccountId(accountId);
-        Optional<User> invitedUserOptional = userRepository.findByAccountId(invitedUserId);
+    public void inviteUser(String inviterEmail, String inviteeEmail) {
+        Optional<User> inviterOptional = userRepository.findByEmail(inviterEmail);
+        Optional<User> inviteeOptional = userRepository.findByEmail(inviteeEmail);
 
-        if (userOptional.isEmpty() || invitedUserOptional.isEmpty()) {
+        if (inviterOptional.isEmpty() || inviteeOptional.isEmpty()) {
             throw new IllegalArgumentException("User not found");
         }
 
-        User user = userOptional.get();
-        User invitedUser = invitedUserOptional.get();
+        User inviter = inviterOptional.get();
+        User invitee = inviteeOptional.get();
 
-        if (accountId.equals(invitedUserId)) {
+        if (inviterEmail.equals(inviteeEmail)) {
             throw new IllegalArgumentException("User cannot invite themselves");
         }
 
-        //We will prob. need another crud procedures for that btw
-        if (invitationRepository.existsByInviterAndInvitee(user, invitedUser)) {
+        if (invitationRepository.existsByInviterAndInvitee(inviter, invitee)) {
             throw new IllegalArgumentException("User has already invited this user");
         }
 
-        if (user.isActive() && invitedUser.isActive() && !user.isDiscount() && !invitedUser.isDiscount()) {
-            userRepository.patchByAccountId(user.getAccountId(), null, null, null, null, null, null, null, null, null, null, null,  true);
-            userRepository.patchByAccountId(invitedUser.getAccountId(), null, null, null, null, null, null, null, null, null, null, null,  true);
+        if (inviter.isActive() && invitee.isActive() && !inviter.isDiscount() && !invitee.isDiscount()) {
+            inviter.setDiscount(true);
+            invitee.setDiscount(true);
+            userRepository.save(inviter);
+            userRepository.save(invitee);
 
-            //We will prob. need another crud procedures for that btw
             Invitation invitation = new Invitation();
-            invitation.setInviter(user);
-            invitation.setInvitee(invitedUser);
+            invitation.setInviter(inviter);
+            invitation.setInvitee(invitee);
             invitationRepository.save(invitation);
 
-            processPayment(user);
-            processPayment(invitedUser);
+            processPayment(inviter);
+            processPayment(invitee);
         }
     }
 

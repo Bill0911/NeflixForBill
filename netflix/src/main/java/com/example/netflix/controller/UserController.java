@@ -1,5 +1,6 @@
 package com.example.netflix.controller;
 
+import com.example.netflix.dto.InviteUserRequest;
 import com.example.netflix.dto.LoginRequest;
 import com.example.netflix.dto.ProfileRequest;
 import com.example.netflix.entity.Profile;
@@ -193,16 +194,12 @@ public class UserController {
     }
 
     @PostMapping("/invite")
-    public ResponseEntity<String> inviteUser(@RequestParam Integer userId, @RequestParam Integer invitedAccountId)
-    {
-        try
-        {
-            userService.inviteUser(userId, invitedAccountId);
+    public ResponseEntity<String> inviteUser(@RequestBody InviteUserRequest inviteRequest) {
+        try {
+            userService.inviteUser(inviteRequest.getInviterEmail(), inviteRequest.getInviteeEmail());
             return ResponseEntity.ok("Invitation sent successfully");
-        }
-        catch (RuntimeException e)
-        {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }
