@@ -3,6 +3,7 @@ package com.example.netflix.service;
 import com.example.netflix.dto.MethodResponse;
 import com.example.netflix.entity.*;
 import com.example.netflix.dto.ProfileRequest;
+import com.example.netflix.exception.AccessDeniedException;
 import com.example.netflix.repository.*;
 import com.example.netflix.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,7 +161,7 @@ public class UserService {
         System.out.println("Id: " + id + ", Role: " + authedUserRole);
         if (authedUserRole.isLowerThan(requiredRole))
         {
-            throw new RuntimeException("Access denied. Minimal required level - " + requiredRole);
+            throw new AccessDeniedException("Access denied. Minimal required level - " + requiredRole);
         }
     }
 
