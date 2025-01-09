@@ -1,5 +1,6 @@
 package com.example.netflix.security;
 
+import com.example.netflix.entity.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,9 +50,9 @@ public class JwtUtil {
         return (int) claims.get("account_id");
     }
 
-    public String extractRole(String token) {
+    public Role extractRole(String token) {
         Claims claims = extractAllClaims(token);
-        return (String) claims.get("role");
+        return (Role) claims.get("role");
     }
 
     //========Activation token========//

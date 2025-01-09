@@ -3,6 +3,7 @@ package com.example.netflix.controller;
 import com.example.netflix.dto.LoginRequest;
 import com.example.netflix.dto.ProfileRequest;
 import com.example.netflix.entity.Profile;
+import com.example.netflix.entity.Role;
 import com.example.netflix.entity.User;
 import com.example.netflix.security.JwtUtil;
 import com.example.netflix.service.UserService;
@@ -129,27 +130,29 @@ public class UserController {
         try {
             userService.deleteUserById(id);
             return ResponseEntity.ok("User has been deleted successfully");
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<String> patchUserById(@PathVariable Integer id, @RequestBody User user) {
+    public ResponseEntity<String> patchUserById(@PathVariable Integer id, @RequestBody User user, @RequestHeader("Authorization") String token) {
         try {
+            userService.enforceRoleRestriction(token, Role.SENIOR);
             userService.patchUserById(id, user);
             return ResponseEntity.ok("User has been patched successfully");
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<String> putUserById(@PathVariable Integer id, @RequestBody User user) {
+    public ResponseEntity<String> putUserById(@PathVariable Integer id, @RequestBody User user, @RequestHeader("Authorization") String token) {
         try {
+            userService.enforceRoleRestriction(token, Role.SENIOR);
             userService.updateUserById(id, user);
             return ResponseEntity.ok("User has been deleted successfully");
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }

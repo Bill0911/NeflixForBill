@@ -4,6 +4,7 @@ import com.example.netflix.dto.MethodResponse;
 import com.example.netflix.entity.*;
 import com.example.netflix.dto.ProfileRequest;
 import com.example.netflix.repository.*;
+import com.example.netflix.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,8 +15,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
-import javax.management.relation.Role;
 
 @Service
 public class UserService {
@@ -38,13 +37,17 @@ public class UserService {
     @Autowired
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, InvitationRepository invitationRepository, PaymentRepository paymentRepository, PasswordEncoder passwordEncoder) {
+    @Autowired
+    private final JwtUtil jwtUtil;
+
+    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, InvitationRepository invitationRepository, PaymentRepository paymentRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.languageRepository = languageRepository;
         this.profileRepository = profileRepository;
         this.invitationRepository = invitationRepository;
         this.paymentRepository = paymentRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     public User register(User user) {
@@ -150,8 +153,11 @@ public class UserService {
         userRepository.updateByAccountId(accountId, user.getPassword(), user.getPaymentMethod(), user.isActive(), user.isBlocked(), user.getSubscription(), user.getTrialStartDate(), user.getTrialEndDate(), user.getAccountId(), user.getRole(), user.getFailedLoginAttempts(), user.getLockTime(), user.isDiscount());
     }
 
-    public boolean isRoleForAccount(Integer accountId, Role role) {
-        return userRepository.findByAccountId(accountId).map(user -> user.getRole().equals(role)).orElse(false);
+    public void enforceRoleRestriction (String token, Role role)
+    {
+        if (role.isLowerThan(jwtUtil.extractRole(token))) {
+            throw new RuntimeException("Your role is to low to access this endpoint");
+        }
     }
 
     private Date calculateExpiryDate(int expiryTimeInMinutes) {
