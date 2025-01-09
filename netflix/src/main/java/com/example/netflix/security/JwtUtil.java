@@ -38,7 +38,7 @@ public class JwtUtil {
     }
 
     //========login token======//
-    public String generateToken(int accountId, String role) {
+    public String generateToken(int accountId, Role role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("account_id", accountId);
         claims.put("role", role); // Add role to claims
