@@ -152,7 +152,7 @@ public User register(User user) {
         userRepository.updateByAccountId(accountId, user.getPassword(), user.getPaymentMethod(), user.isActive(), user.isBlocked(), user.getSubscription(), user.getTrialStartDate(), user.getTrialEndDate(), user.getAccountId(), user.getRole(), user.getFailedLoginAttempts(), user.getLockTime(), user.isDiscount());
     }
 
-    private void enforceRoleRestriction (String token, Role role)
+    public void enforceRoleRestriction (String token, Role role)
     {
         if (role.isLowerThan(jwtUtil.extractRole(token))) {
             throw new RuntimeException("Your role is to low to access this endpoint");
