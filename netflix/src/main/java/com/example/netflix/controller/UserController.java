@@ -6,6 +6,7 @@ import com.example.netflix.dto.ProfileRequest;
 import com.example.netflix.entity.Profile;
 import com.example.netflix.entity.Role;
 import com.example.netflix.entity.User;
+import com.example.netflix.exception.AccessDeniedException;
 import com.example.netflix.security.JwtUtil;
 import com.example.netflix.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -137,25 +138,17 @@ public class UserController {
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<String> patchUserById(@PathVariable Integer id, @RequestBody User user, @RequestHeader("Authorization") String token) {
-        try {
-            userService.enforceRoleRestriction(token, Role.SENIOR);
-            userService.patchUserById(id, user);
-            return ResponseEntity.ok("User has been patched successfully");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
-        }
+    public ResponseEntity<String> patchUserById(@PathVariable Integer id, @RequestBody User user, @RequestHeader("Authorization") String token) throws AccessDeniedException {
+        userService.enforceRoleRestriction(token, Role.SENIOR);
+        userService.patchUserById(id, user);
+        return ResponseEntity.ok("User has been deleted successfully");
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<String> putUserById(@PathVariable Integer id, @RequestBody User user, @RequestHeader("Authorization") String token) {
-        try {
-            userService.enforceRoleRestriction(token, Role.SENIOR);
-            userService.updateUserById(id, user);
-            return ResponseEntity.ok("User has been deleted successfully");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
-        }
+    public ResponseEntity<String> putUserById(@PathVariable Integer id, @RequestBody User user, @RequestHeader("Authorization") String token) throws AccessDeniedException {
+        userService.enforceRoleRestriction(token, Role.SENIOR);
+        userService.updateUserById(id, user);
+        return ResponseEntity.ok("User has been deleted successfully");
     }
 
     @PostMapping("/request-password-reset")
