@@ -50,9 +50,9 @@ public class JwtUtil {
         return (int) claims.get("account_id");
     }
 
-    public Role extractRole(String token) {
+    public String extractRole(String token) {
         Claims claims = extractAllClaims(token);
-        return (Role) claims.get("role");
+        return (String) claims.get("role");
     }
 
     //========Activation token========//

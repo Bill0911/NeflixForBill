@@ -155,12 +155,9 @@ public class UserService {
 
     public void enforceRoleRestriction (String token, Role role)
     {
-        Role extractedRole = jwtUtil.extractRole(token);
+        String extractedRole = jwtUtil.extractRole(token);
         int id = jwtUtil.extractId(token);
         System.out.println("Id: " + id + ", Role: " + extractedRole);
-        if (role.isHigherThan(extractedRole)) {
-            throw new RuntimeException("Your role is to low to access this endpoint");
-        }
     }
 
     private Date calculateExpiryDate(int expiryTimeInMinutes) {
