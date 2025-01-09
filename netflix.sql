@@ -603,7 +603,11 @@ CREATE PROCEDURE `PatchUser` (IN `p_account_id` BIGINT(20), IN `p_password` VARC
         `subscription` = COALESCE(p_subscription, `subscription`),
         `trial_start_date` = COALESCE(p_trial_start_date, `trial_start_date`),
         `trial_end_date`= COALESCE(p_trial_end_date, `trial_end_date`),
-        `language_id` = COALESCE(p_language_id, `language_id`), `role` = COALESCE(p_role, `role`), `failed_attempts` = COALESCE(p_failed_attempts, `failed_attempts`), `lock_time` = COALESCE(p_lock_time, `lock_time`), `discount` = COALESCE(p_discount, `discount`)
+        `language_id` = COALESCE(p_language_id, `language_id`), 
+        `role` = COALESCE(p_role, `role`), 
+        `failed_attempts` = COALESCE(p_failed_attempts, `failed_attempts`), 
+        `lock_time` = COALESCE(p_lock_time, `lock_time`), 
+        `discount` = COALESCE(p_discount, `discount`)
     WHERE `account_id` = p_account_id;
 END$$
 
@@ -733,10 +737,11 @@ CREATE PROCEDURE `UpdateSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_se
     WHERE account_id = p_account_id AND series_id = p_series_id;
 END$$
 
-CREATE PROCEDURE `UpdateUser` (IN `p_account_id` BIGINT(20), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_blocked` BIT(1), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_trial_end_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
+CREATE PROCEDURE `UpdateUser` (IN `p_account_id` BIGINT(20), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_active` BIT(1), IN `p_blocked` BIT(1), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_trial_end_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
     UPDATE `user`
     SET 
         `password` = p_password,
+        `active` = p_active,
         `payment_method` = p_payment_method,
         `blocked` = p_blocked,
         `subscription` = p_subscription,
