@@ -93,12 +93,10 @@ public class UserController {
         try {
             User user = userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
             String token = jwtUtil.generateToken(user.getAccountId(), user.getRole()); // Pass accountId and role
-            System.out.println("Token generated successfully. Email:" + jwtUtil.extractEmail(token) + ", Role:" + jwtUtil.extractRole(token));
             return ResponseEntity.ok(token);
         }
         catch (Exception e)
         {
-            System.out.println("Login failed for email: " + loginRequest.getEmail() + " - " + e.getMessage());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login failed: " + e.getMessage());
         }
     }

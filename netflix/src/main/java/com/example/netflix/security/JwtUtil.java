@@ -67,13 +67,11 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", email);
         String token = createToken(claims, 24 * 60 * 60 * 1000); // 24 hours expiration for password reset token
-        System.out.println("Generated password reset token: " + token);
         return token;
     }
 
     public String extractEmailFromPasswordResetToken(String token) {
         Claims claims = extractAllClaims(token);
-        System.out.println("Extracted email from token: " + claims.get("email"));
         return (String) claims.get("email");
     }
 
