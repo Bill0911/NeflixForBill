@@ -89,7 +89,7 @@ public class UserController {
     {
         try {
             User user = userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
-            String token = jwtUtil.generateToken(user.getAccountId(), user.getRole().name()); // Pass accountId and role
+            String token = jwtUtil.generateToken(user.getAccountId(), user.getRole()); // Pass accountId and role
             System.out.println("Token generated successfully for user with email: " + loginRequest.getEmail());
             return ResponseEntity.ok(token);
         }
