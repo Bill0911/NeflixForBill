@@ -1,5 +1,6 @@
 package com.example.netflix.security;
 
+import com.example.netflix.entity.Role;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +27,7 @@ public class JwtFilter extends OncePerRequestFilter {
             String token = authHeader.substring(7);
             try {
                 int userId = jwtUtil.extractId(token);
-                String role = jwtUtil.extractRole(token);
+                Role role = jwtUtil.extractRole(token);
 
                 request.setAttribute("userId", userId);
                 request.setAttribute("role", role);
