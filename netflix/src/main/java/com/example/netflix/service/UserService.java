@@ -125,7 +125,7 @@ public class UserService {
     }
 
     public void addUser(User user) {
-        userRepository.addUser(user.getEmail(), user.getPassword(), user.getPaymentMethod(), user.getLanguage());
+        userRepository.addUser(user.getEmail(), user.getPassword(), user.getPaymentMethod(), user.getLanguage(), user.getSubscription());
     }
     public User getUserById(Integer accountId) {
         Optional<User> user = userRepository.findByAccountId(accountId);
