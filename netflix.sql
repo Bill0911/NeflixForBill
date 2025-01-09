@@ -1358,19 +1358,19 @@ CREATE EVENT `InsertExpiredTrialsDaily` ON SCHEDULE EVERY 1 DAY STARTS '2025-01-
 DELIMITER ;
 
 
-START TRANSACTION;
+-- START TRANSACTION;
 
-BEGIN
-    -- Query 1: Attempt to insert an order
-    INSERT INTO orders (user_id, product_id, quantity) VALUES (1, 101, 2);
+-- BEGIN
+--     -- Query 1: Attempt to insert an order
+--     INSERT INTO orders (user_id, product_id, quantity) VALUES (1, 101, 2);
 
-    -- Query 2: Attempt to update inventory (might fail due to insufficient stock)
-    UPDATE inventory SET stock = stock - 2 WHERE product_id = 101;
+--     -- Query 2: Attempt to update inventory (might fail due to insufficient stock)
+--     UPDATE inventory SET stock = stock - 2 WHERE product_id = 101;
 
-    -- If everything works, commit the transaction
-    COMMIT;
+--     -- If everything works, commit the transaction
+--     COMMIT;
 
-EXCEPTION
-    -- If an error occurs, rollback all changes
-    ROLLBACK;
-END;
+-- EXCEPTION
+--     -- If an error occurs, rollback all changes
+--     ROLLBACK;
+-- END;
