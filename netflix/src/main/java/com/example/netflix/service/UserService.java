@@ -1,6 +1,7 @@
 package com.example.netflix.service;
 
 import com.example.netflix.dto.MethodResponse;
+import com.example.netflix.dto.SubscriptionOverview;
 import com.example.netflix.entity.*;
 import com.example.netflix.dto.ProfileRequest;
 import com.example.netflix.exception.AccessDeniedException;
@@ -41,7 +42,10 @@ public class UserService {
     @Autowired
     private final JwtUtil jwtUtil;
 
-    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, InvitationRepository invitationRepository, PaymentRepository paymentRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    @Autowired
+    private final SubscriptionCostRepository subscriptionCostRepository;
+
+    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, InvitationRepository invitationRepository, PaymentRepository paymentRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, SubscriptionCostRepository subscriptionCostRepository) {
         this.userRepository = userRepository;
         this.languageRepository = languageRepository;
         this.profileRepository = profileRepository;
@@ -49,6 +53,7 @@ public class UserService {
         this.paymentRepository = paymentRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.subscriptionCostRepository = subscriptionCostRepository;
     }
 
     public User register(User user) {
@@ -287,6 +292,9 @@ public class UserService {
         return amount;
     }
 
+    public List<SubscriptionOverview> getAllSubscriptionCosts() {
+        return subscriptionCostRepository.findAllSubscriptionCosts();
+    }
 
 }
 

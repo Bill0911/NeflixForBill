@@ -3,6 +3,7 @@ package com.example.netflix.controller;
 import com.example.netflix.dto.InviteUserRequest;
 import com.example.netflix.dto.LoginRequest;
 import com.example.netflix.dto.ProfileRequest;
+import com.example.netflix.dto.SubscriptionOverview;
 import com.example.netflix.entity.Profile;
 import com.example.netflix.entity.Role;
 import com.example.netflix.entity.User;
@@ -173,8 +174,9 @@ public class UserController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request)
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request, @RequestHeader("Authorization") String accessToken) throws Exception
     {
+        userService.enforceRoleRestriction(accessToken, Role.MEDIOR);
         try
         {
             String token = request.get("token");
@@ -198,5 +200,11 @@ public class UserController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    @GetMapping("/subscription-costs")
+    public ResponseEntity<List<SubscriptionOverview>> getSubscriptionCosts(@RequestHeader("Authorization") String token) throws Exception {
+        userService.enforceRoleRestriction(token, Role.SENIOR);
+        return ResponseEntity.ok(userService.getAllSubscriptionCosts());
     }
 }
