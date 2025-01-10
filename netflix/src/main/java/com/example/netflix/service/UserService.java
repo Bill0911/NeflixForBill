@@ -1,8 +1,10 @@
 package com.example.netflix.service;
 
 import com.example.netflix.dto.MethodResponse;
+import com.example.netflix.dto.SubscriptionOverview;
 import com.example.netflix.entity.*;
 import com.example.netflix.dto.ProfileRequest;
+import com.example.netflix.exception.AccessDeniedException;
 import com.example.netflix.repository.*;
 import com.example.netflix.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +42,10 @@ public class UserService {
     @Autowired
     private final JwtUtil jwtUtil;
 
-    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, InvitationRepository invitationRepository, PaymentRepository paymentRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    @Autowired
+    private final SubscriptionCostRepository subscriptionCostRepository;
+
+    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, InvitationRepository invitationRepository, PaymentRepository paymentRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, SubscriptionCostRepository subscriptionCostRepository) {
         this.userRepository = userRepository;
         this.languageRepository = languageRepository;
         this.profileRepository = profileRepository;
@@ -48,6 +53,7 @@ public class UserService {
         this.paymentRepository = paymentRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.subscriptionCostRepository = subscriptionCostRepository;
     }
 
     public User register(User user) {
@@ -80,7 +86,6 @@ public class UserService {
         System.out.println("CHECKPOINT - 7");
         System.out.println("CHECKPOINT - 8");
         userRepository.patchByAccountId(id, null, null, true, null, null, null, null, null, null, null, null,  null);
-        System.out.println("User activated: " + user.isActive()); // Debug statement
     }
 
     public User loginUser(String email, String password) {
@@ -153,11 +158,13 @@ public class UserService {
         userRepository.updateByAccountId(accountId, user.getPassword(), user.getPaymentMethod(), user.isActive(), user.isBlocked(), user.getSubscription(), user.getTrialStartDate(), user.getTrialEndDate(), user.getAccountId(), user.getRole(), user.getFailedLoginAttempts(), user.getLockTime(), user.isDiscount());
     }
 
-    public void enforceRoleRestriction (String token, Role role)
-    {
-        String extractedRole = jwtUtil.extractRole(token);
-        int id = jwtUtil.extractId(token);
-        System.out.println("Id: " + id + ", Role: " + extractedRole);
+    public void enforceRoleRestriction (String token, Role requiredRole) throws AccessDeniedException {
+        int id = jwtUtil.extractId(token.substring(7));
+        Role authedUserRole = getUserById(id).getRole();
+        if (authedUserRole.isLowerThan(requiredRole))
+        {
+            throw new AccessDeniedException("Access denied. Minimal required level - " + requiredRole);
+        }
     }
 
     private Date calculateExpiryDate(int expiryTimeInMinutes) {
@@ -186,38 +193,38 @@ public class UserService {
         userRepository.patchByAccountId(user.getAccountId(), passwordEncoder.encode(newPassword), null, null, null, null, null, null, null, null, 0, null,  null);;
     }
 
-    public void inviteUser(Integer accountId, Integer invitedUserId) {
-        Optional<User> userOptional = userRepository.findByAccountId(accountId);
-        Optional<User> invitedUserOptional = userRepository.findByAccountId(invitedUserId);
+    public void inviteUser(String inviterEmail, String inviteeEmail) {
+        Optional<User> inviterOptional = userRepository.findByEmail(inviterEmail);
+        Optional<User> inviteeOptional = userRepository.findByEmail(inviteeEmail);
 
-        if (userOptional.isEmpty() || invitedUserOptional.isEmpty()) {
+        if (inviterOptional.isEmpty() || inviteeOptional.isEmpty()) {
             throw new IllegalArgumentException("User not found");
         }
 
-        User user = userOptional.get();
-        User invitedUser = invitedUserOptional.get();
+        User inviter = inviterOptional.get();
+        User invitee = inviteeOptional.get();
 
-        if (accountId.equals(invitedUserId)) {
+        if (inviterEmail.equals(inviteeEmail)) {
             throw new IllegalArgumentException("User cannot invite themselves");
         }
 
-        //We will prob. need another crud procedures for that btw
-        if (invitationRepository.existsByInviterAndInvitee(user, invitedUser)) {
+        if (invitationRepository.existsByInviterAndInvitee(inviter, invitee)) {
             throw new IllegalArgumentException("User has already invited this user");
         }
 
-        if (user.isActive() && invitedUser.isActive() && !user.isDiscount() && !invitedUser.isDiscount()) {
-            userRepository.patchByAccountId(user.getAccountId(), null, null, null, null, null, null, null, null, null, null, null,  true);
-            userRepository.patchByAccountId(invitedUser.getAccountId(), null, null, null, null, null, null, null, null, null, null, null,  true);
+        if (inviter.isActive() && invitee.isActive() && !inviter.isDiscount() && !invitee.isDiscount()) {
+            inviter.setDiscount(true);
+            invitee.setDiscount(true);
+            userRepository.save(inviter);
+            userRepository.save(invitee);
 
-            //We will prob. need another crud procedures for that btw
             Invitation invitation = new Invitation();
-            invitation.setInviter(user);
-            invitation.setInvitee(invitedUser);
+            invitation.setInviter(inviter);
+            invitation.setInvitee(invitee);
             invitationRepository.save(invitation);
 
-            processPayment(user);
-            processPayment(invitedUser);
+            processPayment(inviter);
+            processPayment(invitee);
         }
     }
 
@@ -283,6 +290,9 @@ public class UserService {
         return amount;
     }
 
+    public List<SubscriptionOverview> getAllSubscriptionCosts() {
+        return subscriptionCostRepository.findAllSubscriptionCosts();
+    }
 
 }
 
