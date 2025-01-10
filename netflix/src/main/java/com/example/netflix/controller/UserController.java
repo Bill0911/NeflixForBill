@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -89,16 +90,26 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> loginUser(@RequestBody LoginRequest loginRequest)
-    {
+    public ResponseEntity<Object> loginUser(@RequestBody LoginRequest loginRequest) {
         try {
+            // Authenticate user and generate token
             User user = userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
-            String token = jwtUtil.generateToken(user.getAccountId(), user.getRole()); // Pass accountId and role
-            return ResponseEntity.ok(token);
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login failed: " + e.getMessage());
+            String token = jwtUtil.generateToken(user.getAccountId(), user.getRole().name());
+
+            // Create response payload
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("role", user.getRole().name());
+            response.put("message", "Login successful!");
+
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            // Handle login failure
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
+                    "error", e.getMessage(),
+                    "message", "Login failed. Please check your credentials."
+            ));
         }
     }
 
