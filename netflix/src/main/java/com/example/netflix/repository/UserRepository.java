@@ -22,11 +22,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "CALL AddUser(:email, :password, :paymentMethod, :languageId)", nativeQuery = true)
+    @Query(value = "CALL AddUser(:email, :password, :paymentMethod, :languageId, :subscription)", nativeQuery = true)
     void addUser(@Param("email") String email,
                  @Param("password") String password,
                  @Param("paymentMethod") String paymentMethod,
-                 @Param("languageId") Integer languageId);
+                 @Param("languageId") Integer languageId,
+                 @Param("subscription") SubscriptionType subscription);
 
     @Query(value = "CALL GetUserByEmail(:email)", nativeQuery = true)
     Optional<User> findByEmail(@Param("email") String email);
