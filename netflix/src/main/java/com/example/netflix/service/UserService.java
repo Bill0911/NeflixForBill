@@ -153,10 +153,10 @@ public class UserService {
         userRepository.updateByAccountId(accountId, user.getPassword(), user.getPaymentMethod(), user.isActive(), user.isBlocked(), user.getSubscription(), user.getTrialStartDate(), user.getTrialEndDate(), user.getAccountId(), user.getRole(), user.getFailedLoginAttempts(), user.getLockTime(), user.isDiscount());
     }
 
-    public void enforceRoleRestriction (String token, Role role)
-    {
-        if (role.isLowerThan(jwtUtil.extractRole(token))) {
-            throw new RuntimeException("Your role is to low to access this endpoint");
+    public void enforceRoleRestriction(String token, Role requiredRole) {
+        Role userRole = jwtUtil.extractRole(token);
+        if (userRole.isLowerThan(requiredRole)) {
+            throw new RuntimeException("Your role is too low to access this endpoint.");
         }
     }
 
@@ -253,7 +253,7 @@ public class UserService {
 
         paymentRepository.save(payment);
     }
-    
+
     //I know this code right here is quite controversial
     // as I already implemented these in payment service
     // but for some reasons it does not update table after getting 200 OK,
@@ -282,7 +282,6 @@ public class UserService {
         }
         return amount;
     }
-
 
 }
 

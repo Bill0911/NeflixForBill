@@ -52,7 +52,8 @@ public class JwtUtil {
 
     public Role extractRole(String token) {
         Claims claims = extractAllClaims(token);
-        return (Role) claims.get("role");
+        String roleString = (String) claims.get("role");
+        return Role.valueOf(roleString);
     }
 
     //========Activation token========//
@@ -80,6 +81,15 @@ public class JwtUtil {
     public String extractEmail(String token) {
         Claims claims = extractAllClaims(token);
         return (String) claims.get("email");
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+            return true;
+        } catch (JwtException e) {
+            return false;
+        }
     }
 
     private String createToken(Map<String, Object> claims) {

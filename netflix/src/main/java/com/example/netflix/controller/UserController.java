@@ -1,22 +1,17 @@
 package com.example.netflix.controller;
 
 import com.example.netflix.dto.LoginRequest;
-import com.example.netflix.dto.ProfileRequest;
-import com.example.netflix.entity.Profile;
 import com.example.netflix.entity.Role;
 import com.example.netflix.entity.User;
 import com.example.netflix.security.JwtUtil;
 import com.example.netflix.service.UserService;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-
 
 @RestController
 @RequestMapping("/api/users")
@@ -36,25 +31,46 @@ public class UserController {
         }
         throw new RuntimeException("Invalid Authorization header");
     }
-    @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@RequestBody User user)
-    {
-        try
-        {
-            System.out.println("CHECKPOINT - 1");
-            User registeredUser = userService.register(user);
-            System.out.println("CHECKPOINT - 2");
-            String token = jwtUtil.generateActivationToken(registeredUser.getEmail());
-            System.out.println("CHECKPOINT - 3");
-            String activationLink = "http://localhost:8081/api/users/activate?token=" + token;
 
+    @PostMapping("/login")
+    public ResponseEntity<Object> loginUser(@RequestBody LoginRequest loginRequest) {
+        try {
+            User user = userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
+            String token = jwtUtil.generateToken(user.getAccountId(), user.getRole().name());
+
+            // Return token and role
             return ResponseEntity.ok(Map.of(
-                    "activationLink", activationLink
+                    "token", token,
+                    "role", user.getRole().name(),
+                    "message", "Login successful!"
+            ));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
+                    "error", e.getMessage(),
+                    "message", "Login failed. Check credentials."
             ));
         }
-        catch (RuntimeException e)
-        {
-            System.out.println("CHECKPOINT - error");
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getUsers() {
+        return ResponseEntity.ok(userService.getManyUsers());
+    }
+
+
+    @PostMapping("/register")
+    public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
+        try {
+            // Register new user
+            User registeredUser = userService.register(user);
+
+            // Generate activation token
+            String token = jwtUtil.generateActivationToken(registeredUser.getEmail());
+            String activationLink = "http://localhost:8081/api/users/activate?token=" + token;
+
+            return ResponseEntity.ok(Map.of("activationLink", activationLink));
+        } catch (RuntimeException e) {
+            // Return a structured error response for registration failure
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
                     "error", e.getMessage()
             ));
@@ -62,51 +78,16 @@ public class UserController {
     }
 
     @GetMapping("/activate")
-    public ResponseEntity<Object> activateUser(@RequestParam String token)
-    {
-        try
-        {
+    public ResponseEntity<Object> activateUser(@RequestParam String token) {
+        try {
             String email = jwtUtil.extractEmail(token);
             userService.activateUser(email);
             return ResponseEntity.ok("User activated successfully.");
-        }
-        catch (ExpiredJwtException e)
-        {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token has expired.");
-        }
-        catch (JwtException e)
-        {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid token.");
-        }
-        catch (RuntimeException e)
-        {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
-        }
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<Object> loginUser(@RequestBody LoginRequest loginRequest)
-    {
-        try {
-            User user = userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
-            String token = jwtUtil.generateToken(user.getAccountId(), user.getRole().name()); // Pass accountId and role
-            System.out.println("Token generated successfully for user with email: " + loginRequest.getEmail());
-            return ResponseEntity.ok(token);
-        }
-        catch (Exception e)
-        {
-            System.out.println("Login failed for email: " + loginRequest.getEmail() + " - " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login failed: " + e.getMessage());
-        }
-    }
-
-    @PostMapping()
-    public ResponseEntity<Object> addUser(@RequestBody User user) {
-        try {
-            userService.addUser(user);
-            return ResponseEntity.ok("User has been created");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "error", e.getMessage(),
+                    "message", "Activation failed. Invalid or expired token."
+            ));
         }
     }
 
@@ -151,57 +132,35 @@ public class UserController {
         try {
             userService.enforceRoleRestriction(token, Role.SENIOR);
             userService.updateUserById(id, user);
-            return ResponseEntity.ok("User has been deleted successfully");
+            return ResponseEntity.ok("User has been updated successfully");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 
     @PostMapping("/request-password-reset")
-    public ResponseEntity<String> requestPasswordReset(@RequestBody Map<String, String> request)
-    {
-        try
-        {
+    public ResponseEntity<String> requestPasswordReset(@RequestBody Map<String, String> request) {
+        try {
             String email = request.get("email");
             userService.requestPasswordReset(email);
             String token = jwtUtil.generatePasswordResetToken(email);
             System.out.println("Password reset token: " + token);
             return ResponseEntity.ok(token);
-        }
-        catch (RuntimeException e)
-        {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request)
-    {
-        try
-        {
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) {
+        try {
             String token = request.get("token");
             String newPassword = request.get("newPassword");
             String email = jwtUtil.extractEmailFromPasswordResetToken(token);
             System.out.println("Email extracted from token: " + email);
             userService.resetPassword(email, newPassword);
             return ResponseEntity.ok("Password reset successfully.");
-        }
-        catch (RuntimeException e)
-        {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
-        }
-    }
-
-    @PostMapping("/invite")
-    public ResponseEntity<String> inviteUser(@RequestParam Integer userId, @RequestParam Integer invitedAccountId)
-    {
-        try
-        {
-            userService.inviteUser(userId, invitedAccountId);
-            return ResponseEntity.ok("Invitation sent successfully");
-        }
-        catch (RuntimeException e)
-        {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }

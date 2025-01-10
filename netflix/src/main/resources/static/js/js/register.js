@@ -1,45 +1,40 @@
 document.getElementById('loginForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission
 
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value.trim();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
 
-    if (!email || !password) {
-        alert('Please enter both email and password.');
-        return;
-    }
+    // API endpoint for login
+    const apiEndpoint = 'http://localhost:8081/api/users/login';
 
-    const apiEndpoint = '/api/users/login';
-    try {
-        const response = await fetch(apiEndpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            const { role, token } = data;
-
-            localStorage.setItem('authToken', token);
-
-            if (role === 'JUNIOR') {
-                window.location.href = '/junior-dashboard.html';
-            } else if (role === 'MEDIOR') {
-                window.location.href = '/medior-dashboard.html';
-            } else if (role === 'SENIOR') {
-                window.location.href = '/senior-dashboard.html';
-            } else {
-                alert('Unknown role. Please contact support.');
+    fetch(apiEndpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email,
+            password,
+        }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        } else {
-            const error = await response.json();
-            alert(`Login failed: ${error.error || 'Invalid credentials'}`);
-        }
-    } catch (err) {
-        console.error('Error occurred during login:', err);
-        alert('Something went wrong. Please try again later.');
-    }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Login successful:", data);
+            if (data.role === "JUNIOR") {
+                window.location.href = "junior.html";
+            } else if (data.role === "MEDIOR") {
+                window.location.href = "medior.html";
+            } else if (data.role === "SENIOR") {
+                window.location.href = "senior.html";
+            }
+        })
+        .catch(error => {
+            console.error("Error during login:", error);
+            alert("Something went wrong during login.");
+        });
 });

@@ -1,4 +1,5 @@
 package com.example.netflix.config;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -20,10 +21,12 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:63342")
+        registry.addMapping("/**") // Restrict to API paths
+                .allowedOrigins("http://localhost") // Add multiple origins
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
+                .exposedHeaders("Authorization", "Content-Disposition") // Optional: Expose specific headers
                 .allowCredentials(true);
     }
+
 }
