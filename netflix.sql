@@ -344,10 +344,8 @@ CREATE PROCEDURE `GetPersonalizedOfferMovies` (IN `userId` BIGINT(20), IN `maxMo
             LEAVE read_loop;
         END IF;
 
-        -- Calculate the proportional number of movies for this genre
         SET genreLimit = CEIL((genreViews * maxMovies) / totalUserViews);
 
-        -- Fetch random movies for this genre, ensuring no duplicates
         INSERT INTO TempPersonalizedOffer (movie_id, title)
         SELECT m.movie_id, m.title 
         FROM movie m
@@ -364,12 +362,10 @@ CREATE PROCEDURE `GetPersonalizedOfferMovies` (IN `userId` BIGINT(20), IN `maxMo
 
     CLOSE cur;
 
-    -- Step 3: Return the final result, limiting to maxMovies
     SELECT DISTINCT movie_id, title
     FROM TempPersonalizedOffer
     LIMIT maxMovies;
 
-    -- Drop the temporary table
     DROP TEMPORARY TABLE TempPersonalizedOffer;
 END$$
 
@@ -387,18 +383,15 @@ CREATE PROCEDURE `GetPersonalizedOfferSeries` (IN `userId` BIGINT(20), IN `maxSe
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
-    -- Step 1: Calculate total views across all genres for the user
     SELECT SUM(total_views) INTO totalUserViews
     FROM user_genre_count
     WHERE user_id = userId;
 
-    -- Temporary table to store proportional movies for the user
     CREATE TEMPORARY TABLE TempPersonalizedOffer (
         series_id INT,
         title VARCHAR(255)
     );
 
-    -- Step 2: Loop through each genre
     OPEN cur;
     read_loop: LOOP
         FETCH cur INTO genreId, genreViews;
@@ -406,10 +399,8 @@ CREATE PROCEDURE `GetPersonalizedOfferSeries` (IN `userId` BIGINT(20), IN `maxSe
             LEAVE read_loop;
         END IF;
 
-        -- Calculate the proportional number of series for this genre
         SET genreLimit = CEIL((genreViews * maxSeries) / totalUserViews);
 
-        -- Fetch random movies for this genre, ensuring no duplicates
         INSERT INTO TempPersonalizedOffer (series_id, title)
         SELECT s.series_id, s.title 
         FROM series s
@@ -426,12 +417,10 @@ CREATE PROCEDURE `GetPersonalizedOfferSeries` (IN `userId` BIGINT(20), IN `maxSe
 
     CLOSE cur;
 
-    -- Step 3: Return the final result, limiting to maxMovies
     SELECT DISTINCT series_id, title
     FROM TempPersonalizedOffer
     LIMIT maxseries;
 
-    -- Drop the temporary table
     DROP TEMPORARY TABLE TempPersonalizedOffer;
 END$$
 
@@ -604,7 +593,7 @@ CREATE PROCEDURE `PatchSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_ser
     WHERE account_id = p_account_id AND series_id = p_series_id;
 END$$
 
-CREATE PROCEDURE `PatchUser` (IN `p_account_id` BIGINT(20), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_active` BIT(1), IN `p_blocked` BIT(1), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_trial_end_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
+CREATE PROCEDURE `PatchUser` (IN `p_account_id` BIGINT(20), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_active` BIT(1), IN `p_blocked` BIT(1), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_trial_end_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('VIEWER','JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
     UPDATE `user`
     SET 
         `password` = COALESCE(p_password, `password`),
@@ -614,7 +603,11 @@ CREATE PROCEDURE `PatchUser` (IN `p_account_id` BIGINT(20), IN `p_password` VARC
         `subscription` = COALESCE(p_subscription, `subscription`),
         `trial_start_date` = COALESCE(p_trial_start_date, `trial_start_date`),
         `trial_end_date`= COALESCE(p_trial_end_date, `trial_end_date`),
-        `language_id` = COALESCE(p_language_id, `language_id`), `role` = COALESCE(p_role, `role`), `failed_attempts` = COALESCE(p_failed_attempts, `failed_attempts`), `lock_time` = COALESCE(p_lock_time, `lock_time`), `discount` = COALESCE(p_discount, `discount`)
+        `language_id` = COALESCE(p_language_id, `language_id`), 
+        `role` = COALESCE(p_role, `role`), 
+        `failed_attempts` = COALESCE(p_failed_attempts, `failed_attempts`), 
+        `lock_time` = COALESCE(p_lock_time, `lock_time`), 
+        `discount` = COALESCE(p_discount, `discount`)
     WHERE `account_id` = p_account_id;
 END$$
 
@@ -744,10 +737,11 @@ CREATE PROCEDURE `UpdateSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_se
     WHERE account_id = p_account_id AND series_id = p_series_id;
 END$$
 
-CREATE PROCEDURE `UpdateUser` (IN `p_account_id` BIGINT(20), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_blocked` BIT(1), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_trial_end_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
+CREATE PROCEDURE `UpdateUser` (IN `p_account_id` BIGINT(20), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_active` BIT(1), IN `p_blocked` BIT(1), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_trial_end_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('VIEWER','JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
     UPDATE `user`
     SET 
         `password` = p_password,
+        `active` = p_active,
         `payment_method` = p_payment_method,
         `blocked` = p_blocked,
         `subscription` = p_subscription,
@@ -1045,7 +1039,7 @@ CREATE TABLE `user` (
   `trial_start_date` datetime DEFAULT current_timestamp(),
   `trial_end_date` datetime DEFAULT (CURRENT_TIMESTAMP + INTERVAL 7 DAY),
   `language_id` int(11) UNSIGNED DEFAULT NULL,
-  `role` enum('JUNIOR','MEDIOR','SENIOR') DEFAULT 'JUNIOR',
+  `role` enum('VIEWER','JUNIOR','MEDIOR','SENIOR') DEFAULT 'VIEWER',
   `failed_attempts` int(11) DEFAULT 0,
   `lock_time` datetime DEFAULT NULL,
   `discount` bit(1) DEFAULT b'0'
@@ -1058,13 +1052,13 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `active`, `blocked`, `subscription`, `trial_start_date`, `trial_end_date`, `language_id`, `role`, `failed_attempts`, `lock_time`, `discount`) VALUES
 (1, 'fjodor.smorodins@gmail.com', '$2a$10$hszeHDUNOv4lnd24ZS9sOeOkOJUYo5zSi2H2makEPti1uznr4s5P2', 'abc', b'0', b'0', 'SD', '2024-12-07 14:32:59', '2024-12-14 14:32:59', 4, 'SENIOR', 0, NULL, b'0'),
 (2, 'fjodorsm@gmail.com', '$2a$10$2QlecdJ25ELwT/avANQAUelbxtS9tysiRO5LSE0omLATaWhdAPfZC', 'Credit Card', b'0', b'0', 'SD', '2024-12-07 14:33:33', '2024-12-14 14:33:33', 1, 'JUNIOR', 0, NULL, b'0'),
-(3, 'smorodins@gmail.com', '$2a$10$KhhGnFeK2q32DYG7/fMhNe/GEzf1dDJVkQqq5isK1vwuIO9h0zor.', 'CrC', b'0', b'0', 'SD', '2024-12-16 18:54:30', '2024-12-23 18:54:30', 3, 'JUNIOR', 0, NULL, b'0'),
-(5, 'fjodors@hello.com', '$2a$10$hKsRL99MRpKUr.vrJPqsfuG3qhGkDjXQEYDxHytWFBYgW7HZJ/54W', 'golden bars', b'0', b'0', 'SD', '2024-12-20 16:19:25', '2024-12-27 16:19:25', 2, 'JUNIOR', 0, NULL, b'0'),
+(3, 'smorodins@gmail.com', '$2a$10$KhhGnFeK2q32DYG7/fMhNe/GEzf1dDJVkQqq5isK1vwuIO9h0zor.', 'CrC', b'0', b'0', 'SD', '2024-12-16 18:54:30', '2024-12-23 18:54:30', 3, 'VIEWER', 0, NULL, b'0'),
+(5, 'fjodors@hello.com', '$2a$10$hKsRL99MRpKUr.vrJPqsfuG3qhGkDjXQEYDxHytWFBYgW7HZJ/54W', 'golden bars', b'0', b'0', 'SD', '2024-12-20 16:19:25', '2024-12-27 16:19:25', 2, 'VIEWER', 0, NULL, b'0'),
 (6, 'artjoms.grishajevs@hello.com', '$2a$10$NboUZOHniHtnfHhFFECcF.dA64uJsp.8/OnD0B0NEuMvTyvIfN7we', 'children', b'0', b'0', 'SD', '2024-12-20 16:24:58', '2024-12-27 16:24:58', 1, 'JUNIOR', 0, NULL, b'0'),
-(7, 'somebody@hello.com', '$2a$10$4H41Ugw1ho9ga4DfTV1rwegl.uxbZcTbEu3/SBeklNzsHnXoYliTe', 'money', b'0', b'0', 'SD', '2024-12-20 17:08:59', '2024-12-27 17:08:59', 1, 'JUNIOR', 0, NULL, b'0'),
-(9, 'somepersonwhatever@hello.com', '$2a$10$DhZSCWySz9rypM/jM8mR6.yzaCPIpugVlITMSWx9whkmEp1ciPK42', 'something', b'0', b'0', 'SD', '2024-12-20 17:24:39', '2024-12-27 17:24:39', 2, 'JUNIOR', 0, NULL, b'0'),
-(10, 'iamsteve@hello.com', '$2a$10$92qxixAWTf94z9sK.Lf2iebtyLdBV9ckOx.xfzGLv4enlX5gdsis6', 'mastercard', b'0', b'0', 'SD', '2024-12-20 17:58:22', '2024-12-27 17:58:22', 3, 'JUNIOR', 0, NULL, b'0'),
-(15, 'test1@.com', '$2a$10$aP97IvFmxH8yLGuL1012Xe4sfLd6s1SdokAAKOhG3.tvWCTkmfD2.', 'some method', b'0', b'0', 'SD', '2024-12-20 22:46:29', '2024-12-27 22:46:29', 3, 'JUNIOR', 1, NULL, b'0'),
+(7, 'somebody@hello.com', '$2a$10$4H41Ugw1ho9ga4DfTV1rwegl.uxbZcTbEu3/SBeklNzsHnXoYliTe', 'money', b'0', b'0', 'SD', '2024-12-20 17:08:59', '2024-12-27 17:08:59', 1, 'VIEWER', 0, NULL, b'0'),
+(9, 'somepersonwhatever@hello.com', '$2a$10$DhZSCWySz9rypM/jM8mR6.yzaCPIpugVlITMSWx9whkmEp1ciPK42', 'something', b'0', b'0', 'SD', '2024-12-20 17:24:39', '2024-12-27 17:24:39', 2, 'VIEWER', 0, NULL, b'0'),
+(10, 'iamsteve@hello.com', '$2a$10$92qxixAWTf94z9sK.Lf2iebtyLdBV9ckOx.xfzGLv4enlX5gdsis6', 'mastercard', b'0', b'0', 'SD', '2024-12-20 17:58:22', '2024-12-27 17:58:22', 3, 'VIEWER', 0, NULL, b'0'),
+(15, 'test1@.com', '$2a$10$aP97IvFmxH8yLGuL1012Xe4sfLd6s1SdokAAKOhG3.tvWCTkmfD2.', 'some method', b'0', b'0', 'SD', '2024-12-20 22:46:29', '2024-12-27 22:46:29', 3, 'VIEWER', 1, NULL, b'0'),
 (17, 'medior.fjodor@g.com', '$2a$10$gQuhxuEegp0Ypg.IrGiL8.bmQwV4sdMzXirKh7N0N4KbOXAq4xwFi', 'some money transfer method', b'0', b'0', 'SD', '2024-12-23 17:55:18', '2024-12-30 17:55:18', 3, 'JUNIOR', 0, NULL, b'0'),
 (18, 'billyJ@outlook.com', '$2a$10$3', 'IDEAL', b'1', b'0', 'SD', '2024-12-23 18:00:00', '2024-12-30 18:00:00', 3, 'JUNIOR', 0, NULL, b'0'),
 (19, 'random.user@gg.com', '$2a$10$MOir8H30oJGVlQTrcKrBZOi8CNBD5oYACgjg5/3TcOPyWwSP9TLYi', 'a transfer method', b'1', b'0', 'SD', '2025-01-06 15:54:13', '2025-01-13 15:54:13', 1, 'JUNIOR', 0, NULL, b'0');
@@ -1075,9 +1069,25 @@ INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `active
 CREATE VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`account_id` AS `account_id`, `u`.`email` AS `email`, `p`.`subscription_type` AS `subscription_type`, `p`.`payment_amount` AS `payment_amount`, `p`.`is_paid` AS `is_paid`, `p`.`is_discount_applied` AS `is_discount_applied`, `p`.`payment_date` AS `payment_date`, `p`.`next_billing_date` AS `next_billing_date` FROM (`payments` `p` join `user` `u` on(`p`.`account_id` = `u`.`account_id`)) ;
 
 
-CREATE VIEW `subscriptioncosts`  AS SELECT `u`.`account_id` AS `UserID`, `u`.`email` AS `Email`, `u`.`subscription` AS `SubscriptionType`, CASE WHEN to_days(curdate()) - to_days(`u`.`trial_start_date`) <= 7 THEN 0 ELSE CASE WHEN `u`.`subscription` = 'SD' THEN 7.99 WHEN `u`.`subscription` = 'HD' THEN 10.99 WHEN `u`.`subscription` = 'UHD' THEN 13.99 ELSE 0 END- CASE WHEN `u`.`discount` = 1 THEN 2 ELSE 0 END END AS `SubscriptionCost` FROM `user` AS `u` ;
-
--- --------------------------------------------------------
+    CREATE VIEW subscription_cost AS
+    SELECT *
+    FROM (
+        SELECT 
+            u.account_id,
+            u.subscription,
+            u.email,
+            u.payment_method,
+            CASE
+                WHEN u.role IN ('Junior', 'Medior', 'Senior') THEN 0
+                WHEN u.discount = b'1' THEN -2.00
+                WHEN u.subscription = 'SD' THEN 7.99
+                WHEN u.subscription = 'HD' THEN 10.99
+                WHEN u.subscription = 'UHD' THEN 13.99
+            END AS subscription_cost
+        FROM 
+            user u
+    ) subquery
+    WHERE subscription_cost > 0;
 
 
 CREATE VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) AS `total_views` FROM ((((((`genre` `g` left join `genreformovie` `mg` on(`g`.`genre_id` = `mg`.`genre_id`)) left join `movie` `m` on(`mg`.`movie_id` = `m`.`movie_id`)) left join `movieviewcount` `mvc` on(`m`.`movie_id` = `mvc`.`movie_id`)) left join `genreforseries` `gfs` on(`g`.`genre_id` = `gfs`.`genre_id`)) left join `series` `s` on(`gfs`.`series_id` = `s`.`series_id`)) left join `seriesviewcount` `svc` on(`s`.`series_id` = `svc`.`series_id` and `svc`.`account_id` = `mvc`.`account_id`)) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) DESC ;
@@ -1346,3 +1356,21 @@ DELIMITER $$
 CREATE EVENT `InsertExpiredTrialsDaily` ON SCHEDULE EVERY 1 DAY STARTS '2025-01-04 19:44:33' ON COMPLETION NOT PRESERVE ENABLE DO CALL `InsertExpiredTrialsIntoPayments`()$$
 
 DELIMITER ;
+
+
+-- START TRANSACTION;
+
+-- BEGIN
+--     -- Query 1: Attempt to insert an order
+--     INSERT INTO orders (user_id, product_id, quantity) VALUES (1, 101, 2);
+
+--     -- Query 2: Attempt to update inventory (might fail due to insufficient stock)
+--     UPDATE inventory SET stock = stock - 2 WHERE product_id = 101;
+
+--     -- If everything works, commit the transaction
+--     COMMIT;
+
+-- EXCEPTION
+--     -- If an error occurs, rollback all changes
+--     ROLLBACK;
+-- END;

@@ -30,7 +30,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column()
-    private Role role = Role.JUNIOR; // Default role
+    private Role role = Role.VIEWER; // Default role
 
     @Column(name = "active", columnDefinition = "bit(1) DEFAULT 0")
     private boolean isActive = false;

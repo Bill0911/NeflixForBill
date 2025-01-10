@@ -38,7 +38,7 @@ public class JwtUtil {
     }
 
     //========login token======//
-    public String generateToken(int accountId, String role) {
+    public String generateToken(int accountId, Role role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("account_id", accountId);
         claims.put("role", role); // Add role to claims
@@ -50,10 +50,9 @@ public class JwtUtil {
         return (int) claims.get("account_id");
     }
 
-    public Role extractRole(String token) {
+    public String extractRole(String token) {
         Claims claims = extractAllClaims(token);
-        String roleString = (String) claims.get("role");
-        return Role.valueOf(roleString);
+        return (String) claims.get("role");
     }
 
     //========Activation token========//
@@ -68,28 +67,17 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", email);
         String token = createToken(claims, 24 * 60 * 60 * 1000); // 24 hours expiration for password reset token
-        System.out.println("Generated password reset token: " + token);
         return token;
     }
 
     public String extractEmailFromPasswordResetToken(String token) {
         Claims claims = extractAllClaims(token);
-        System.out.println("Extracted email from token: " + claims.get("email"));
         return (String) claims.get("email");
     }
 
     public String extractEmail(String token) {
         Claims claims = extractAllClaims(token);
         return (String) claims.get("email");
-    }
-
-    public boolean isTokenValid(String token) {
-        try {
-            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
-            return true;
-        } catch (JwtException e) {
-            return false;
-        }
     }
 
     private String createToken(Map<String, Object> claims) {
