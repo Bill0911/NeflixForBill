@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-
+@CrossOrigin(origins = "http://localhost", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -94,7 +94,7 @@ public class UserController {
         try {
             // Authenticate user and generate token
             User user = userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
-            String token = jwtUtil.generateToken(user.getAccountId(), user.getRole().name());
+            String token = jwtUtil.generateToken(user.getAccountId(), Role.valueOf(user.getRole().name()));
 
             // Create response payload
             Map<String, Object> response = new HashMap<>();
