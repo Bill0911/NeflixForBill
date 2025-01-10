@@ -1360,32 +1360,6 @@ CREATE EVENT `InsertExpiredTrialsDaily` ON SCHEDULE EVERY 1 DAY STARTS '2025-01-
 
 DELIMITER ;
 
--- Create users
-CREATE USER 'junior_user'@'%' IDENTIFIED BY 'junior_password';
-CREATE USER 'medior_user'@'%' IDENTIFIED BY 'medior_password';
-CREATE USER 'senior_user'@'%' IDENTIFIED BY 'senior_password';
-CREATE USER 'api_user'@'%' IDENTIFIED BY 'api_password';
-
--- Grant permissions to Junior user
-GRANT SELECT ON netflix.user TO 'junior_user'@'%';
-GRANT SELECT ON netflix.profile TO 'junior_user'@'%';
--- Restrict access to financial and privacy-sensitive information
-REVOKE SELECT ON netflix.payments FROM 'junior_user'@'%';
-REVOKE SELECT (email, payment_method) ON netflix.user FROM 'junior_user'@'%';
-
--- Grant permissions to Medior user
-GRANT SELECT ON netflix.user TO 'medior_user'@'%';
--- Restrict access to financial information
-REVOKE SELECT ON netflix.payments FROM 'medior_user'@'%';
-
--- Grant permissions to Senior user
-GRANT ALL PRIVILEGES ON netflix.* TO 'senior_user'@'%';
-
--- Grant permissions to API user
-GRANT EXECUTE ON PROCEDURE netflix.* TO 'api_user'@'%';
-GRANT SELECT ON VIEW netflix.* TO 'api_user'@'%';
--- Restrict direct SQL queries
-REVOKE ALL PRIVILEGES ON netflix.* FROM 'api_user'@'%';
 -- START TRANSACTION;
 
 -- BEGIN
