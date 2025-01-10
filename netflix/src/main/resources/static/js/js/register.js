@@ -1,11 +1,10 @@
 document.getElementById('loginForm').addEventListener('submit', async function (e) {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
-    // API endpoint for login
-    const apiEndpoint = 'http://localhost:8081/api/users/login';
+    const apiEndpoint = await 'http://localhost:8081/api/users/login';
 
     fetch(apiEndpoint, {
         method: 'POST',
@@ -13,15 +12,18 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            email,
-            password,
+            email: email.trim(),
+            password: password.trim(),
         }),
     })
-        .then(response => {
+        .then(async response => {
+            console.log("Raw response:", response);
+            const errorText = await response.text();
+            console.error("Error response text:", errorText);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            return response.json();
+            return JSON.parse(errorText);
         })
         .then(data => {
             console.log("Login successful:", data);
@@ -35,6 +37,6 @@ document.getElementById('loginForm').addEventListener('submit', async function (
         })
         .catch(error => {
             console.error("Error during login:", error);
-            alert("Something went wrong during login.");
+            alert("Login failed. Please check your credentials.");
         });
 });

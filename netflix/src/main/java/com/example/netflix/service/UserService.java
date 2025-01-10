@@ -88,45 +88,97 @@ public class UserService {
         userRepository.patchByAccountId(id, null, null, true, null, null, null, null, null, null, null, null,  null);
     }
 
+//    public User loginUser(String email, String password) {
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//        Integer id = user.getAccountId();
+//        // Debug statement to check if the user is found
+//        System.out.println("User found: " + user.getEmail());
+//
+//        // Check if account is blocked
+//        if (user.isIsBlocked()) {
+//            throw new RuntimeException("Account is blocked due to too many failed login attempts.");
+//        }
+//
+//        // Debug statement to check the stored password
+//        System.out.println("Stored password: " + user.getPassword());
+//        System.out.println("Password to verify: " + password);
+//
+//        // Verify password
+//        if (!passwordEncoder.matches(password, user.getPassword())) {
+//            // Increment failed attempts and block account if necessary
+//            int failedAttempts = user.getFailedLoginAttempts() + 1;
+//            userRepository.patchByAccountId(id, null, null, null, null, null, null, null, null, null, failedAttempts, null,  null);
+//
+//            if (failedAttempts >= 3) {
+//                userRepository.patchByAccountId(id, null, null, null, true, null, null, null, null, null, null, LocalDateTime.now(),  null);
+//                throw new RuntimeException("Invalid credentials. The account has been blocked :(");
+//            }
+//            // Debug statement to check failed attempts
+//            System.out.println("Failed attempts: " + failedAttempts);
+//
+//            throw new RuntimeException("Invalid credentials");
+//        }
+//
+//        // Reset failed attempts on successful login
+//        userRepository.patchByAccountId(id, null, null, null, null, null, null, null, null, null, 0, null,  null);
+//
+//        // Debug statement to confirm successful login
+//        System.out.println("Login successful for user: " + user.getEmail());
+//
+//        return user; // Return full User object
+//    }
+
     public User loginUser(String email, String password) {
+        email = email.trim();
+        System.out.println("Attempting login for email: " + email);
+
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Integer id = user.getAccountId();
-        // Debug statement to check if the user is found
-        System.out.println("User found: " + user.getEmail());
 
-        // Check if account is blocked
+        checkAccountStatus(user);
+
+        if (!verifyPassword(password, user.getPassword())) {
+            handleFailedLoginAttempt(user);
+        } else {
+            resetFailedAttempts(user);
+        }
+
+        System.out.println("Login successful for user: " + user.getEmail());
+        return user;
+    }
+
+    private void checkAccountStatus(User user) {
         if (user.isIsBlocked()) {
             throw new RuntimeException("Account is blocked due to too many failed login attempts.");
         }
+    }
 
-        // Debug statement to check the stored password
-        System.out.println("Stored password: " + user.getPassword());
-        System.out.println("Password to verify: " + password);
+    private boolean verifyPassword(String rawPassword, String encodedPassword) {
+        System.out.println("Verifying password...");
+        System.out.println("Raw password: " + rawPassword);
+        System.out.println("Encoded password: " + encodedPassword);
+        return passwordEncoder.matches(rawPassword, encodedPassword);
+    }
 
-        // Verify password
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            // Increment failed attempts and block account if necessary
-            int failedAttempts = user.getFailedLoginAttempts() + 1;
-            userRepository.patchByAccountId(id, null, null, null, null, null, null, null, null, null, failedAttempts, null,  null);
+    private void handleFailedLoginAttempt(User user) {
+        int failedAttempts = user.getFailedLoginAttempts() + 1;
+        userRepository.patchByAccountId(
+                user.getAccountId(), null, null, null, null, null, null, null, null, null, failedAttempts, null, null);
 
-            if (failedAttempts >= 3) {
-                userRepository.patchByAccountId(id, null, null, null, true, null, null, null, null, null, null, LocalDateTime.now(),  null);
-                throw new RuntimeException("Invalid credentials. The account has been blocked :(");
-            }
-            // Debug statement to check failed attempts
-            System.out.println("Failed attempts: " + failedAttempts);
-
-            throw new RuntimeException("Invalid credentials");
+        if (failedAttempts >= 3) {
+            userRepository.patchByAccountId(
+                    user.getAccountId(), null, null, null, true, null, null, null, null, null, null, LocalDateTime.now(), null);
+            throw new RuntimeException("Invalid credentials. The account has been blocked.");
         }
 
-        // Reset failed attempts on successful login
-        userRepository.patchByAccountId(id, null, null, null, null, null, null, null, null, null, 0, null,  null);
+        System.out.println("Failed login attempt count: " + failedAttempts);
+        throw new RuntimeException("Invalid credentials.");
+    }
 
-        // Debug statement to confirm successful login
-        System.out.println("Login successful for user: " + user.getEmail());
-
-        return user; // Return full User object
+    private void resetFailedAttempts(User user) {
+        userRepository.patchByAccountId(
+                user.getAccountId(), null, null, null, null, null, null, null, null, null, 0, null, null);
     }
 
     public void addUser(User user) {

@@ -7,7 +7,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebConfig implements WebMvcConfigurer {
+public class WebConfig implements WebMvcConfigurer
+{
 
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
@@ -21,12 +22,10 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // Restrict to API paths
-                .allowedOrigins("http://localhost") // Add multiple origins
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000", "http://localhost") // Adjust frontend origins
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .exposedHeaders("Authorization", "Content-Disposition") // Optional: Expose specific headers
-                .allowCredentials(true);
+                .allowCredentials(true); // Set to false if using wildcard origins
     }
-
 }
