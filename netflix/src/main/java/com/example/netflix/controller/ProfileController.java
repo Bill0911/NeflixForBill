@@ -79,20 +79,20 @@ public class ProfileController {
         }
     }
 
-//    @PostMapping("/watch-movie")
-//    public ResponseEntity<String> watchMovie(@RequestParam Integer profileId, @RequestParam Integer movieId, @RequestHeader("Authorization") String token) {
-//        String jwt = token.substring(7);
-//        int id = jwtUtil.extractId(jwt);
-//        MethodResponse fitsMovieAgeRestrictions = profileService.fitsMovieAgeRestrictions(profileId, movieId);
-//
-//        if (fitsMovieAgeRestrictions.isSuccess())
-//        {
-//            movieViewCountService.incrementMovieViewCount(id, movieId);
-//            return ResponseEntity.ok("Movie has been watched!");
-//        }
-//
-//        return ResponseEntity.ok("Movie has not been watched" + fitsMovieAgeRestrictions.getMessage());
-//    }
+    @PostMapping("/watch-movie")
+    public ResponseEntity<String> watchMovie(@RequestParam Integer profileId, @RequestParam Integer movieId, @RequestHeader("Authorization") String token) {
+        String jwt = token.substring(7);
+        int id = jwtUtil.extractId(jwt);
+        MethodResponse fitsMovieAgeRestrictions = profileService.fitsMovieAgeRestrictions(profileId, movieId);
+
+        if (fitsMovieAgeRestrictions.isSuccess())
+        {
+            movieViewCountService.addMovieViewCount(id, movieId);
+            return ResponseEntity.ok("Movie has been watched!");
+        }
+
+        return ResponseEntity.ok("Movie has not been watched" + fitsMovieAgeRestrictions.getMessage());
+    }
 
 //    @PostMapping("/watch-series")
 //    public ResponseEntity<String> watchSeries(@RequestParam Integer profileId, @RequestParam Integer seriesId, @RequestHeader("Authorization") String token) {

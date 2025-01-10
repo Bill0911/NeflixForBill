@@ -27,7 +27,7 @@ public class ProfileService {
         MethodResponse methodResponse = new MethodResponse();
 
         Optional<Profile> profileOptional = profileRepository.findByProfileId(profileId);
-        Optional<Movie> movieOptional = movieRepository.findById(movieId);
+        Optional<Movie> movieOptional = movieRepository.findByMovieId(movieId);
 
         if(movieOptional.isEmpty() || profileOptional.isEmpty()) {
             methodResponse.setMessage("No such profile or movie");
