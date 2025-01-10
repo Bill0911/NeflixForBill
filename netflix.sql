@@ -1092,6 +1092,9 @@ CREATE VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`ac
 
 CREATE VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) AS `total_views` FROM ((((((`genre` `g` left join `genreformovie` `mg` on(`g`.`genre_id` = `mg`.`genre_id`)) left join `movie` `m` on(`mg`.`movie_id` = `m`.`movie_id`)) left join `movieviewcount` `mvc` on(`m`.`movie_id` = `mvc`.`movie_id`)) left join `genreforseries` `gfs` on(`g`.`genre_id` = `gfs`.`genre_id`)) left join `series` `s` on(`gfs`.`series_id` = `s`.`series_id`)) left join `seriesviewcount` `svc` on(`s`.`series_id` = `svc`.`series_id` and `svc`.`account_id` = `mvc`.`account_id`)) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) DESC ;
 
+CREATE VIEW netflix.user_view AS
+SELECT `account_id`, `email`, `subscription`, `trial_start_date`, `trial_end_date`, `language_id`, `role`
+FROM netflix.user;
 --
 -- Indexes for dumped tables
 --
@@ -1357,7 +1360,32 @@ CREATE EVENT `InsertExpiredTrialsDaily` ON SCHEDULE EVERY 1 DAY STARTS '2025-01-
 
 DELIMITER ;
 
+-- Create users
+CREATE USER 'junior_user'@'%' IDENTIFIED BY 'junior_password';
+CREATE USER 'medior_user'@'%' IDENTIFIED BY 'medior_password';
+CREATE USER 'senior_user'@'%' IDENTIFIED BY 'senior_password';
+CREATE USER 'api_user'@'%' IDENTIFIED BY 'api_password';
 
+-- Grant permissions to Junior user
+GRANT SELECT ON netflix.user TO 'junior_user'@'%';
+GRANT SELECT ON netflix.profile TO 'junior_user'@'%';
+-- Restrict access to financial and privacy-sensitive information
+REVOKE SELECT ON netflix.payments FROM 'junior_user'@'%';
+REVOKE SELECT (email, payment_method) ON netflix.user FROM 'junior_user'@'%';
+
+-- Grant permissions to Medior user
+GRANT SELECT ON netflix.user TO 'medior_user'@'%';
+-- Restrict access to financial information
+REVOKE SELECT ON netflix.payments FROM 'medior_user'@'%';
+
+-- Grant permissions to Senior user
+GRANT ALL PRIVILEGES ON netflix.* TO 'senior_user'@'%';
+
+-- Grant permissions to API user
+GRANT EXECUTE ON PROCEDURE netflix.* TO 'api_user'@'%';
+GRANT SELECT ON VIEW netflix.* TO 'api_user'@'%';
+-- Restrict direct SQL queries
+REVOKE ALL PRIVILEGES ON netflix.* FROM 'api_user'@'%';
 -- START TRANSACTION;
 
 -- BEGIN
