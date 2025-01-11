@@ -56,12 +56,18 @@ GRANT SELECT ON netflix.user_for_junior TO junior;
 
 -- --------------------------API-------------------------------
 
-GRANT EXECUTE ON netflix.* TO api;
+---this will not run grants, this will only write grant queries into your chosen file path---
 
-SET @role = 'api';
-SELECT CONCAT('GRANT SELECT ON `netflix`.`', TABLE_NAME, '` TO ''', @role, ''';')
+SELECT GROUP_CONCAT(CONCAT('GRANT SELECT ON `netflix`.`', table_name, '` TO ''api''@''%'';') SEPARATOR '\n')
+INTO OUTFILE 'C:/xampp_/htdocs/view_grants_to_api.sql'
+FIELDS TERMINATED BY '\n'
 FROM information_schema.tables
-WHERE TABLE_SCHEMA = @db AND TABLE_TYPE = 'VIEW';
+WHERE table_schema = 'netflix' AND table_type = 'VIEW';
+SELECT GROUP_CONCAT(CONCAT('GRANT EXECUTE ON PROCEDURE `netflix`.`', routine_name, '` TO ''api''@''%'';') SEPARATOR '\n')
+INTO OUTFILE 'C:/xampp_/htdocs/proc_grants_to_api.sql'
+FIELDS TERMINATED BY '\n'
+FROM information_schema.routines
+WHERE routine_schema = 'netflix';
 
 -- ---------------------------------------------------------
 
