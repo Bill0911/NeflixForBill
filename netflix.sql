@@ -1099,6 +1099,10 @@ FROM netflix.user;
 -- Indexes for dumped tables
 --
 
+CREATE VIEW netflix.user_for_junior AS
+SELECT `account_id`, `language_id`, `role`
+FROM netflix.user;
+
 --
 -- Indexes for table `episode`
 --
