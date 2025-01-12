@@ -6,7 +6,7 @@ DROP ROLE IF EXISTS api;
 DROP USER IF EXISTS 'fjodorsenior'@'%';
 DROP USER IF EXISTS 'zhimedior'@'%';
 DROP USER IF EXISTS 'billjunior'@'%';
-DROP USER IF EXISTS 'ghost_api'@'%';
+DROP USER IF EXISTS 'main_api_user'@'%';
 
 CREATE ROLE senior;
 CREATE ROLE medior;
@@ -56,22 +56,18 @@ GRANT SELECT ON netflix.user_for_junior TO junior;
 
 -- --------------------------API-------------------------------
 
----this will not run grants, this will only write grant queries into your chosen file path---
-
 SELECT CONCAT('GRANT SELECT ON `netflix`.`', table_name, '` TO api;')
-INTO OUTFILE 'C:/xampp_/htdocs/view_grants_to_api.sql'
+INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/netflix_views_grants.sql'
 FIELDS TERMINATED BY '\n'
 FROM information_schema.tables
 WHERE table_schema = 'netflix' AND table_type = 'VIEW';
+
 SELECT CONCAT('GRANT EXECUTE ON PROCEDURE `netflix`.`', routine_name, '` TO api;')
-INTO OUTFILE 'C:/xampp_/htdocs/proc_grants_to_api.sql'
+INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/netflix_procedures_grants.sql'
 FIELDS TERMINATED BY '\n'
 FROM information_schema.routines
 WHERE routine_schema = 'netflix';
--- ---------------------------------------------------------
 
-
-    
 -- ---------------------------------------------------------
 
 CREATE USER 'fjodorsenior'@'%' IDENTIFIED BY '1234';
@@ -84,12 +80,8 @@ CREATE USER 'billjunior'@'%' IDENTIFIED BY '8765';
 GRANT junior TO 'billjunior'@'%';
 
 CREATE USER 'main_api_user'@'%' IDENTIFIED BY '1234api';
-GRANT 'api' TO 'main_api_user'@'%';
-SET DEFAULT ROLE 'api' FOR 'main_api_user'@'%';
-
-
-
-
+GRANT api TO 'main_api_user'@'%';
+SET DEFAULT ROLE api TO 'main_api_user'@'%';
 
 
 
