@@ -57,16 +57,23 @@ GRANT SELECT ON netflix.user_for_junior TO junior;
 -- --------------------------API-------------------------------
 
 SELECT CONCAT('GRANT SELECT ON `netflix`.`', table_name, '` TO api;')
-INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/netflix_views_grants.sql'
+INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/netflix_views_grants.sql' -- --this path is just an example for my server
 FIELDS TERMINATED BY '\n'
 FROM information_schema.tables
 WHERE table_schema = 'netflix' AND table_type = 'VIEW';
 
 SELECT CONCAT('GRANT EXECUTE ON PROCEDURE `netflix`.`', routine_name, '` TO api;')
-INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/netflix_procedures_grants.sql'
+INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/netflix_procedures_grants.sql' -- --this path is just an example for my server
 FIELDS TERMINATED BY '\n'
 FROM information_schema.routines
 WHERE routine_schema = 'netflix';
+
+-- -------------------------IMPORTANT-------------------------
+-- --make sure to check check which directory is allowed by the server
+-- --To do that run the script: SHOW VARIABLES LIKE 'secure_file_priv';
+-- --Then copy the files to the directory that is allowed by the server
+-- --And paste the allowed chosen path to replace 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/netflix_views_grants.sql' 
+-- --and 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/netflix_procedures_grants.sql'
 
 -- ---------------------------------------------------------
 
