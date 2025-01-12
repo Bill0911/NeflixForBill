@@ -7,75 +7,59 @@
   <title>Netflix Clone - Register</title>
 </head>
   <body>
-  <div class="grid-container">
-    <header>
-      <div class="logo">
-        <img src="../img/logo.png" alt="Netflix Logo">
+      <div class="grid-container">
+        <header>
+          <div class="logo">
+            <img src="../img/logo.png" alt="Netflix Logo">
+          </div>
+        </header>
+        <main>
+          <form id="registerForm" class="form-style">
+            <h1>Create Your Account</h1>
+            <div class="content">
+              <label for="email">Email</label>
+              <input type="email" name="email" id="email" placeholder="Enter your email" required>
+            </div>
+            <div class="content">
+              <label for="password">Password</label>
+              <input type="password" name="password" id="password" placeholder="Enter your password" required minlength="8">
+            </div>
+            <div class="content">
+              <label for="paymentMethod">Payment Method</label>
+              <select name="paymentMethod" id="paymentMethod" required>
+                <option value="Credit Card">Credit Card</option>
+                <option value="PayPal">PayPal</option>
+                <option value="iDEAL">iDEAL</option>
+              </select>
+            </div>
+            <div class="content">
+              <label for="language">Language ID</label>
+              <input type="number" name="language" id="language" placeholder="Enter language ID (e.g., 1)" required>
+            </div>
+            <div class="content">
+              <label>
+                I agree to the <a href="#terms">Terms and Conditions</a>.
+                <input type="checkbox" name="terms" id="terms" required>
+              </label>
+            </div>
+            <div class="content">
+              <input type="submit" value="Register">
+            </div>
+          </form>
+        </main>
+        <footer>
+          <div class="footer-links">
+            <a href="#help">Help Center</a>
+            <a href="#terms">Terms of Use</a>
+            <a href="#privacy">Privacy</a>
+            <a href="#cookies">Cookie Preferences</a>
+            <a href="#corporate">Corporate Information</a>
+          </div>
+          <div class="footer-text">
+            © 2024 Netflix Clone | Powered by <span>HTML</span>, <span>CSS</span>, and <span>JavaScript</span>.
+          </div>
+        </footer>
       </div>
-    </header>
-    <main>
-      <form id="registerForm" class="form-style">
-        <h1>Create Your Account</h1>
-        <div class="content">
-          <label for="email">Email</label>
-          <input type="email" name="email" id="email" placeholder="Enter your email" required>
-        </div>
-        <div class="content">
-          <label for="password">Password</label>
-          <input type="password" name="password" id="password" placeholder="Enter your password" required minlength="8">
-        </div>
-        <div class="content">
-          <label for="subscription">Subscription Type</label>
-          <select name="subscription" id="subscription" required>
-            <option value="">Select a subscription</option>
-            <option value="SD">SD</option>
-            <option value="HD">HD</option>
-            <option value="ULTRA_HD">Ultra HD</option>
-          </select>
-        </div>
-        <div class="content">
-          <label for="paymentMethod">Payment Method</label>
-          <select name="paymentMethod" id="paymentMethod" required>
-            <option value="">Select a payment method</option>
-            <option value="paypal">PayPal</option>
-            <option value="ideal">iDEAL</option>
-            <option value="visa">Visa</option>
-            <option value="mastercard">MasterCard</option>
-          </select>
-        </div>
-        <div class="content">
-          <label for="language">Language</label>
-          <input type="language" name="language" id="language">
-        </div>
-        <div class="content">
-          <label>
-            I agree to the <a href="#terms">Terms and Conditions</a>.
-            <input type="checkbox" name="terms" id="terms" required>
-          </label>
-        </div>
-        <div class="content">
-          <input type="submit" value="Register">
-        </div>
-        <div class="content">
-          <p>
-            Already have a Netflix Account? <a href="home.html">Login Here</a>.
-          </p>
-        </div>
-      </form>
-    </main>
-    <footer>
-      <div class="footer-links">
-        <a href="#help">Help Center</a>
-        <a href="#terms">Terms of Use</a>
-        <a href="#privacy">Privacy</a>
-        <a href="#cookies">Cookie Preferences</a>
-        <a href="#corporate">Corporate Information</a>
-      </div>
-      <div class="footer-text">
-        © 2024 Netflix Clone | Powered by <span>HTML</span>, <span>CSS</span>, and <span>JavaScript</span>.
-      </div>
-    </footer>
-  </div>
-  <script src="../js/register.js"></script>
+    <script src="../js/register.js"></script>
   </body>
 </html>
