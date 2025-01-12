@@ -1,17 +1,17 @@
 DROP ROLE IF EXISTS senior;
 DROP ROLE IF EXISTS medior;
 DROP ROLE IF EXISTS junior;
-DROP ROLE IF EXISTS api_user;
+DROP ROLE IF EXISTS api;
 
 DROP USER IF EXISTS 'fjodorsenior'@'%';
 DROP USER IF EXISTS 'zhimedior'@'%';
 DROP USER IF EXISTS 'billjunior'@'%';
-DROP USER IF EXISTS 'ghost_api'@'%';
+DROP USER IF EXISTS 'main_api_user'@'%';
 
 CREATE ROLE senior;
 CREATE ROLE medior;
 CREATE ROLE junior;
-CREATE ROLE api_user;
+CREATE ROLE api;
 
 -- ---------------SENNIOR PERMISSIONS-----------------------
 GRANT SELECT, UPDATE, INSERT, DELETE ON netflix.* TO senior;
@@ -54,6 +54,28 @@ GRANT SELECT, UPDATE, INSERT, DELETE ON netflix.seriesviewcount TO junior;
 GRANT SELECT ON netflix.user_for_junior TO junior;
 -- ---------------------------------------------------------
 
+-- --------------------------API-------------------------------
+
+SELECT CONCAT('GRANT SELECT ON `netflix`.`', table_name, '` TO api;')
+INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/netflix_views_grants.sql' -- --this path is just an example for my server
+FIELDS TERMINATED BY '\n'
+FROM information_schema.tables
+WHERE table_schema = 'netflix' AND table_type = 'VIEW';
+
+SELECT CONCAT('GRANT EXECUTE ON PROCEDURE `netflix`.`', routine_name, '` TO api;')
+INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/netflix_procedures_grants.sql' -- --this path is just an example for my server
+FIELDS TERMINATED BY '\n'
+FROM information_schema.routines
+WHERE routine_schema = 'netflix';
+
+-- -------------------------IMPORTANT-------------------------
+-- --make sure to check check which directory is allowed by the server
+-- --To do that run the script: SHOW VARIABLES LIKE 'secure_file_priv';
+-- --Then copy the files to the directory that is allowed by the server
+-- --And paste the allowed chosen path to replace 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/netflix_views_grants.sql' 
+-- --and 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/netflix_procedures_grants.sql'
+
+-- ---------------------------------------------------------
 
 CREATE USER 'fjodorsenior'@'%' IDENTIFIED BY '1234';
 GRANT senior TO 'fjodorsenior'@'%';
@@ -64,10 +86,9 @@ GRANT medior TO 'zhimedior'@'%';
 CREATE USER 'billjunior'@'%' IDENTIFIED BY '8765';
 GRANT junior TO 'billjunior'@'%';
 
-CREATE USER 'ghost_api'@'%' IDENTIFIED BY 'ghost';
-
-GRANT EXECUTE ON PROCEDURE netflix.getManyUsers TO ghost_api;
-GRANT SELECT ON netflix.user_view TO ghost_api;
+CREATE USER 'main_api_user'@'%' IDENTIFIED BY '1234api';
+GRANT api TO 'main_api_user'@'%';
+SET DEFAULT ROLE api TO 'main_api_user'@'%';
 
 
 
