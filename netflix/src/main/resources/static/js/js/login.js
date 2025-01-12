@@ -28,11 +28,11 @@ document.getElementById('loginForm').addEventListener('submit', async function (
         .then(data => {
             console.log("Login successful:", data);
             if (data.role === "JUNIOR") {
-                window.location.href = "junior.html";
+                window.location.href = "junior-dashboard.html";
             } else if (data.role === "MEDIOR") {
-                window.location.href = "medior.html";
+                window.location.href = "medior-dashboard.html";
             } else if (data.role === "SENIOR") {
-                window.location.href = "senior.html";
+                window.location.href = "senior-dashboard.html";
             }
         })
         .catch(error => {
