@@ -1,108 +1,63 @@
-const apiBaseUrl = "http://localhost:8081/api"; // API Base URL
-const token = localStorage.getItem("token"); // JWT token from login
+document.getElementById('loadTable').addEventListener('click', async () => {
+    const tableName = document.getElementById('tableSelect').value;
+    const tableContainer = document.getElementById('tableContainer');
 
-// Fetch all tables and display them
-function fetchTableData(tableName) {
-    fetch(`${apiBaseUrl}/${tableName}`, {
-        headers: { Authorization: `Bearer ${token}` },
-    })
-        .then(response => response.json())
-        .then(data => displayTable(tableName, data))
-        .catch(err => console.error(`Error fetching ${tableName}:`, err));
-}
+    try {
+        const response = await fetch(`http://localhost:8081/api/${tableName}`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch data for table: ${tableName}`);
+        }
 
-// Display table
-function displayTable(tableName, data) {
-    const contentDiv = document.getElementById("content");
+        const data = await response.json();
 
-    const table = document.createElement("table");
-    const thead = document.createElement("thead");
-    const tbody = document.createElement("tbody");
+        // Clear previous table content
+        tableContainer.innerHTML = '';
 
-    // Table header
-    const headers = Object.keys(data[0] || {}).concat("Actions");
-    const headerRow = document.createElement("tr");
-    headers.forEach(header => {
-        const th = document.createElement("th");
-        th.textContent = header;
-        headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
+        // Build table dynamically
+        const table = document.createElement('table');
+        const headerRow = document.createElement('tr');
 
-    // Table body
-    data.forEach(row => {
-        const rowElement = document.createElement("tr");
-        Object.values(row).forEach(value => {
-            const td = document.createElement("td");
-            td.textContent = value;
-            rowElement.appendChild(td);
+        // Generate headers
+        Object.keys(data[0]).forEach((key) => {
+            const th = document.createElement('th');
+            th.textContent = key;
+            headerRow.appendChild(th);
         });
 
-        // Actions column
-        const actionTd = document.createElement("td");
-        actionTd.className = "actions";
+        // Add action column
+        const actionTh = document.createElement('th');
+        actionTh.textContent = 'Actions';
+        headerRow.appendChild(actionTh);
 
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Delete";
-        deleteButton.onclick = () => deleteRow(tableName, row.id);
+        table.appendChild(headerRow);
 
-        const editButton = document.createElement("button");
-        editButton.textContent = "Edit";
-        editButton.onclick = () => editRow(tableName, row);
+        // Generate rows
+        data.forEach((row) => {
+            const tr = document.createElement('tr');
+            Object.values(row).forEach((value) => {
+                const td = document.createElement('td');
+                td.textContent = value;
+                tr.appendChild(td);
+            });
 
-        actionTd.appendChild(deleteButton);
-        actionTd.appendChild(editButton);
-        rowElement.appendChild(actionTd);
+            // Add edit and delete buttons
+            const actionTd = document.createElement('td');
+            const editButton = document.createElement('button');
+            editButton.textContent = 'Edit';
+            editButton.addEventListener('click', () => loadFormData(row));
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.addEventListener('click', () => deleteRow(row.id, tableName));
 
-        tbody.appendChild(rowElement);
-    });
+            actionTd.appendChild(editButton);
+            actionTd.appendChild(deleteButton);
+            tr.appendChild(actionTd);
 
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    contentDiv.innerHTML = ""; // Clear existing content
-    contentDiv.appendChild(table);
-}
+            table.appendChild(tr);
+        });
 
-// Delete a row
-function deleteRow(tableName, id) {
-    fetch(`${apiBaseUrl}/${tableName}/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-    })
-        .then(response => {
-            if (response.ok) {
-                alert("Row deleted successfully!");
-                fetchTableData(tableName);
-            } else {
-                alert("Failed to delete row.");
-            }
-        })
-        .catch(err => console.error("Error deleting row:", err));
-}
-
-// Edit a row
-function editRow(tableName, row) {
-    const newValue = prompt("Enter new value for the row:", JSON.stringify(row));
-    if (newValue) {
-        fetch(`${apiBaseUrl}/${tableName}/${row.id}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: newValue,
-        })
-            .then(response => {
-                if (response.ok) {
-                    alert("Row updated successfully!");
-                    fetchTableData(tableName);
-                } else {
-                    alert("Failed to update row.");
-                }
-            })
-            .catch(err => console.error("Error updating row:", err));
+        tableContainer.appendChild(table);
+    } catch (error) {
+        console.error('Error loading table:', error);
     }
-}
-
-// Fetch genres table as default
-fetchTableData("genres");
+});

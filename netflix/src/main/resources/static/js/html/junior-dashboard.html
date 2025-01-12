@@ -3,12 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/table-style.css"> <!-- External CSS -->
-    <title>Junior Dashboard</title>
+    <link rel="stylesheet" href="../css/table-style.css">
+    <title>Database Table Display</title>
 </head>
-    <body>
-        <h1>Junior Dashboard</h1>
-        <div id="content"></div>
-        <script src="../js/junior-access.js"></script> <!-- External JS -->
-    </body>
+<body>
+<div class="container">
+    <h1>Database Table Viewer</h1>
+
+    <div>
+        <label for="tableSelect">Select Table:</label>
+        <select id="tableSelect">
+            <option value="users">Users</option>
+            <option value="movies">Movies</option>
+            <option value="episodes">Episodes</option>
+        </select>
+        <button id="loadTable">Load Table</button>
+    </div>
+
+    <div id="tableContainer"></div>
+
+    <div id="formContainer">
+        <h2>Add/Edit Entry</h2>
+        <form id="crudForm">
+            <div id="formFields"></div>
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+<script src="../js/junior-access.js"></script>
+</body>
 </html>
