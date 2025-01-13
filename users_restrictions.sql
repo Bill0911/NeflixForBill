@@ -88,7 +88,6 @@ GRANT junior TO 'billjunior'@'%';
 
 CREATE USER 'main_api_user'@'%' IDENTIFIED BY '1234api';
 GRANT api TO 'main_api_user'@'%';
-SET DEFAULT ROLE api TO 'main_api_user'@'%';
 
 
 
