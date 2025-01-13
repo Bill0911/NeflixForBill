@@ -184,7 +184,7 @@ public class UserController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request, @RequestHeader("Authorization") String accessToken) throws Exception
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) throws Exception
     {
         try
         {
