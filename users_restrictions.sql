@@ -57,18 +57,19 @@ GRANT SELECT ON netflix.user_for_junior TO junior;
 -- --------------------------API-------------------------------
 
 SELECT CONCAT('GRANT SELECT ON `netflix`.`', table_name, '` TO api;')
-INTO OUTFILE 'C:\work\sqlViewFile.sql' -- --this path is just an example for my server
+INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/views.sql'
 FIELDS TERMINATED BY '\n'
 FROM information_schema.tables
 WHERE table_schema = 'netflix' AND table_type = 'VIEW';
 
 SELECT CONCAT('GRANT EXECUTE ON PROCEDURE `netflix`.`', routine_name, '` TO api;')
-INTO OUTFILE 'C:\work\sqlProcedures.sql' -- --this path is just an example for my server
+INTO OUTFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/procedures.sql'
 FIELDS TERMINATED BY '\n'
 FROM information_schema.routines
 WHERE routine_schema = 'netflix';
 
 -- -------------------------IMPORTANT-------------------------
+
 -- --make sure to check check which directory is allowed by the server
 -- --To do that run the script: SHOW VARIABLES LIKE 'secure_file_priv';
 -- --Then copy the files to the directory that is allowed by the server
@@ -79,16 +80,19 @@ WHERE routine_schema = 'netflix';
 
 CREATE USER 'fjodorsenior'@'%' IDENTIFIED BY '1234';
 GRANT senior TO 'fjodorsenior'@'%';
+SET DEFAULT ROLE senior TO 'fjodorsenior'@'%';
 
 CREATE USER 'zhimedior'@'%' IDENTIFIED BY '5678';
 GRANT medior TO 'zhimedior'@'%';
+SET DEFAULT ROLE medior TO 'zhimedior'@'%';
 
 CREATE USER 'billjunior'@'%' IDENTIFIED BY '8765';
 GRANT junior TO 'billjunior'@'%';
+SET DEFAULT ROLE junior TO 'billjunior'@'%';
 
 CREATE USER 'main_api_user'@'%' IDENTIFIED BY '1234api';
 GRANT api TO 'main_api_user'@'%';
-
+SET DEFAULT ROLE api TO 'main_api_user'@'%';
 
 
 -- --------------------NOTICE---------------------------
