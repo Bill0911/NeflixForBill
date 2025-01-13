@@ -1,9 +1,8 @@
 document.getElementById('loginForm').addEventListener('submit', async function (e) {
-    e.preventDefault(); // Prevent the default form submission behavior
+    e.preventDefault(); // Prevent default form submission
 
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();
-
     const apiEndpoint = 'http://localhost:8081/api/users/login';
 
     try {
@@ -12,46 +11,47 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                email: email,
-                password: password,
-            }),
+            body: JSON.stringify({ email, password }),
         });
 
-        console.log("Raw response:", response);
-
-        // Parse the response or extract error message
-        const responseText = await response.text();
-        if (!response.ok) {
-            console.error("Error response text:", responseText);
-            const errorData = JSON.parse(responseText); // Parse error message
-            alert(`Login failed: ${errorData.message || "Unknown error occurred."}`);
+        // Check if the response is JSON
+        const contentType = response.headers.get('Content-Type');
+        if (!response.ok || !contentType || !contentType.includes('application/json')) {
+            const responseText = await response.text(); // Fallback for non-JSON error
+            console.error('Error response text:', responseText);
+            alert(`Login failed: ${responseText || 'Unknown error occurred'}`);
             return;
         }
 
-        const data = JSON.parse(responseText);
-        console.log("Login successful:", data);
+        // Parse JSON response
+        const data = await response.json();
 
-        // Redirect based on the role in the response
-        switch (data.role) {
-            case "JUNIOR":
-                window.location.href = "junior-dashboard.html";
-                break;
-            case "MEDIOR":
-                window.location.href = "medior-dashboard.html";
-                break;
-            case "SENIOR":
-                window.location.href = "senior-dashboard.html";
-                break;
-            case "VIEWER":
-                window.location.href = "viewer-dashboard.html";
-                break;
-            default:
-                alert("Unexpected role. Please contact support.");
-                console.error(`Unexpected role: ${data.role}`);
+        if (data.token) {
+            localStorage.setItem('token', data.token); // Save the token
+
+            // Redirect based on role
+            switch (data.role) {
+                case 'JUNIOR':
+                    window.location.href = 'junior-dashboard.html';
+                    break;
+                case 'MEDIOR':
+                    window.location.href = 'medior-dashboard.html';
+                    break;
+                case 'SENIOR':
+                    window.location.href = 'senior-dashboard.html';
+                    break;
+                case 'VIEWER':
+                    window.location.href = 'viewer-dashboard.html';
+                    break;
+                default:
+                    alert('Unexpected role. Please contact support.');
+                    console.error(`Unexpected role: ${data.role}`);
+            }
+        } else {
+            alert('Login failed: Missing authentication token.');
         }
     } catch (error) {
-        console.error("Error during login:", error);
-        alert("An error occurred while trying to log in. Please try again.");
+        console.error('Error during login:', error);
+        alert('An error occurred while trying to log in. Please try again later.');
     }
 });

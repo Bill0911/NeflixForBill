@@ -4,29 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/table-style.css">
-    <title>Senior Dashboard</title>
+    <title>Database Table Display</title>
 </head>
 <body>
-<header>
-    <h1>Welcome, Senior User</h1>
-</header>
-<main>
-    <div id="table-container">
-        <h2>Data Overview</h2>
-        <select id="table-select">
-            <option value="movies">Movies</option>
-            <option value="series">Series</option>
-            <option value="genres">Genres</option>
-            <option value="payments">Payments</option>
-            <option value="users">Users</option>
+<div class="container">
+    <h1>Database Table Senior</h1>
+
+    <div>
+        <label for="tableSelect">Select Table:</label>
+        <select id="tableSelect">
+            <option value="users">user</option>
+            <option value="movies">movie</option>
+            <option value="episodes">episode</option>
+            <option value="genres">genre</option>
+            <option value="languages">language</option>
+            <option value="payments">payment</option>
+            <option value="series">series</option>
+            <option value="invitations">invitation</option>
+            <option value="profiles">profile</option>
         </select>
-        <button id="load-data">Load Data</button>
-        <div id="data-table"></div>
+        <button id="loadTable">Load Table</button>
     </div>
-</main>
-<footer>
-    <p>© 2024 Netflix Clone</p>
-</footer>
+
+    <div id="tableContainer"></div>
+
+    <div id="formContainer">
+        <h2>Add/Edit Entry</h2>
+        <form id="crudForm">
+            <div id="formFields"></div>
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+<!-- Ensure the script is loaded after the DOM is fully constructed -->
 <script src="../js/senior-access.js"></script>
 </body>
 </html>
