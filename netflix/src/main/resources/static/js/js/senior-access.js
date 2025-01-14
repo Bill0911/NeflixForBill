@@ -10,31 +10,27 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    let currentTable = "languages"; // Default table for CRUD operations
+    loadTableButton.addEventListener("click", () => loadTableData(tableSelect.value));
 
-    // Load table on button click
-    loadTableButton.addEventListener("click", async () => {
-        currentTable = tableSelect.value; // Update current table
-        await loadTableData(currentTable);
-    });
+    // Fetch data from the server
+    async function fetchAPI(url, method, data = null) {
+        const headers = {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+        };
+        const response = await fetch(url, {
+            method: method,
+            headers: headers,
+            body: data ? JSON.stringify(data) : null
+        });
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        return response.json();
+    }
 
-    // Load table data dynamically
     async function loadTableData(tableName) {
         tableContainer.innerHTML = "<p>Loading...</p>";
         try {
-            const response = await fetch(`http://localhost:8081/api/${tableName}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to fetch data for table "${tableName}". Status: ${response.status}`);
-            }
-
-            const data = await response.json();
+            const data = await fetchAPI(`http://localhost:8081/api/${tableName}`, "GET");
             renderTable(data, tableName);
         } catch (error) {
             console.error("Error loading table data:", error);
@@ -42,10 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Render table dynamically
     function renderTable(data, tableName) {
         tableContainer.innerHTML = "";
-
         if (!data || data.length === 0) {
             tableContainer.innerHTML = `<p>No data available for table "${tableName}".</p>`;
             return;
@@ -53,135 +47,80 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const table = document.createElement("table");
         const headerRow = document.createElement("tr");
-
-        // Generate table headers dynamically
-        Object.keys(data[0]).forEach((key) => {
-            const th = document.createElement("th");
-            th.textContent = key;
-            headerRow.appendChild(th);
-        });
-
-        // Add Actions column
-        const actionsTh = document.createElement("th");
-        actionsTh.textContent = "Actions";
-        headerRow.appendChild(actionsTh);
+        Object.keys(data[0]).forEach(key => headerRow.appendChild(createElement('th', key)));
+        headerRow.appendChild(createElement('th', 'Actions'));
         table.appendChild(headerRow);
 
-        // Generate table rows dynamically
-        data.forEach((row) => {
+        data.forEach(item => {
             const tr = document.createElement("tr");
-
-            Object.values(row).forEach((value) => {
-                const td = document.createElement("td");
-                td.textContent = value;
-                tr.appendChild(td);
-            });
-
-            // Add action buttons
+            Object.entries(item).forEach(([key, value]) => tr.appendChild(createElement('td', value)));
             const actionsTd = document.createElement("td");
-            const editButton = document.createElement("button");
-            editButton.textContent = "Edit";
-            editButton.addEventListener("click", () => loadEditForm(row, tableName));
-
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Delete";
-            deleteButton.addEventListener("click", () => deleteRow(row.id, tableName));
-
-            actionsTd.appendChild(editButton);
-            actionsTd.appendChild(deleteButton);
+            actionsTd.appendChild(createActionButton('Edit', () => loadEditForm(item, tableName)));
+            actionsTd.appendChild(createActionButton('Delete', () => deleteRow(item.id, tableName)));
             tr.appendChild(actionsTd);
-
             table.appendChild(tr);
         });
-
         tableContainer.appendChild(table);
     }
 
-    // Load form for adding/editing entries
-    function loadEditForm(row = null, tableName) {
-        crudForm.dataset.id = row ? row.id : ""; // Set ID for edit, or clear for add
-        crudForm.dataset.table = tableName; // Store table name in form
-        formFields.innerHTML = "";
-
-        if (row) {
-            Object.entries(row).forEach(([key, value]) => {
-                if (key === "id") return; // Skip ID for editing
-
-                const label = document.createElement("label");
-                label.textContent = key;
-                const input = document.createElement("input");
-                input.name = key;
-                input.value = value;
-                formFields.appendChild(label);
-                formFields.appendChild(input);
-            });
-        } else {
-            // Add generic fields for adding new entries
-            const label = document.createElement("label");
-            label.textContent = "Enter details:";
-            const input = document.createElement("input");
-            input.name = "name"; // Default field (can be adjusted)
-            formFields.appendChild(label);
-            formFields.appendChild(input);
-        }
+    function createElement(tag, content) {
+        const element = document.createElement(tag);
+        element.textContent = content;
+        return element;
     }
 
-    // Handle form submission (Add/Edit)
+    function createActionButton(text, action) {
+        const button = document.createElement("button");
+        button.textContent = text;
+        button.onclick = action;
+        return button;
+    }
+
+    function loadEditForm(item, tableName) {
+        crudForm.dataset.id = item.id; // Store the ID for use in PUT or PATCH requests
+        crudForm.dataset.table = tableName; // Store the table name for use in requests
+        formFields.innerHTML = ""; // Clear previous form fields
+        Object.entries(item).forEach(([key, value]) => {
+            const label = document.createElement('label');
+            label.textContent = key;
+            const input = document.createElement('input');
+            input.name = key;
+            input.value = value;
+            formFields.appendChild(label);
+            formFields.appendChild(input);
+        });
+    }
+
     crudForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const id = crudForm.dataset.id; // ID for editing
-        const tableName = crudForm.dataset.table; // Current table
-        const formData = new FormData(crudForm);
-        const data = Object.fromEntries(formData.entries());
-        const method = id ? "PUT" : "POST";
-        const endpoint = id
-            ? `http://localhost:8081/api/${tableName}/${id}`
-            : `http://localhost:8081/api/${tableName}`;
+        const data = Object.fromEntries(new FormData(crudForm));
+        const id = crudForm.dataset.id;
+        const tableName = crudForm.dataset.table;
+        const method = id ? 'PUT' : 'POST';
+        const url = `http://localhost:8081/api/${tableName}/${id}`;
 
         try {
-            const response = await fetch(endpoint, {
-                method,
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: JSON.stringify(data),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to ${id ? "update" : "add"} entry. Status: ${response.status}`);
-            }
-
+            const result = await fetchAPI(url, method, data);
             alert(`${id ? "Updated" : "Added"} successfully!`);
             crudForm.reset();
-            await loadTableData(tableName); // Reload table
+            delete crudForm.dataset.id; // Remove the stored ID after operation
+            loadTableData(tableName);
         } catch (error) {
             console.error("Error saving entry:", error);
-            alert("Failed to save entry. Check the console for details.");
+            alert(`Failed to save entry: ${error.message}`);
         }
     });
 
-    // Delete a row
     async function deleteRow(id, tableName) {
         if (!confirm("Are you sure you want to delete this entry?")) return;
 
         try {
-            const response = await fetch(`http://localhost:8081/api/${tableName}/${id}`, {
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to delete entry. Status: ${response.status}`);
-            }
-
+            await fetchAPI(`http://localhost:8081/api/${tableName}/${id}`, "DELETE");
             alert("Deleted successfully!");
-            await loadTableData(tableName); // Reload table
+            loadTableData(tableName);
         } catch (error) {
             console.error("Error deleting entry:", error);
-            alert("Failed to delete entry. Check the console for details.");
+            alert(`Failed to delete entry: ${error.message}`);
         }
     }
 });

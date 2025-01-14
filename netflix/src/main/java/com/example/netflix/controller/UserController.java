@@ -124,25 +124,25 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Integer id, @RequestHeader("Authorization") String token) throws Exception {
+    public ResponseEntity<User> getUserById(@PathVariable Integer id) throws Exception {
 //        userService.enforceRoleRestriction(token, Role.MEDIOR);
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email, @RequestHeader("Authorization") String token) throws Exception {
+    public ResponseEntity<User> getUserByEmail(@PathVariable String email) throws Exception {
 //        userService.enforceRoleRestriction(token, Role.MEDIOR);
         return ResponseEntity.ok(userService.getUserByEmail(email));
     }
 
     @GetMapping()
-    public ResponseEntity<Object> getManyUsers(@RequestHeader("Authorization") String token) throws Exception {
+    public ResponseEntity<Object> getManyUsers() throws Exception {
 //        userService.enforceRoleRestriction(token, Role.MEDIOR);
         return ResponseEntity.ok(userService.getManyUsers());
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Object> deleteUserById(@PathVariable Integer id, @RequestHeader("Authorization") String token) throws Exception {
+    public ResponseEntity<Object> deleteUserById(@PathVariable Integer id) throws Exception {
         try {
 //            userService.enforceRoleRestriction(token, Role.MEDIOR);
             userService.deleteUserById(id);
@@ -153,17 +153,17 @@ public class UserController {
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<String> patchUserById(@PathVariable Integer id, @RequestBody User user, @RequestHeader("Authorization") String token) throws Exception {
+    public ResponseEntity<String> patchUserById(@PathVariable Integer id, @RequestBody User user) throws Exception {
 //        userService.enforceRoleRestriction(token, Role.SENIOR);
         userService.patchUserById(id, user);
-        return ResponseEntity.ok("User has been deleted successfully");
+        return ResponseEntity.ok("User has been updated successfully");
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<String> putUserById(@PathVariable Integer id, @RequestBody User user, @RequestHeader("Authorization") String token) throws Exception {
+    public ResponseEntity<String> putUserById(@PathVariable Integer id, @RequestBody User user) throws Exception {
 //        userService.enforceRoleRestriction(token, Role.SENIOR);
         userService.updateUserById(id, user);
-        return ResponseEntity.ok("User has been deleted successfully");
+        return ResponseEntity.ok("User has been updated successfully");
     }
 
     @PostMapping("/request-password-reset")
@@ -212,7 +212,7 @@ public class UserController {
     }
 
     @GetMapping("/subscription-costs")
-    public ResponseEntity<List<SubscriptionOverview>> getSubscriptionCosts(@RequestHeader("Authorization") String token) throws Exception {
+    public ResponseEntity<List<SubscriptionOverview>> getSubscriptionCosts() throws Exception {
 //        userService.enforceRoleRestriction(token, Role.SENIOR);
         return ResponseEntity.ok(userService.getAllSubscriptionCosts());
     }
