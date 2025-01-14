@@ -1,4 +1,4 @@
-SSSDS-- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
+-- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
 --
 -- Host: localhost    Database: mysql
 -- ------------------------------------------------------
@@ -8,12 +8,6 @@ SSSDS-- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
 -- Table structure for table `general_log`
@@ -21,6 +15,7 @@ SSSDS-- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
+USE mysql;
 CREATE TABLE IF NOT EXISTS `general_log` (
   `event_time` timestamp(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6),
   `user_host` mediumtext NOT NULL,
@@ -74,7 +69,7 @@ CREATE TABLE `column_stats` (
   `hist_type` enum('SINGLE_PREC_HB','DOUBLE_PREC_HB') DEFAULT NULL,
   `histogram` varbinary(255) DEFAULT NULL,
   PRIMARY KEY (`db_name`,`table_name`,`column_name`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_bin PAGE_CHECKSUM=1 TRANSACTIONAL=0 COMMENT='Statistics on Columns';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Statistics on Columns';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -102,7 +97,7 @@ CREATE TABLE `columns_priv` (
   `Timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `Column_priv` set('Select','Insert','Update','References') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`Host`,`Db`,`User`,`Table_name`,`Column_name`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_bin PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='Column privileges';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Column privileges';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -147,7 +142,7 @@ CREATE TABLE `db` (
   `Delete_history_priv` enum('N','Y') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'N',
   PRIMARY KEY (`Host`,`Db`,`User`),
   KEY `User` (`User`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_bin PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='Database privileges';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Database privileges';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -176,7 +171,7 @@ CREATE TABLE `event` (
   `interval_value` int(11) DEFAULT NULL,
   `interval_field` enum('YEAR','QUARTER','MONTH','DAY','HOUR','MINUTE','WEEK','SECOND','MICROSECOND','YEAR_MONTH','DAY_HOUR','DAY_MINUTE','DAY_SECOND','HOUR_MINUTE','HOUR_SECOND','MINUTE_SECOND','DAY_MICROSECOND','HOUR_MICROSECOND','MINUTE_MICROSECOND','SECOND_MICROSECOND') DEFAULT NULL,
   `created` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `last_executed` datetime DEFAULT NULL,
   `starts` datetime DEFAULT NULL,
   `ends` datetime DEFAULT NULL,
@@ -191,7 +186,7 @@ CREATE TABLE `event` (
   `db_collation` char(32) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `body_utf8` longblob DEFAULT NULL,
   PRIMARY KEY (`db`,`name`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='Events';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Events';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -207,7 +202,7 @@ CREATE TABLE `func` (
   `dl` char(128) NOT NULL DEFAULT '',
   `type` enum('function','aggregate') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`name`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_bin PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='User defined functions';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='User defined functions';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -229,9 +224,9 @@ DROP TABLE IF EXISTS `global_priv`;
 CREATE TABLE `global_priv` (
   `Host` char(60) NOT NULL DEFAULT '',
   `User` char(80) NOT NULL DEFAULT '',
-  `Priv` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '{}' CHECK (json_valid(`Priv`)),
+  `Priv` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`Priv`)),
   PRIMARY KEY (`Host`,`User`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_bin PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='Users and global privileges';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Users and global privileges';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -283,7 +278,7 @@ CREATE TABLE `help_category` (
   `url` text NOT NULL,
   PRIMARY KEY (`help_category_id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci PAGE_CHECKSUM=1 TRANSACTIONAL=0 COMMENT='help categories';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='help categories';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -308,7 +303,7 @@ CREATE TABLE `help_keyword` (
   `name` char(64) NOT NULL,
   PRIMARY KEY (`help_keyword_id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci PAGE_CHECKSUM=1 TRANSACTIONAL=0 COMMENT='help keywords';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='help keywords';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -332,7 +327,7 @@ CREATE TABLE `help_relation` (
   `help_topic_id` int(10) unsigned NOT NULL,
   `help_keyword_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`help_keyword_id`,`help_topic_id`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci PAGE_CHECKSUM=1 TRANSACTIONAL=0 COMMENT='keyword-topic relation';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='keyword-topic relation';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -361,7 +356,7 @@ CREATE TABLE `help_topic` (
   `url` text NOT NULL,
   PRIMARY KEY (`help_topic_id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci PAGE_CHECKSUM=1 TRANSACTIONAL=0 COMMENT='help topics';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='help topics';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -377,64 +372,74 @@ UNLOCK TABLES;
 -- Table structure for table `index_stats`
 --
 
-DROP TABLE IF EXISTS `index_stats`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `index_stats` (
-  `db_name` varchar(64) NOT NULL,
-  `table_name` varchar(64) NOT NULL,
-  `index_name` varchar(64) NOT NULL,
-  `prefix_arity` int(11) unsigned NOT NULL,
-  `avg_frequency` decimal(12,4) DEFAULT NULL,
-  PRIMARY KEY (`db_name`,`table_name`,`index_name`,`prefix_arity`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_bin PAGE_CHECKSUM=1 TRANSACTIONAL=0 COMMENT='Statistics on Indexes';
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- Table structure for table `index_stats`
 
---
+-- DROP TABLE IF EXISTS `index_stats`;
+-- /*!40101 SET @saved_cs_client     = @@character_set_client */;
+-- /*!40101 SET character_set_client = utf8 */;
+-- CREATE TABLE `index_stats` (
+--   `db_name` varchar(64) NOT NULL,
+--   `table_name` varchar(64) NOT NULL,
+--   `index_name` varchar(64) NOT NULL,
+--   `prefix_arity` int(11) unsigned NOT NULL,
+--   `avg_frequency` decimal(12,4) DEFAULT NULL,
+--   PRIMARY KEY (`db_name`,`table_name`,`index_name`,`prefix_arity`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Statistics on Indexes';
+-- /*!40101 SET character_set_client = @saved_cs_client */;
+
 -- Dumping data for table `index_stats`
---
 
-LOCK TABLES `index_stats` WRITE;
-/*!40000 ALTER TABLE `index_stats` DISABLE KEYS */;
-/*!40000 ALTER TABLE `index_stats` ENABLE KEYS */;
-UNLOCK TABLES;
+-- LOCK TABLES `index_stats` WRITE;
+-- /*!40000 ALTER TABLE `index_stats` DISABLE KEYS */;
+-- /*!40000 ALTER TABLE `index_stats` ENABLE KEYS */;
+-- UNLOCK TABLES;
 
 --
 -- Table structure for table `innodb_index_stats`
 --
 
-DROP TABLE IF EXISTS `innodb_index_stats`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `innodb_index_stats` (
-  `database_name` varchar(64) NOT NULL,
-  `table_name` varchar(199) NOT NULL,
-  `index_name` varchar(64) NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `stat_name` varchar(64) NOT NULL,
-  `stat_value` bigint(20) unsigned NOT NULL,
-  `sample_size` bigint(20) unsigned DEFAULT NULL,
-  `stat_description` varchar(1024) NOT NULL,
-  PRIMARY KEY (`database_name`,`table_name`,`index_name`,`stat_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin STATS_PERSISTENT=0;
+-- Table structure for table `innodb_index_stats`
+
+-- DROP TABLE IF EXISTS `innodb_index_stats`;
+-- /*!40101 SET @saved_cs_client     = @@character_set_client */;
+-- /*!40101 SET character_set_client = utf8 */;
+-- CREATE TABLE `innodb_index_stats` (
+--   `database_name` varchar(64) NOT NULL,
+--   `table_name` varchar(199) NOT NULL,
+--   `index_name` varchar(64) NOT NULL,
+--   `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+--   `stat_name` varchar(64) NOT NULL,
+--   `stat_value` bigint(20) unsigned NOT NULL,
+--   `sample_size` bigint(20) unsigned DEFAULT NULL,
+--   `stat_description` varchar(1024) NOT NULL,
+--   PRIMARY KEY (`database_name`,`table_name`,`index_name`,`stat_name`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin STATS_PERSISTENT=0;
+-- /*!40101 SET character_set_client = @saved_cs_client */;
+
+-- Dumping data for table `innodb_index_stats`
+
+-- LOCK TABLES `innodb_index_stats` WRITE;
+-- /*!40000 ALTER TABLE `innodb_index_stats` DISABLE KEYS */;
+-- /*!40000 ALTER TABLE `innodb_index_stats` ENABLE KEYS */;
+-- UNLOCK TABLES;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `innodb_table_stats`
 --
 
-DROP TABLE IF EXISTS `innodb_table_stats`;
+-- --DROP TABLE IF EXISTS `innodb_table_stats`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `innodb_table_stats` (
-  `database_name` varchar(64) NOT NULL,
-  `table_name` varchar(199) NOT NULL,
-  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `n_rows` bigint(20) unsigned NOT NULL,
-  `clustered_index_size` bigint(20) unsigned NOT NULL,
-  `sum_of_other_index_sizes` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`database_name`,`table_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin STATS_PERSISTENT=0;
+-- --CREATE TABLE `innodb_table_stats` (
+  -- --`database_name` varchar(64) NOT NULL,
+  -- --`table_name` varchar(199) NOT NULL,
+  -- --`last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  -- --`n_rows` bigint(20) unsigned NOT NULL,
+  -- --`clustered_index_size` bigint(20) unsigned NOT NULL,
+  -- --`sum_of_other_index_sizes` bigint(20) unsigned NOT NULL,
+  -- --PRIMARY KEY (`database_name`,`table_name`)
+-- --) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin STATS_PERSISTENT=0;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -448,7 +453,7 @@ CREATE TABLE `plugin` (
   `name` varchar(64) NOT NULL DEFAULT '',
   `dl` varchar(128) NOT NULL DEFAULT '',
   PRIMARY KEY (`name`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='MySQL plugins';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='MySQL plugins';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -481,7 +486,7 @@ CREATE TABLE `proc` (
   `body` longblob NOT NULL,
   `definer` char(141) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
   `created` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `sql_mode` set('REAL_AS_FLOAT','PIPES_AS_CONCAT','ANSI_QUOTES','IGNORE_SPACE','IGNORE_BAD_TABLE_OPTIONS','ONLY_FULL_GROUP_BY','NO_UNSIGNED_SUBTRACTION','NO_DIR_IN_CREATE','POSTGRESQL','ORACLE','MSSQL','DB2','MAXDB','NO_KEY_OPTIONS','NO_TABLE_OPTIONS','NO_FIELD_OPTIONS','MYSQL323','MYSQL40','ANSI','NO_AUTO_VALUE_ON_ZERO','NO_BACKSLASH_ESCAPES','STRICT_TRANS_TABLES','STRICT_ALL_TABLES','NO_ZERO_IN_DATE','NO_ZERO_DATE','INVALID_DATES','ERROR_FOR_DIVISION_BY_ZERO','TRADITIONAL','NO_AUTO_CREATE_USER','HIGH_NOT_PRECEDENCE','NO_ENGINE_SUBSTITUTION','PAD_CHAR_TO_FULL_LENGTH','EMPTY_STRING_IS_NULL','SIMULTANEOUS_ASSIGNMENT','TIME_ROUND_FRACTIONAL') NOT NULL DEFAULT '',
   `comment` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `character_set_client` char(32) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
@@ -490,7 +495,7 @@ CREATE TABLE `proc` (
   `body_utf8` longblob DEFAULT NULL,
   `aggregate` enum('NONE','GROUP') NOT NULL DEFAULT 'NONE',
   PRIMARY KEY (`db`,`name`,`type`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='Stored Procedures';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Stored Procedures';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -520,7 +525,7 @@ CREATE TABLE `procs_priv` (
   `Timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`Host`,`Db`,`User`,`Routine_name`,`Routine_type`),
   KEY `Grantor` (`Grantor`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_bin PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='Procedure privileges';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Procedure privileges';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -549,7 +554,7 @@ CREATE TABLE `proxies_priv` (
   `Timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`Host`,`User`,`Proxied_host`,`Proxied_user`),
   KEY `Grantor` (`Grantor`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_bin PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='User proxy privileges';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='User proxy privileges';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -575,7 +580,7 @@ CREATE TABLE `roles_mapping` (
   `Role` char(80) NOT NULL DEFAULT '',
   `Admin_option` enum('N','Y') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'N',
   UNIQUE KEY `Host` (`Host`,`User`,`Role`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_bin PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='Granted roles';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Granted roles';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -606,7 +611,7 @@ CREATE TABLE `servers` (
   `Wrapper` char(64) NOT NULL DEFAULT '',
   `Owner` char(64) NOT NULL DEFAULT '',
   PRIMARY KEY (`Server_name`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='MySQL Foreign Servers table';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='MySQL Foreign Servers table';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -622,25 +627,28 @@ UNLOCK TABLES;
 -- Table structure for table `table_stats`
 --
 
-DROP TABLE IF EXISTS `table_stats`;
+-- --DROP TABLE IF EXISTS `table_stats`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `table_stats` (
-  `db_name` varchar(64) NOT NULL,
-  `table_name` varchar(64) NOT NULL,
-  `cardinality` bigint(21) unsigned DEFAULT NULL,
-  PRIMARY KEY (`db_name`,`table_name`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_bin PAGE_CHECKSUM=1 TRANSACTIONAL=0 COMMENT='Statistics on Tables';
-/*!40101 SET character_set_client = @saved_cs_client */;
+-- Table structure for table `table_stats`
 
---
+-- DROP TABLE IF EXISTS `table_stats`;
+-- /*!40101 SET @saved_cs_client     = @@character_set_client */;
+-- /*!40101 SET character_set_client = utf8 */;
+-- CREATE TABLE `table_stats` (
+--   `db_name` varchar(64) NOT NULL,
+--   `table_name` varchar(64) NOT NULL,
+--   `cardinality` bigint(21) unsigned DEFAULT NULL,
+--   PRIMARY KEY (`db_name`,`table_name`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Statistics on Tables';
+-- /*!40101 SET character_set_client = @saved_cs_client */;
+
 -- Dumping data for table `table_stats`
---
 
-LOCK TABLES `table_stats` WRITE;
-/*!40000 ALTER TABLE `table_stats` DISABLE KEYS */;
-/*!40000 ALTER TABLE `table_stats` ENABLE KEYS */;
-UNLOCK TABLES;
+-- LOCK TABLES `table_stats` WRITE;
+-- /*!40000 ALTER TABLE `table_stats` DISABLE KEYS */;
+-- /*!40000 ALTER TABLE `table_stats` ENABLE KEYS */;
+-- UNLOCK TABLES;
 
 --
 -- Table structure for table `tables_priv`
@@ -660,7 +668,7 @@ CREATE TABLE `tables_priv` (
   `Column_priv` set('Select','Insert','Update','References') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`Host`,`Db`,`User`,`Table_name`),
   KEY `Grantor` (`Grantor`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_bin PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='Table privileges';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Table privileges';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -683,7 +691,7 @@ CREATE TABLE `time_zone` (
   `Time_zone_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `Use_leap_seconds` enum('Y','N') NOT NULL DEFAULT 'N',
   PRIMARY KEY (`Time_zone_id`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='Time zones';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Time zones';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -706,7 +714,7 @@ CREATE TABLE `time_zone_leap_second` (
   `Transition_time` bigint(20) NOT NULL,
   `Correction` int(11) NOT NULL,
   PRIMARY KEY (`Transition_time`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='Leap seconds information for time zones';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Leap seconds information for time zones';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -729,7 +737,7 @@ CREATE TABLE `time_zone_name` (
   `Name` char(64) NOT NULL,
   `Time_zone_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`Name`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='Time zone names';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Time zone names';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -753,7 +761,7 @@ CREATE TABLE `time_zone_transition` (
   `Transition_time` bigint(20) NOT NULL,
   `Transition_type_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`Time_zone_id`,`Transition_time`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='Time zone transitions';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Time zone transitions';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -779,7 +787,7 @@ CREATE TABLE `time_zone_transition_type` (
   `Is_DST` tinyint(3) unsigned NOT NULL DEFAULT 0,
   `Abbreviation` char(8) NOT NULL DEFAULT '',
   PRIMARY KEY (`Time_zone_id`,`Transition_type_id`)
-) ENGINE=Aria DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci PAGE_CHECKSUM=1 TRANSACTIONAL=1 COMMENT='Time zone transition types';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci COMMENT='Time zone transition types';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -858,8 +866,8 @@ SET character_set_client = @saved_cs_client;
 CREATE TABLE IF NOT EXISTS `transaction_registry` (
   `transaction_id` bigint(20) unsigned NOT NULL,
   `commit_id` bigint(20) unsigned NOT NULL,
-  `begin_timestamp` timestamp(6) NOT NULL DEFAULT '0000-00-00 00:00:00.000000',
-  `commit_timestamp` timestamp(6) NOT NULL DEFAULT '0000-00-00 00:00:00.000000',
+  `begin_timestamp` timestamp(6) NOT NULL DEFAULT current_timestamp(6),
+  `commit_timestamp` timestamp(6) NOT NULL DEFAULT current_timestamp(6),
   `isolation_level` enum('READ-UNCOMMITTED','READ-COMMITTED','REPEATABLE-READ','SERIALIZABLE') NOT NULL,
   PRIMARY KEY (`transaction_id`),
   UNIQUE KEY `commit_id` (`commit_id`),
@@ -872,20 +880,16 @@ CREATE TABLE IF NOT EXISTS `transaction_registry` (
 -- Final view structure for view `user`
 --
 
-CREATE ALGORITHM=UNDEFINED */
-/DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-VIEW `user` AS select `global_priv`.`Host` AS `Host`,`global_priv`.`User` AS `User`,if(json_value(`global_priv`.`Priv`,'$.plugin') in ('mysql_native_password','mysql_old_password'),ifnull(json_value(`global_priv`.`Priv`,'$.authentication_string'),''),'') AS `Password`,if(json_value(`global_priv`.`Priv`,'$.access') & 1,'Y','N') AS `Select_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 2,'Y','N') AS `Insert_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 4,'Y','N') AS `Update_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 8,'Y','N') AS `Delete_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 16,'Y','N') AS `Create_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 32,'Y','N') AS `Drop_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 64,'Y','N') AS `Reload_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 128,'Y','N') AS `Shutdown_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 256,'Y','N') AS `Process_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 512,'Y','N') AS `File_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 1024,'Y','N') AS `Grant_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 2048,'Y','N') AS `References_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 4096,'Y','N') AS `Index_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 8192,'Y','N') AS `Alter_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 16384,'Y','N') AS `Show_db_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 32768,'Y','N') AS `Super_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 65536,'Y','N') AS `Create_tmp_table_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 131072,'Y','N') AS `Lock_tables_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 262144,'Y','N') AS `Execute_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 524288,'Y','N') AS `Repl_slave_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 1048576,'Y','N') AS `Repl_client_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 2097152,'Y','N') AS `Create_view_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 4194304,'Y','N') AS `Show_view_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 8388608,'Y','N') AS `Create_routine_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 16777216,'Y','N') AS `Alter_routine_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 33554432,'Y','N') AS `Create_user_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 67108864,'Y','N') AS `Event_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 134217728,'Y','N') AS `Trigger_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 268435456,'Y','N') AS `Create_tablespace_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 536870912,'Y','N') AS `Delete_history_priv`,elt(ifnull(json_value(`global_priv`.`Priv`,'$.ssl_type'),0) + 1,'','ANY','X509','SPECIFIED') AS `ssl_type`,ifnull(json_value(`global_priv`.`Priv`,'$.ssl_cipher'),'') AS `ssl_cipher`,ifnull(json_value(`global_priv`.`Priv`,'$.x509_issuer'),'') AS `x509_issuer`,ifnull(json_value(`global_priv`.`Priv`,'$.x509_subject'),'') AS `x509_subject`,cast(ifnull(json_value(`global_priv`.`Priv`,'$.max_questions'),0) as unsigned) AS `max_questions`,cast(ifnull(json_value(`global_priv`.`Priv`,'$.max_updates'),0) as unsigned) AS `max_updates`,cast(ifnull(json_value(`global_priv`.`Priv`,'$.max_connections'),0) as unsigned) AS `max_connections`,cast(ifnull(json_value(`global_priv`.`Priv`,'$.max_user_connections'),0) as signed) AS `max_user_connections`,ifnull(json_value(`global_priv`.`Priv`,'$.plugin'),'') AS `plugin`,ifnull(json_value(`global_priv`.`Priv`,'$.authentication_string'),'') AS `authentication_string`,'N' AS `password_expired`,elt(ifnull(json_value(`global_priv`.`Priv`,'$.is_role'),0) + 1,'N','Y') AS `is_role`,ifnull(json_value(`global_priv`.`Priv`,'$.default_role'),'') AS `default_role`,cast(ifnull(json_value(`global_priv`.`Priv`,'$.max_statement_time'),0.0) as decimal(12,6)) AS `max_statement_time` from `global_priv` */;
+DROP VIEW IF EXISTS `user`;
+
+CREATE ALGORITHM=UNDEFINED
+DEFINER=`root`@`localhost` SQL SECURITY DEFINER
+VIEW `user` AS select `global_priv`.`Host` AS `Host`,`global_priv`.`User` AS `User`,if(json_value(`global_priv`.`Priv`,'$.plugin') in ('mysql_native_password','mysql_old_password'),ifnull(json_value(`global_priv`.`Priv`,'$.authentication_string'),''),'') AS `Password`,if(json_value(`global_priv`.`Priv`,'$.access') & 1,'Y','N') AS `Select_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 2,'Y','N') AS `Insert_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 4,'Y','N') AS `Update_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 8,'Y','N') AS `Delete_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 16,'Y','N') AS `Create_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 32,'Y','N') AS `Drop_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 64,'Y','N') AS `Reload_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 128,'Y','N') AS `Shutdown_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 256,'Y','N') AS `Process_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 512,'Y','N') AS `File_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 1024,'Y','N') AS `Grant_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 2048,'Y','N') AS `References_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 4096,'Y','N') AS `Index_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 8192,'Y','N') AS `Alter_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 16384,'Y','N') AS `Show_db_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 32768,'Y','N') AS `Super_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 65536,'Y','N') AS `Create_tmp_table_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 131072,'Y','N') AS `Lock_tables_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 262144,'Y','N') AS `Execute_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 524288,'Y','N') AS `Repl_slave_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 1048576,'Y','N') AS `Repl_client_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 2097152,'Y','N') AS `Create_view_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 4194304,'Y','N') AS `Show_view_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 8388608,'Y','N') AS `Create_routine_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 16777216,'Y','N') AS `Alter_routine_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 33554432,'Y','N') AS `Create_user_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 67108864,'Y','N') AS `Event_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 134217728,'Y','N') AS `Trigger_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 268435456,'Y','N') AS `Create_tablespace_priv`,if(json_value(`global_priv`.`Priv`,'$.access') & 536870912,'Y','N') AS `Delete_history_priv`,elt(ifnull(json_value(`global_priv`.`Priv`,'$.ssl_type'),0) + 1,'','ANY','X509','SPECIFIED') AS `ssl_type`,ifnull(json_value(`global_priv`.`Priv`,'$.ssl_cipher'),'') AS `ssl_cipher`,ifnull(json_value(`global_priv`.`Priv`,'$.x509_issuer'),'') AS `x509_issuer`,ifnull(json_value(`global_priv`.`Priv`,'$.x509_subject'),'') AS `x509_subject`,cast(ifnull(json_value(`global_priv`.`Priv`,'$.max_questions'),0) as unsigned) AS `max_questions`,cast(ifnull(json_value(`global_priv`.`Priv`,'$.max_updates'),0) as unsigned) AS `max_updates`,cast(ifnull(json_value(`global_priv`.`Priv`,'$.max_connections'),0) as unsigned) AS `max_connections`,cast(ifnull(json_value(`global_priv`.`Priv`,'$.max_user_connections'),0) as signed) AS `max_user_connections`,ifnull(json_value(`global_priv`.`Priv`,'$.plugin'),'') AS `plugin`,ifnull(json_value(`global_priv`.`Priv`,'$.authentication_string'),'') AS `authentication_string`,'N' AS `password_expired`,elt(ifnull(json_value(`global_priv`.`Priv`,'$.is_role'),0) + 1,'N','Y') AS `is_role`,ifnull(json_value(`global_priv`.`Priv`,'$.default_role'),'') AS `default_role`,cast(ifnull(json_value(`global_priv`.`Priv`,'$.max_statement_time'),0.0) as decimal(12,6)) AS `max_statement_time` from `global_priv`;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2025-01-10 23:59:42
