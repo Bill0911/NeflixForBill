@@ -103,6 +103,7 @@ GRANT EXECUTE ON PROCEDURE `netflix`.`GetManyProfiles` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetManySeriesProfileWatchlists` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetManySeriesViewCounts` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetManyUsers` TO api;
+GRANT EXECUTE ON PROCEDURE `netflix`.`GetManySeries` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetMovieById` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetMoviesProfileWatchlist` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetMovieViewCount` TO api;
