@@ -68,8 +68,10 @@ public class UserService {
         System.out.println("CHECKPOINT - 6");
         user.setPassword(encodedPassword);
         System.out.println("CHECKPOINT - 7");
-        userRepository.save(user); // Save the user directly using the repository
+        //userRepository.save(user); // Save the user directly using the repository
         System.out.println("CHECKPOINT - 9");
+
+        this.addUser(user);
 
         // Debug statement to check the encoded password
         System.out.println("Encoded password during registration: " + encodedPassword);
