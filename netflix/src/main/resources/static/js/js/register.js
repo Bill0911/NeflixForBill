@@ -7,21 +7,28 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const subscription = document.getElementById('subscription').value;
     const language = document.getElementById('language').value;
     const termsAccepted = document.getElementById('terms').checked;
-    const subscription = "SD";
 
     if (!termsAccepted) {
         alert('You must agree to the Terms and Conditions.');
         return;
     }
 
+    // Validate input data
+    const validSubscriptions = ['SD', 'HD', 'UHD'];
+    if (!validSubscriptions.includes(subscription)) {
+        alert('Invalid subscription type.');
+        return;
+    }
+
     const payload = {
         email,
         password,
-        subscription,
         paymentMethod,
-        language: parseInt(language),
-        subscription
+        subscription,
+        language: parseInt(language)
     };
+
+    console.log('Payload:', payload); // Log the payload
 
     try {
         const response = await fetch('http://localhost:8081/api/users/register', {

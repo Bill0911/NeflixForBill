@@ -120,10 +120,18 @@ CREATE PROCEDURE `AddSeriesViewCount` (IN `p_accountId` INT, IN `p_seriesId` INT
     AND series_id = p_seriesId;
 END$$
 
-CREATE PROCEDURE `AddUser` (IN `p_email` VARCHAR(255), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_language_id` INT(11), IN `p_subscription` ENUM('SD','HD','UHD'))   BEGIN
+CREATE PROCEDURE `AddUser` (
+    IN `p_email` VARCHAR(255),
+    IN `p_password` VARCHAR(255),
+    IN `p_payment_method` VARCHAR(255),
+    IN `p_language_id` INT(11),
+    IN `p_subscription` ENUM('SD','HD','UHD')
+)
+BEGIN
     INSERT INTO `user` (`email`, `password`, `payment_method`, `language_id`, `subscription`)
     VALUES (p_email, p_password, p_payment_method, p_language_id, p_subscription);
 END$$
+
 
 CREATE PROCEDURE `DeleteEpisode` (IN `p_episode_id` INT)   BEGIN
     DELETE FROM `episode` WHERE `episode_id` = p_episode_id;

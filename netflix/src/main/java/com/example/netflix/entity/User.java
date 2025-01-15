@@ -1,7 +1,9 @@
 package com.example.netflix.entity;
 
+import com.example.netflix.entity.Role;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "user")
@@ -19,8 +21,8 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column()
-    private SubscriptionType subscription = SubscriptionType.SD; // Default subscription
+    @Column(nullable = false)
+    private SubscriptionType subscription;
 
     @Column(name = "trial_start_date")
     private LocalDateTime trialStartDate = LocalDateTime.now(); // Default to current time
@@ -30,7 +32,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column()
-    private Role role = Role.VIEWER; // Default role
+    private Role role = Role.VIEWER;// Default role
 
     @Column(name = "active", columnDefinition = "bit(1) DEFAULT 0")
     private boolean isActive = false;
