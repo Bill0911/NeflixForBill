@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+hdocument.addEventListener("DOMContentLoaded", () => {
     const loadTableButton = document.getElementById("loadTable");
     const tableSelect = document.getElementById("tableSelect");
     const tableContainer = document.getElementById("tableContainer");

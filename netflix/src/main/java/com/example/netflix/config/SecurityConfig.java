@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())  // Disable CSRF for APIs
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/login", "/api/languages", "/api/genres/**", "/api/users/register", "/api/users/activate", "/api/users/request-password-reset", "/api/users/reset-password", "/api/movies/**", "/api/movie-view-count/**", "/api/series/**", "/api/users/**", "/api/movie-watchlist/**", "/api/series-watchlist/**", "/api/series/**", "/api/profiles/**", "/api/profiles/watch-movie", "/api/profiles/watch-series", "/api/genre-for-series/**", "/api/preferences/**", "/api/payments", "api/users/invite", "api/admin/endpoints", "/error").permitAll()
+                        .requestMatchers("/api/series-view-count/**","/api/users/login", "/api/languages/**", "/api/genres/**", "/api/users/register", "/api/users/activate", "/api/users/request-password-reset", "/api/users/reset-password", "/api/movies/**", "/api/movie-view-count/**", "/api/series/**", "/api/users/**", "/api/movie-watchlist/**", "/api/series-watchlist/**", "/api/series/**", "/api/profiles/**", "/api/profiles/watch-movie", "/api/profiles/watch-series", "/api/genre-for-series/**", "/api/preferences/**", "/api/payments", "api/users/invite", "api/admin/endpoints", "/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
