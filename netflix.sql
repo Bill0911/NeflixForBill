@@ -7,6 +7,12 @@ DELIMITER $$
 --
 -- Procedures
 --
+
+CREATE PROCEDURE `GetProfilesByAccountId` (IN `p_account_id` BIGINT(20))   BEGIN
+    SELECT * FROM `profile`
+    WHERE `account_id` = p_account_id;
+END$$
+
 CREATE PROCEDURE `AddEpisode` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     INSERT INTO `episode` (`title`, `duration`, `series_id`)
     VALUES (p_title, p_duration, p_series_id);
@@ -249,59 +255,59 @@ CREATE PROCEDURE `GetLanguageById` (IN `p_language_id` INT)   BEGIN
 END$$
 
 CREATE PROCEDURE `GetManyEpisodes` ()   BEGIN
-    SELECT * FROM `episode` LIMIT 49;
+    SELECT * FROM `episode`;
 END$$
 
     CREATE PROCEDURE `GetManyProfiles` ()   BEGIN
-        SELECT * FROM `profile` LIMIT 49;
+        SELECT * FROM `profile`;
     END$$
 
 CREATE PROCEDURE `GetManyMovies` ()   BEGIN
-    SELECT * FROM `movie` LIMIT 49;
+    SELECT * FROM `movie`;
 END$$
 
 CREATE PROCEDURE `GetManySeries` ()  BEGIN
-    SELECT * FROM `series` LIMIT 49;
+    SELECT * FROM `series`;
 END$$
 
 CREATE PROCEDURE `GetManyLanguages` ()   BEGIN
-    SELECT * FROM `language` LIMIT 49;
+    SELECT * FROM `language`;
 END$$
 
 CREATE PROCEDURE `GetManyGenreForMovies` ()   BEGIN
-    SELECT * FROM `genreformovie` LIMIT 49;
+    SELECT * FROM `genreformovie`;
 END$$
 
 CREATE PROCEDURE `GetManyGenreForSeries` ()   BEGIN
-    SELECT * FROM `genreforseries` LIMIT 49;
+    SELECT * FROM `genreforseries`;
 END$$
 
 CREATE PROCEDURE `GetManyGenreForUsers` ()   BEGIN
-    SELECT * FROM `genreforuser` LIMIT 49;
+    SELECT * FROM `genreforuser`;
 END$$
 
 CREATE PROCEDURE `GetManyGenres` ()   BEGIN
-    SELECT * FROM `genre` LIMIT 49;
+    SELECT * FROM `genre`;
 END$$
 
 CREATE PROCEDURE `GetManyMoviesProfileWatchlists` ()   BEGIN
-    SELECT * FROM `moviesprofilewatchlist` LIMIT 49;
+    SELECT * FROM `moviesprofilewatchlist`;
 END$$
 
 CREATE PROCEDURE `GetManyMovieViewCounts` ()   BEGIN
-    SELECT * FROM `movieviewcount` LIMIT 49;
+    SELECT * FROM `movieviewcount`;
 END$$
 
 CREATE PROCEDURE `GetManySeriesProfileWatchlists` ()   BEGIN
-    SELECT * FROM `seriesprofilewatchlist` LIMIT 49;
+    SELECT * FROM `seriesprofilewatchlist`;
 END$$
 
 CREATE PROCEDURE `GetManySeriesViewCounts` ()   BEGIN
-    SELECT * FROM `seriesviewcount` LIMIT 49;
+    SELECT * FROM `seriesviewcount`;
 END$$
 
 CREATE PROCEDURE `GetManyUsers` ()   BEGIN
-    SELECT * FROM `user` LIMIT 49;
+    SELECT * FROM `user`;
 END$$
 
 CREATE PROCEDURE `GetMovieById` (IN `p_movie_id` INT)   BEGIN

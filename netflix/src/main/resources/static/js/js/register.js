@@ -4,6 +4,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const paymentMethod = document.getElementById('paymentMethod').value;
+    const subscription = document.getElementById('subscription').value;
     const language = document.getElementById('language').value;
     const termsAccepted = document.getElementById('terms').checked;
     const subscription = "SD";
@@ -16,6 +17,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const payload = {
         email,
         password,
+        subscription,
         paymentMethod,
         language: parseInt(language),
         subscription

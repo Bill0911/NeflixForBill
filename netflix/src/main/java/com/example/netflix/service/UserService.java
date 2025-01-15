@@ -90,47 +90,6 @@ public class UserService {
         userRepository.patchByAccountId(id, null, null, true, null, null, null, null, null, null, null, null,  null);
     }
 
-//    public User loginUser(String email, String password) {
-//        User user = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//        Integer id = user.getAccountId();
-//        // Debug statement to check if the user is found
-//        System.out.println("User found: " + user.getEmail());
-//
-//        // Check if account is blocked
-//        if (user.isIsBlocked()) {
-//            throw new RuntimeException("Account is blocked due to too many failed login attempts.");
-//        }
-//
-//        // Debug statement to check the stored password
-//        System.out.println("Stored password: " + user.getPassword());
-//        System.out.println("Password to verify: " + password);
-//
-//        // Verify password
-//        if (!passwordEncoder.matches(password, user.getPassword())) {
-//            // Increment failed attempts and block account if necessary
-//            int failedAttempts = user.getFailedLoginAttempts() + 1;
-//            userRepository.patchByAccountId(id, null, null, null, null, null, null, null, null, null, failedAttempts, null,  null);
-//
-//            if (failedAttempts >= 3) {
-//                userRepository.patchByAccountId(id, null, null, null, true, null, null, null, null, null, null, LocalDateTime.now(),  null);
-//                throw new RuntimeException("Invalid credentials. The account has been blocked :(");
-//            }
-//            // Debug statement to check failed attempts
-//            System.out.println("Failed attempts: " + failedAttempts);
-//
-//            throw new RuntimeException("Invalid credentials");
-//        }
-//
-//        // Reset failed attempts on successful login
-//        userRepository.patchByAccountId(id, null, null, null, null, null, null, null, null, null, 0, null,  null);
-//
-//        // Debug statement to confirm successful login
-//        System.out.println("Login successful for user: " + user.getEmail());
-//
-//        return user; // Return full User object
-//    }
-
     public User loginUser(String email, String password) {
         email = email.trim();
         System.out.println("Attempting login for email: " + email);
@@ -212,26 +171,11 @@ public class UserService {
         userRepository.updateByAccountId(accountId, user.getPassword(), user.getPaymentMethod(), user.isActive(), user.isBlocked(), user.getSubscription(), user.getTrialStartDate(), user.getTrialEndDate(), user.getAccountId(), user.getRole(), user.getFailedLoginAttempts(), user.getLockTime(), user.isDiscount());
     }
 
-    public void enforceRoleRestriction (String token, Role requiredRole) throws AccessDeniedException {
-        int id = jwtUtil.extractId(token.substring(7));
-        Role authedUserRole = getUserById(id).getRole();
-        if (authedUserRole.isLowerThan(requiredRole))
-        {
-            throw new AccessDeniedException("Access denied. Minimal required level - " + requiredRole);
-        }
-    }
-
     private Date calculateExpiryDate(int expiryTimeInMinutes) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.MINUTE, expiryTimeInMinutes);
         return new Date(cal.getTime().getTime());
-    }
-
-    public boolean isAccountBlocked(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return user.isBlocked();
     }
 
     public void requestPasswordReset(String email)
