@@ -6,30 +6,36 @@
     <link rel="stylesheet" href="../css/table-style.css">
     <title>Database Table Display</title>
 </head>
-<body>
-<div class="container">
-    <h1>Database Table Junior</h1>
+    <body>
+        <div class="container">
+            <h1>Database Table Junior</h1>
 
-    <div>
-        <label for="tableSelect">Select Table:</label>
-        <select id="tableSelect">
-            <option value="users">Users</option>
-            <option value="movies">Movies</option>
-            <option value="episodes">Episodes</option>
-        </select>
-        <button id="loadTable">Load Table</button>
-    </div>
+            <div>
+                <label for="tableSelect">Select Table:</label>
+                <select id="tableSelect">
+                    <option value="users">user</option>
+                    <option value="movies">movie</option>
+                    <option value="episodes">episode</option>
+                    <option value="genres">genre</option>
+                    <option value="languages">language</option>
+                    <option value="series">series</option>
+                    <option value="invitations">invitation</option>
+                    <option value="profiles">profile</option>
+                </select>
+                <button id="loadTable">Load Table</button>
+            </div>
 
-    <div id="tableContainer"></div>
+            <div id="tableContainer"></div>
 
-    <div id="formContainer">
-        <h2>Add/Edit Entry</h2>
-        <form id="crudForm">
-            <div id="formFields"></div>
-            <button type="submit">Save</button>
-        </form>
-    </div>
-</div>
-<script src="../js/junior-access.js"></script>
-</body>
+            <div id="formContainer">
+                <h2>Add/Edit Entry</h2>
+                <form id="crudForm">
+                    <div id="formFields"></div>
+                    <button type="submit">Save</button>
+                </form>
+            </div>
+        </div>
+
+        <script src="../js/junior-access.js"></script>
+    </body>
 </html>

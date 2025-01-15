@@ -1,63 +1,68 @@
-document.getElementById('loadTable').addEventListener('click', async () => {
-    const tableName = document.getElementById('tableSelect').value;
-    const tableContainer = document.getElementById('tableContainer');
+document.addEventListener("DOMContentLoaded", () => {
+    const tableSelect = document.getElementById("tableSelect");
+    const loadTableButton = document.getElementById("loadTable");
+    const tableContainer = document.getElementById("tableContainer");
 
-    try {
-        const response = await fetch(`http://localhost:8081/api/${tableName}`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch data for table: ${tableName}`);
+    // Hide payment option from Junior users
+    if (tableSelect) {
+        Array.from(tableSelect.options).forEach(option => {
+            if (option.value === "payments") {
+                option.style.display = "none";
+            }
+        });
+    }
+
+    loadTableButton.addEventListener("click", () => {
+        const selectedTable = tableSelect.value;
+        if (selectedTable !== "payments") { // Prevent loading payment table
+            loadTableData(selectedTable);
+        } else {
+            alert("You do not have permission to access this data.");
+        }
+    });
+
+    async function loadTableData(tableName) {
+        const response = await fetch(`http://localhost:8081/api/${tableName}`, {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+        });
+        const data = await response.json();
+        renderTable(data, tableName);
+    }
+
+    function renderTable(data, tableName) {
+        tableContainer.innerHTML = "";
+        if (data.length === 0) {
+            tableContainer.innerHTML = "<p>No data available.</p>";
+            return;
         }
 
-        const data = await response.json();
+        const table = document.createElement("table");
+        const headerRow = document.createElement("tr");
 
-        // Clear previous table content
-        tableContainer.innerHTML = '';
-
-        // Build table dynamically
-        const table = document.createElement('table');
-        const headerRow = document.createElement('tr');
-
-        // Generate headers
-        Object.keys(data[0]).forEach((key) => {
-            const th = document.createElement('th');
-            th.textContent = key;
-            headerRow.appendChild(th);
+        // Filter out sensitive columns
+        Object.keys(data[0]).forEach(key => {
+            if (!["email", "password"].includes(key)) {
+                const th = document.createElement("th");
+                th.textContent = key;
+                headerRow.appendChild(th);
+            }
         });
-
-        // Add action column
-        const actionTh = document.createElement('th');
-        actionTh.textContent = 'Actions';
-        headerRow.appendChild(actionTh);
 
         table.appendChild(headerRow);
 
-        // Generate rows
-        data.forEach((row) => {
-            const tr = document.createElement('tr');
-            Object.values(row).forEach((value) => {
-                const td = document.createElement('td');
-                td.textContent = value;
-                tr.appendChild(td);
+        data.forEach(item => {
+            const row = document.createElement("tr");
+            Object.entries(item).forEach(([key, value]) => {
+                if (!["email", "password"].includes(key)) {
+                    const td = document.createElement("td");
+                    td.textContent = value;
+                    row.appendChild(td);
+                }
             });
-
-            // Add edit and delete buttons
-            const actionTd = document.createElement('td');
-            const editButton = document.createElement('button');
-            editButton.textContent = 'Edit';
-            editButton.addEventListener('click', () => loadFormData(row));
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Delete';
-            deleteButton.addEventListener('click', () => deleteRow(row.id, tableName));
-
-            actionTd.appendChild(editButton);
-            actionTd.appendChild(deleteButton);
-            tr.appendChild(actionTd);
-
-            table.appendChild(tr);
+            table.appendChild(row);
         });
 
         tableContainer.appendChild(table);
-    } catch (error) {
-        console.error('Error loading table:', error);
     }
 });
