@@ -7,6 +7,12 @@ DELIMITER $$
 --
 -- Procedures
 --
+
+CREATE PROCEDURE `GetProfilesByAccountId` (IN `p_account_id` BIGINT(20))   BEGIN
+    SELECT * FROM `profile`
+    WHERE `account_id` = p_account_id;
+END$$
+
 CREATE PROCEDURE `AddEpisode` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     INSERT INTO `episode` (`title`, `duration`, `series_id`)
     VALUES (p_title, p_duration, p_series_id);
