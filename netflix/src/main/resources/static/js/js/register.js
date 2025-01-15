@@ -6,6 +6,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const paymentMethod = document.getElementById('paymentMethod').value;
     const language = document.getElementById('language').value;
     const termsAccepted = document.getElementById('terms').checked;
+    const subscription = "SD";
 
     if (!termsAccepted) {
         alert('You must agree to the Terms and Conditions.');
@@ -17,6 +18,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         password,
         paymentMethod,
         language: parseInt(language),
+        subscription
     };
 
     try {
