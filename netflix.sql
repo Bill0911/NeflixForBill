@@ -260,6 +260,10 @@ CREATE PROCEDURE `GetManyMovies` ()   BEGIN
     SELECT * FROM `movie` LIMIT 49;
 END$$
 
+CREATE PROCEDURE `GetManySeries` ()  BEGIN
+    SELECT * FROM `series` LIMIT 49;
+END$$
+
 CREATE PROCEDURE `GetManyLanguages` ()   BEGIN
     SELECT * FROM `language` LIMIT 49;
 END$$
@@ -1099,7 +1103,8 @@ FROM netflix.user;
 -- Indexes for dumped tables
 --
 
-
+CREATE VIEW `user_for_junior` AS SELECT `account_id`,  `trial_start_date`, `trial_end_date`, `language_id`, `role` 
+FROM netflix.user;
 
 --
 -- Indexes for table `episode`
