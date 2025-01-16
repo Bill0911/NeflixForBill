@@ -42,33 +42,67 @@ public class UserController {
         throw new RuntimeException("Invalid Authorization header");
     }
 
+//    @PostMapping("/register")
+//    public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
+//        try {
+//            System.out.println("CHECKPOINT - 1: Received registration request for user: " + user.getEmail());
+//            System.out.println("Subscription: " + user.getSubscription()); // Log the subscription
+//
+//            // Validate subscription value
+//            SubscriptionType subscription = user.getSubscription();
+//            if (subscription != SubscriptionType.SD && subscription != SubscriptionType.HD && subscription != SubscriptionType.UHD) {
+//                throw new RuntimeException("Invalid subscription type: " + subscription);
+//            }
+//
+//            User registeredUser = userService.register(user);
+//            System.out.println("CHECKPOINT - 2: User registered successfully: " + registeredUser.getEmail());
+//            String token = jwtUtil.generateActivationToken(registeredUser.getEmail());
+//            System.out.println("CHECKPOINT - 3: Activation token generated: " + token);
+//            String activationLink = "http://localhost:8081/api/users/activate?token=" + token;
+//            System.out.println("CHECKPOINT - 4: Activation link generated: " + activationLink);
+//
+//            return ResponseEntity.ok(Map.of(
+//                    "activationLink", activationLink
+//            ));
+//        } catch (RuntimeException e) {
+//            System.out.println("CHECKPOINT - error: " + e.getMessage());
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+//                    "error", e.getMessage()
+//            ));
+//        }
+//    }
+
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@RequestBody User user) {
         try {
             System.out.println("CHECKPOINT - 1: Received registration request for user: " + user.getEmail());
-            System.out.println("Subscription: " + user.getSubscription()); // Log the subscription
 
-            // Validate subscription value
-            SubscriptionType subscription = user.getSubscription();
-            if (subscription != SubscriptionType.SD && subscription != SubscriptionType.HD && subscription != SubscriptionType.UHD) {
+            // Convert enum to string that matches the database ENUM type
+            String subscription = user.getSubscription().toString(); // This will return "SD", "HD", or "UHD"
+            System.out.println("Subscription: " + subscription); // Log the subscription
+
+            // Validate subscription value to ensure it matches ENUM in database
+            if (!subscription.equals("SD") && !subscription.equals("HD") && !subscription.equals("UHD")) {
                 throw new RuntimeException("Invalid subscription type: " + subscription);
             }
 
+            // Assuming userService.register actually processes the registration and stores the user
             User registeredUser = userService.register(user);
             System.out.println("CHECKPOINT - 2: User registered successfully: " + registeredUser.getEmail());
+
+            // Generate activation token
             String token = jwtUtil.generateActivationToken(registeredUser.getEmail());
             System.out.println("CHECKPOINT - 3: Activation token generated: " + token);
+
+            // Construct activation link
             String activationLink = "http://localhost:8081/api/users/activate?token=" + token;
             System.out.println("CHECKPOINT - 4: Activation link generated: " + activationLink);
 
-            return ResponseEntity.ok(Map.of(
-                    "activationLink", activationLink
-            ));
+            // Send response
+            return ResponseEntity.ok(Map.of("activationLink", activationLink));
         } catch (RuntimeException e) {
             System.out.println("CHECKPOINT - error: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-                    "error", e.getMessage()
-            ));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
 

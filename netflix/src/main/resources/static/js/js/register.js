@@ -1,11 +1,11 @@
 document.getElementById('registerForm').addEventListener('submit', async function (e) {
     e.preventDefault(); // Prevent form default submission
 
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
     const paymentMethod = document.getElementById('paymentMethod').value;
     const subscription = document.getElementById('subscription').value;
-    const language = document.getElementById('language').value;
+    const language = parseInt(document.getElementById('language').value, 10);
     const termsAccepted = document.getElementById('terms').checked;
 
     if (!termsAccepted) {
@@ -13,7 +13,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         return;
     }
 
-    // Validate input data
+    // Ensure the subscription type is valid
     const validSubscriptions = ['SD', 'HD', 'UHD'];
     if (!validSubscriptions.includes(subscription)) {
         alert('Invalid subscription type.');
@@ -25,10 +25,10 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         password,
         paymentMethod,
         subscription,
-        language: parseInt(language)
+        language
     };
 
-    console.log('Payload:', payload); // Log the payload
+    console.log('Payload:', payload); // Log the payload for debugging
 
     try {
         const response = await fetch('http://localhost:8081/api/users/register', {
@@ -39,26 +39,16 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             body: JSON.stringify(payload),
         });
 
-        // Debugging the raw response
-        console.log('Raw response:', response);
+        const responseData = await response.json(); // Parse JSON response
 
-        // Handle non-OK responses
         if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error response text:', errorText);
-            alert(`Registration failed: ${errorText}`);
-            return;
+            throw new Error(responseData.error || 'Failed to register');
         }
 
-        // Parse and handle JSON response
-        const data = await response.json();
-        console.log('Registration successful:', data);
-
-        // Show activation link or success message
-        alert('Registration successful! Check your email for the activation link.');
-        console.log('Activation Link:', data.activationLink);
+        alert('Registration successful! Please check your email to activate your account.');
+        console.log('Activation Link:', responseData.activationLink);
     } catch (error) {
         console.error('Error occurred during registration:', error);
-        alert('Something went wrong. Please try again.');
+        alert(error.message);
     }
 });
