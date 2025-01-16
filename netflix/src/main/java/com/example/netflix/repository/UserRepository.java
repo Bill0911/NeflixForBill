@@ -60,22 +60,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
                           @Param("lockTime") LocalDateTime lockTime,
                           @Param("discount") Boolean discount);
 
-    @Transactional
-    @Query(value = "CALL PatchUser(:accountId, :password, :paymentMethod, :active, :blocked, :subscription, :trialStartDate, :trialEndDate, :languageId, :role, :failedAttempts, :lockTime, :discount)", nativeQuery = true)
-    SubscriptionType patchByAccountIAndReturnSubscription(@Param("accountId") Integer accountId,
-                          @Param("password") String password,
-                          @Param("paymentMethod") String paymentMethod,
-                          @Param("active") Boolean active,
-                          @Param("blocked") Boolean blocked,
-                          @Param("subscription") SubscriptionType subscription,
-                          @Param("trialStartDate") LocalDateTime trialStartDate,
-                          @Param("trialEndDate") LocalDateTime trialEndDate,
-                          @Param("languageId") Integer languageId,
-                          @Param("role") Role role,
-                          @Param("failedAttempts") Integer failedAttempts,
-                          @Param("lockTime") LocalDateTime lockTime,
-                          @Param("discount") Boolean discount);
-
     @Modifying
     @Transactional
     @Query(value = "CALL UpdateUser(:accountId, :password, :paymentMethod, :active, :blocked, :subscription, :trialStartDate, :trialEndDate, :languageId, :role, :failedAttempts, :lockTime, :discount)", nativeQuery = true)

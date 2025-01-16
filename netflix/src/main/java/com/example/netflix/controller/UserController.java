@@ -162,8 +162,8 @@ public class UserController {
     public ResponseEntity<String> patchUserById(@PathVariable Integer id, @RequestBody User user) throws Exception {
 //        userService.enforceRoleRestriction(token, Role.SENIOR);
         System.out.println("role:" + user.getRole() + " and subs:" + user.getSubscription());
-        SubscriptionType subscriptionType = userService.patchUserById(id, user);
-        return ResponseEntity.ok("User has been updated successfully. Subscription should be set to " + subscriptionType);
+        userService.patchUserById(id, user);
+        return ResponseEntity.ok("User has been updated successfully. Subscription should be set to ");
     }
 
     @PutMapping("{id}")

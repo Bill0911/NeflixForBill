@@ -160,9 +160,9 @@ public class UserService {
         userRepository.deleteByAccountId(accountId);
     }
 
-    public SubscriptionType patchUserById(Integer accountId, User user) {
+    public void patchUserById(Integer accountId, User user) {
         System.out.println("role:" + user.getRole() + " and subs:" + user.getSubscription());
-        return userRepository.patchByAccountIAndReturnSubscription(accountId, user.getPassword(), user.getPaymentMethod(), user.isActive(), user.isBlocked(), user.getSubscription(), user.getTrialStartDate(), user.getTrialEndDate(), user.getAccountId(), user.getRole(), user.getFailedLoginAttempts(), user.getLockTime(), user.isDiscount());
+        userRepository.patchByAccountId(accountId, user.getPassword(), user.getPaymentMethod(), user.isActive(), user.isBlocked(), user.getSubscription(), user.getTrialStartDate(), user.getTrialEndDate(), user.getAccountId(), user.getRole(), user.getFailedLoginAttempts(), user.getLockTime(), user.isDiscount());
     }
 
     public void updateUserById(Integer accountId, User user) {
