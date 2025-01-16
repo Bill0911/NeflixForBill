@@ -21,7 +21,7 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "subscription")
     private SubscriptionType subscription;
 
     @Column(name = "trial_start_date")
@@ -31,8 +31,8 @@ public class User {
     private LocalDateTime trialEndDate = LocalDateTime.now().plusDays(7);
 
     @Enumerated(EnumType.STRING)
-    @Column()
-    private Role role = Role.VIEWER;// Default role
+    @Column(name = "role")
+    private Role role;
 
     @Column(name = "active", columnDefinition = "bit(1) DEFAULT 0")
     private boolean isActive = false;

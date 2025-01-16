@@ -13,7 +13,7 @@ CREATE ROLE medior;
 CREATE ROLE junior;
 CREATE ROLE api;
 
--- ---------------SENNIOR PERMISSIONS-----------------------
+-- ---------------SENIOR PERMISSIONS-----------------------
 GRANT SELECT, UPDATE, INSERT, DELETE ON netflix.* TO senior;
 -- ---------------------------------------------------------
 
@@ -55,7 +55,6 @@ GRANT SELECT ON netflix.user_for_junior TO junior;
 -- ---------------------------------------------------------
 
 -- --------------------------API-------------------------------
-
 GRANT EXECUTE ON PROCEDURE `netflix`.`AddEpisode` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`AddGenre` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`AddGenreForMovie` TO api;
@@ -147,7 +146,9 @@ GRANT EXECUTE ON PROCEDURE `netflix`.`UpdateUser` TO api;
 GRANT SELECT ON `netflix`.`paymentstatus` TO api;
 GRANT SELECT ON `netflix`.`subscription_cost` TO api;
 GRANT SELECT ON `netflix`.`user_genre_count` TO api;
-
+GRANT SELECT ON `netflix`.`moviesprofilewatchlist` TO 'main_api_user';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `netflix`.`language` TO 'main_api_user';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `netflix`.`invitation` TO 'main_api_user';
 
 -- -------------------------IMPORTANT-------------------------
 
@@ -174,7 +175,6 @@ SET DEFAULT ROLE junior TO 'billjunior'@'%';
 CREATE USER 'main_api_user'@'%' IDENTIFIED BY '1234api';
 GRANT api TO 'main_api_user'@'%';
 SET DEFAULT ROLE api TO 'main_api_user'@'%';
-
 
 -- --------------------NOTICE---------------------------
 -- --CREATE SERVER CONNECTION FOR DIFFERENT ROLES-------

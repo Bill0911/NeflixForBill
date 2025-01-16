@@ -29,7 +29,7 @@ public class SeriesViewCountService {
     }
 
     public void addSeriesViewCount(Integer accountId, Integer seriesId) {
-        seriesViewCountRepository.add(accountId, seriesId);
+        seriesViewCountRepository.addSeriesViewCount(accountId, seriesId);
     }
 
     public SeriesViewCount getSeriesViewCount(Integer accountId, Integer seriesId) {

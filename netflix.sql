@@ -461,12 +461,13 @@ CREATE PROCEDURE `GetSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_serie
     WHERE `series_id` = p_series_id AND `account_id` = p_account_id;
 END$$
 
--- ---------special case -------
-CREATE PROCEDURE GetUserByEmail(IN p_email VARCHAR(255))
+CREATE PROCEDURE `GetUserByEmail` (IN p_email VARCHAR(255))
 BEGIN
-    SELECT * FROM user WHERE email = p_email COLLATE utf8mb4_unicode_ci LIMIT 1;
+    SELECT account_id, email, password, payment_method, active, blocked, subscription, trial_start_date, trial_end_date, language_id, role, failed_attempts, lock_time, discount
+    FROM `user`
+    WHERE email = p_email COLLATE utf8mb4_general_ci
+    LIMIT 1;
 END $$
--- ---------special case -------
 
 CREATE PROCEDURE `GetUserById` (IN `p_account_id` BIGINT(20))   BEGIN
     SELECT * FROM `user` WHERE `account_id` = p_account_id;
@@ -1110,12 +1111,11 @@ CREATE VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`ac
 
 CREATE VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) AS `total_views` FROM ((((((`genre` `g` left join `genreformovie` `mg` on(`g`.`genre_id` = `mg`.`genre_id`)) left join `movie` `m` on(`mg`.`movie_id` = `m`.`movie_id`)) left join `movieviewcount` `mvc` on(`m`.`movie_id` = `mvc`.`movie_id`)) left join `genreforseries` `gfs` on(`g`.`genre_id` = `gfs`.`genre_id`)) left join `series` `s` on(`gfs`.`series_id` = `s`.`series_id`)) left join `seriesviewcount` `svc` on(`s`.`series_id` = `svc`.`series_id` and `svc`.`account_id` = `mvc`.`account_id`)) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) DESC ;
 
+DROP VIEW IF EXISTS netflix.user_view;
+
 CREATE VIEW netflix.user_view AS
 SELECT `account_id`, `email`, `subscription`, `trial_start_date`, `trial_end_date`, `language_id`, `role`
 FROM netflix.user;
---
--- Indexes for dumped tables
---
 
 CREATE VIEW `user_for_junior` AS SELECT `account_id`,  `trial_start_date`, `trial_end_date`, `language_id`, `role` 
 FROM netflix.user;

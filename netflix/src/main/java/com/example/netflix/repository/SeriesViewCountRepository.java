@@ -20,7 +20,7 @@ public interface SeriesViewCountRepository extends JpaRepository<SeriesViewCount
     @Modifying
     @Transactional
     @Query(value = "CALL AddSeriesViewCount(:accountId, :seriesId)", nativeQuery = true)
-    void add(@Param("accountId") Integer accountId, @Param("movieId") Integer movieId);
+    void addSeriesViewCount(@Param("accountId") Integer accountId, @Param("seriesId") Integer seriesId);
 
     @Query(value = "CALL GetSeriesViewCount(:accountId, :seriesId)", nativeQuery = true)
     Optional<SeriesViewCount> find(@Param("accountId") Integer accountId, @Param("seriesId") Integer seriesId);

@@ -2,6 +2,7 @@ package com.example.netflix.entity;
 
 public enum SubscriptionType
 {
+    invalidValue(0),
     SD(1),
     HD(2),
     UHD(3);
