@@ -26,6 +26,13 @@ public class MoviesProfileWatchlistController
         try {
             profileService.getProfileById(id1);
             movieService.getMovieById(id2);
+
+            // Check if the entry already exists
+            boolean exists = moviesProfileWatchlistService.existsByProfileIdAndMovieId(id1, id2);
+            if (exists) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: The profile-movie relation already exists");
+            }
+
             moviesProfileWatchlistService.addMoviesProfileWatchlist(id1, id2);
             return ResponseEntity.ok("Profile - Movie relation has been created");
         } catch (Exception e) {

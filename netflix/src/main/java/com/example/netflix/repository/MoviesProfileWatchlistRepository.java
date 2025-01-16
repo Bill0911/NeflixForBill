@@ -24,6 +24,9 @@ public interface MoviesProfileWatchlistRepository extends JpaRepository<MoviesPr
     @Query(value = "CALL GetManyMoviesProfileWatchlists()", nativeQuery = true)
     List<MoviesProfileWatchlist> findMany();
 
+    @Query("SELECT CASE WHEN COUNT(m) > 0 THEN TRUE ELSE FALSE END FROM MoviesProfileWatchlist m WHERE m.profile = :profileId AND m.movie = :movieId")
+    boolean existsByProfileIdAndMovieId(Integer profileId, Integer movieId);
+
     @Modifying
     @Transactional
     @Query(value = "CALL DeleteMoviesProfileWatchlist(:id1, :id2)", nativeQuery = true)

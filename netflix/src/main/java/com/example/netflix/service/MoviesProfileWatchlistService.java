@@ -33,6 +33,10 @@ public class MoviesProfileWatchlistService {
         moviesProfileWatchlistRepository.delete(id1, id2);
     }
 
+    public boolean existsByProfileIdAndMovieId(Integer profileId, Integer movieId) {
+        return moviesProfileWatchlistRepository.existsByProfileIdAndMovieId(profileId, movieId);
+    }
+
     public void patchMoviesProfileWatchlist(Integer id1, Integer id2, Integer newId1, Integer newId2) {
         System.out.println("CHECKPOINT - 3");
         moviesProfileWatchlistRepository.patch(id1, id2, newId1, newId2);
