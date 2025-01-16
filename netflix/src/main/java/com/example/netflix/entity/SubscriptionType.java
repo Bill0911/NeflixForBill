@@ -2,9 +2,9 @@ package com.example.netflix.entity;
 
 public enum SubscriptionType
 {
-    SD(1),
-    HD(2),
-    UHD(3);
+    SD(0),
+    HD(1),
+    UHD(2);
     private final Integer value;
 
     SubscriptionType(Integer value) {

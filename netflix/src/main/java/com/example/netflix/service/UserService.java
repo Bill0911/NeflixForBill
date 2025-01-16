@@ -1,10 +1,7 @@
 package com.example.netflix.service;
 
-import com.example.netflix.dto.MethodResponse;
 import com.example.netflix.dto.SubscriptionOverview;
 import com.example.netflix.entity.*;
-import com.example.netflix.dto.ProfileRequest;
-import com.example.netflix.exception.AccessDeniedException;
 import com.example.netflix.repository.*;
 import com.example.netflix.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,8 +160,9 @@ public class UserService {
         userRepository.deleteByAccountId(accountId);
     }
 
-    public void patchUserById(Integer accountId, User user) {
-        userRepository.patchByAccountId(accountId, user.getPassword(), user.getPaymentMethod(), user.isActive(), user.isBlocked(), user.getSubscription(), user.getTrialStartDate(), user.getTrialEndDate(), user.getAccountId(), user.getRole(), user.getFailedLoginAttempts(), user.getLockTime(), user.isDiscount());
+    public SubscriptionType patchUserById(Integer accountId, User user) {
+        System.out.println("role:" + user.getRole() + " and subs:" + user.getSubscription());
+        return userRepository.patchByAccountIAndReturnSubscription(accountId, user.getPassword(), user.getPaymentMethod(), user.isActive(), user.isBlocked(), user.getSubscription(), user.getTrialStartDate(), user.getTrialEndDate(), user.getAccountId(), user.getRole(), user.getFailedLoginAttempts(), user.getLockTime(), user.isDiscount());
     }
 
     public void updateUserById(Integer accountId, User user) {
@@ -188,7 +186,7 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        userRepository.patchByAccountId(user.getAccountId(), passwordEncoder.encode(newPassword), null, null, null, null, null, null, null, null, 0, null,  null);;
+        userRepository.patchByAccountId(user.getAccountId(), passwordEncoder.encode(newPassword), null, null, null, null, null, null, null, null, 0, null,  null);
     }
 
     public void inviteUser(String inviterEmail, String inviteeEmail) {

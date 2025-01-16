@@ -3,10 +3,10 @@ package com.example.netflix.entity;
 import java.util.List;
 
 public enum Role {
-    VIEWER(1),
-    JUNIOR(2),
-    MEDIOR(3),
-    SENIOR(4);
+    VIEWER(0),
+    JUNIOR(1),
+    MEDIOR(2),
+    SENIOR(3);
 
     private final Integer value;
 
