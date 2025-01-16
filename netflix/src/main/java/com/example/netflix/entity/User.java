@@ -21,7 +21,7 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, name = "subscription")
+    @Column(name = "subscription")
     private SubscriptionType subscription;
 
     @Column(name = "trial_start_date")
