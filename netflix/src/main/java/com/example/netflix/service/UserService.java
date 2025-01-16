@@ -190,71 +190,51 @@ public class UserService {
     }
 
     public void inviteUser(String inviterEmail, String inviteeEmail) {
-        Optional<User> inviterOptional = userRepository.findByEmail(inviterEmail);
-        Optional<User> inviteeOptional = userRepository.findByEmail(inviteeEmail);
+        System.out.println("Inviter Email: " + inviterEmail);
+        System.out.println("Invitee Email: " + inviteeEmail);
 
-        if (inviterOptional.isEmpty() || inviteeOptional.isEmpty()) {
-            throw new IllegalArgumentException("User not found");
+        User inviter = userRepository.findByEmail(inviterEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Inviter not found"));
+        System.out.println("Inviter found: " + inviter.getEmail());
+
+        User invitee = userRepository.findByEmail(inviteeEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Invitee not found"));
+        System.out.println("Invitee found: " + invitee.getEmail());
+
+        if (invitationRepository.existsByInviter_AccountIdAndInvitee_AccountId(inviter.getAccountId(), invitee.getAccountId())) {
+            throw new IllegalArgumentException("Invitation already exists");
         }
 
-        User inviter = inviterOptional.get();
-        User invitee = inviteeOptional.get();
-
-        if (inviterEmail.equals(inviteeEmail)) {
-            throw new IllegalArgumentException("User cannot invite themselves");
+        if (!inviter.isActive() || !invitee.isActive()) {
+            throw new IllegalArgumentException("Both users must have a paid account to receive the discount");
         }
 
-        if (invitationRepository.existsByInviterAndInvitee(inviter, invitee)) {
-            throw new IllegalArgumentException("User has already invited this user");
-        }
+        // Apply discount to both users
+        inviter.setDiscount(true);
+        invitee.setDiscount(true);
+        System.out.println("Inviter discount set to: " + inviter.isDiscount());
+        System.out.println("Invitee discount set to: " + invitee.isDiscount());
 
-        if (inviter.isActive() && invitee.isActive() && !inviter.isDiscount() && !invitee.isDiscount()) {
-            inviter.setDiscount(true);
-            invitee.setDiscount(true);
-            userRepository.save(inviter);
-            userRepository.save(invitee);
+        userRepository.save(inviter);
+        userRepository.save(invitee);
+        System.out.println("Inviter saved with discount: " + inviter.isDiscount());
+        System.out.println("Invitee saved with discount: " + invitee.isDiscount());
 
-            Invitation invitation = new Invitation();
-            invitation.setInviter(inviter);
-            invitation.setInvitee(invitee);
-            invitationRepository.save(invitation);
+        // Verify if the changes are persisted
+        User updatedInviter = userRepository.findByEmail(inviterEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Inviter not found after save"));
+        User updatedInvitee = userRepository.findByEmail(inviteeEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Invitee not found after save"));
 
-            processPayment(inviter);
-            processPayment(invitee);
-        }
-    }
+        System.out.println("Updated inviter discount: " + updatedInviter.isDiscount());
+        System.out.println("Updated invitee discount: " + updatedInvitee.isDiscount());
 
-    private void processPayment(User user) {
-        // Calculate payment amount based on subscription type and discount
-        double paymentAmount = calculatePaymentAmount(user.getSubscription(), user.isDiscount());
-
-        // Check if a payment record already exists for this user
-        Optional<Payment> existingPaymentOpt = paymentRepository.findByUserAccountId(user.getAccountId());
-
-        Payment payment;
-        if (existingPaymentOpt.isPresent())
-        {
-            payment = existingPaymentOpt.get();
-            payment.setSubscriptionType(user.getSubscription());
-            payment.setPaymentAmount(paymentAmount);
-            payment.setDiscountApplied(user.isDiscount());
-            payment.setPaid(true);
-            payment.setPaymentDate(LocalDateTime.now());
-            payment.setNextBillingDate(LocalDateTime.now().plusMonths(1));
-        }
-        else
-        {
-            payment = new Payment();
-            payment.setUser(user);
-            payment.setSubscriptionType(user.getSubscription());
-            payment.setPaymentAmount(paymentAmount);
-            payment.setDiscountApplied(user.isDiscount());
-            payment.setPaid(true);
-            payment.setPaymentDate(LocalDateTime.now());
-            payment.setNextBillingDate(LocalDateTime.now().plusMonths(1));
-        }
-
-        paymentRepository.save(payment);
+        // Save the invitation
+        Invitation invitation = new Invitation();
+        invitation.setInviter(inviter);
+        invitation.setInvitee(invitee);
+        invitationRepository.save(invitation);
+        System.out.println("Invitation saved");
     }
     
     //I know this code right here is quite controversial

@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "invitation")
 public class Invitation
 {
     @Id
@@ -20,6 +21,7 @@ public class Invitation
     @JoinColumn(name = "invitee_id", nullable = false)
     private User invitee;
 
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public Integer getId()
