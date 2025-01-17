@@ -206,7 +206,7 @@ public class UserService {
         }
 
         if (!inviter.isActive() || !invitee.isActive()) {
-            throw new IllegalArgumentException("Both users must have a paid account to receive the discount");
+            throw new IllegalArgumentException("Both users must have an active account to receive the discount");
         }
 
         // Apply discount to both users
@@ -220,7 +220,6 @@ public class UserService {
         System.out.println("Inviter saved with discount: " + inviter.isDiscount());
         System.out.println("Invitee saved with discount: " + invitee.isDiscount());
 
-        // Verify if the changes are persisted
         User updatedInviter = userRepository.findByEmail(inviterEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Inviter not found after save"));
         User updatedInvitee = userRepository.findByEmail(inviteeEmail)
@@ -229,7 +228,6 @@ public class UserService {
         System.out.println("Updated inviter discount: " + updatedInviter.isDiscount());
         System.out.println("Updated invitee discount: " + updatedInvitee.isDiscount());
 
-        // Save the invitation
         Invitation invitation = new Invitation();
         invitation.setInviter(inviter);
         invitation.setInvitee(invitee);
