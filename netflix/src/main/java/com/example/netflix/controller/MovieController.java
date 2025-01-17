@@ -69,4 +69,8 @@ public class MovieController {
         }
     }
 
+    @GetMapping("without-genre")
+    public ResponseEntity<Object> getMoviesWithoutGenre() {
+        return ResponseEntity.ok(movieService.getMoviesWithoutGenre());
+    }
 }

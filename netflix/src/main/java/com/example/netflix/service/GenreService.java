@@ -1,8 +1,11 @@
 package com.example.netflix.service;
 
 import com.example.netflix.dto.GenreDTO;
+import com.example.netflix.dto.GenreViewCount;
 import com.example.netflix.entity.Genre;
+import com.example.netflix.repository.GenreDTORepository;
 import com.example.netflix.repository.GenreRepository;
+import com.example.netflix.repository.GenreViewCountRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +16,14 @@ import java.util.Optional;
 public class GenreService {
 
     private final GenreRepository genreRepository;
+    private final GenreDTORepository genreDTORepository;
 
-    public GenreService(GenreRepository genreRepository) {
+    private final GenreViewCountRepository genreViewCountRepository;
+
+    public GenreService(GenreRepository genreRepository, GenreDTORepository genreDTORepository, GenreViewCountRepository genreViewCountRepository) {
         this.genreRepository = genreRepository;
+        this.genreDTORepository = genreDTORepository;
+        this.genreViewCountRepository = genreViewCountRepository;
     }
 
     public List<Genre> getAllGenres() {
@@ -49,5 +57,13 @@ public class GenreService {
 
     public void deleteGenre(Integer id) {
         genreRepository.deleteById(id);
+    }
+
+    public List<GenreDTO> getGenresWithoutMovie() {
+        return  genreDTORepository.findGenresWithoutMovie();
+    }
+
+    public List<GenreViewCount> getViewCounts() {
+        return  genreViewCountRepository.findGenreViewCounts();
     }
 }

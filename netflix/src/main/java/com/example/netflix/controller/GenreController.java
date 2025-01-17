@@ -70,4 +70,14 @@ public class GenreController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Deletion failed: " + e.getMessage());
         }
     }
+
+    @GetMapping("without-movie")
+    public ResponseEntity<Object> getGenresWithoutMovie() {
+        return ResponseEntity.ok(genreService.getGenresWithoutMovie());
+    }
+
+    @GetMapping("view-counts")
+    public ResponseEntity<Object> getGenresViewCounts() {
+        return ResponseEntity.ok(genreService.getViewCounts());
+    }
 }
