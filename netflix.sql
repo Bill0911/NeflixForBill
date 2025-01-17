@@ -1,18 +1,10 @@
 
 --
--- Database: `netflix`
---
 
 DELIMITER $$
 --
 -- Procedures
 --
-
-CREATE PROCEDURE `GetProfilesByAccountId` (IN `p_account_id` BIGINT(20))   BEGIN
-    SELECT * FROM `profile`
-    WHERE `account_id` = p_account_id;
-END$$
-
 CREATE PROCEDURE `AddEpisode` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     INSERT INTO `episode` (`title`, `duration`, `series_id`)
     VALUES (p_title, p_duration, p_series_id);
@@ -120,18 +112,10 @@ CREATE PROCEDURE `AddSeriesViewCount` (IN `p_accountId` INT, IN `p_seriesId` INT
     AND series_id = p_seriesId;
 END$$
 
-CREATE PROCEDURE `AddUser` (
-    IN `p_email` VARCHAR(255),
-    IN `p_password` VARCHAR(255),
-    IN `p_payment_method` VARCHAR(255),
-    IN `p_language_id` INT(11),
-    IN `p_subscription` ENUM('SD','HD','UHD')
-)
-BEGIN
+CREATE PROCEDURE `AddUser` (IN `p_email` VARCHAR(255), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_language_id` INT(11), IN `p_subscription` ENUM('SD','HD','UHD'))   BEGIN
     INSERT INTO `user` (`email`, `password`, `payment_method`, `language_id`, `subscription`)
     VALUES (p_email, p_password, p_payment_method, p_language_id, p_subscription);
 END$$
-
 
 CREATE PROCEDURE `DeleteEpisode` (IN `p_episode_id` INT)   BEGIN
     DELETE FROM `episode` WHERE `episode_id` = p_episode_id;
@@ -266,22 +250,6 @@ CREATE PROCEDURE `GetManyEpisodes` ()   BEGIN
     SELECT * FROM `episode`;
 END$$
 
-    CREATE PROCEDURE `GetManyProfiles` ()   BEGIN
-        SELECT * FROM `profile`;
-    END$$
-
-CREATE PROCEDURE `GetManyMovies` ()   BEGIN
-    SELECT * FROM `movie`;
-END$$
-
-CREATE PROCEDURE `GetManySeries` ()  BEGIN
-    SELECT * FROM `series`;
-END$$
-
-CREATE PROCEDURE `GetManyLanguages` ()   BEGIN
-    SELECT * FROM `language`;
-END$$
-
 CREATE PROCEDURE `GetManyGenreForMovies` ()   BEGIN
     SELECT * FROM `genreformovie`;
 END$$
@@ -298,12 +266,28 @@ CREATE PROCEDURE `GetManyGenres` ()   BEGIN
     SELECT * FROM `genre`;
 END$$
 
+CREATE PROCEDURE `GetManyLanguages` ()   BEGIN
+    SELECT * FROM `language`;
+END$$
+
+CREATE PROCEDURE `GetManyMovies` ()   BEGIN
+    SELECT * FROM `movie`;
+END$$
+
 CREATE PROCEDURE `GetManyMoviesProfileWatchlists` ()   BEGIN
     SELECT * FROM `moviesprofilewatchlist`;
 END$$
 
 CREATE PROCEDURE `GetManyMovieViewCounts` ()   BEGIN
     SELECT * FROM `movieviewcount`;
+END$$
+
+CREATE PROCEDURE `GetManyProfiles` ()   BEGIN
+        SELECT * FROM `profile`;
+    END$$
+
+CREATE DEFINER=`root`@`%` PROCEDURE `GetManySeries` ()   BEGIN
+    SELECT * FROM `series`;
 END$$
 
 CREATE PROCEDURE `GetManySeriesProfileWatchlists` ()   BEGIN
@@ -350,7 +334,7 @@ CREATE PROCEDURE `GetPersonalizedOfferMovies` (IN `userId` BIGINT(20), IN `maxMo
     FROM user_genre_count
     WHERE user_id = userId;
 
-    CREATE TEMPORARY TABLE TempPersonalizedOffer (
+    CREATE TABLE TempPersonalizedOffer (
         movie_id INT,
         title VARCHAR(255)
     );
@@ -384,7 +368,7 @@ CREATE PROCEDURE `GetPersonalizedOfferMovies` (IN `userId` BIGINT(20), IN `maxMo
     FROM TempPersonalizedOffer
     LIMIT maxMovies;
 
-    DROP TEMPORARY TABLE TempPersonalizedOffer;
+    DROP TABLE TempPersonalizedOffer;
 END$$
 
 CREATE PROCEDURE `GetPersonalizedOfferSeries` (IN `userId` BIGINT(20), IN `maxSeries` INT)   BEGIN
@@ -439,12 +423,17 @@ CREATE PROCEDURE `GetPersonalizedOfferSeries` (IN `userId` BIGINT(20), IN `maxSe
     FROM TempPersonalizedOffer
     LIMIT maxseries;
 
-    DROP TEMPORARY TABLE TempPersonalizedOffer;
+    DROP TABLE TempPersonalizedOffer;
 END$$
 
 CREATE PROCEDURE `GetProfileById` (IN `p_profile_id` INT)   BEGIN
     SELECT * FROM `profile`
     WHERE `profile_id` = p_profile_id;
+END$$
+
+CREATE DEFINER=`root`@`%` PROCEDURE `GetProfilesByAccountId` (IN `p_account_id` BIGINT(20))   BEGIN
+    SELECT * FROM `profile`
+    WHERE `account_id` = p_account_id;
 END$$
 
 CREATE PROCEDURE `GetSeriesById` (IN `p_series_id` INT(11))   BEGIN
@@ -461,13 +450,9 @@ CREATE PROCEDURE `GetSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_serie
     WHERE `series_id` = p_series_id AND `account_id` = p_account_id;
 END$$
 
-CREATE PROCEDURE `GetUserByEmail` (IN p_email VARCHAR(255))
-BEGIN
-    SELECT account_id, email, password, payment_method, active, blocked, subscription, trial_start_date, trial_end_date, language_id, role, failed_attempts, lock_time, discount
-    FROM `user`
-    WHERE email = p_email COLLATE utf8mb4_general_ci
-    LIMIT 1;
-END $$
+CREATE PROCEDURE `GetUserByEmail` (IN `p_email` VARCHAR(255))   BEGIN
+    SELECT * FROM user WHERE email = p_email COLLATE utf8mb4_unicode_ci LIMIT 1;
+END$$
 
 CREATE PROCEDURE `GetUserById` (IN `p_account_id` BIGINT(20))   BEGIN
     SELECT * FROM `user` WHERE `account_id` = p_account_id;
@@ -628,6 +613,8 @@ CREATE PROCEDURE `PatchUser` (IN `p_account_id` BIGINT(20), IN `p_password` VARC
         `lock_time` = COALESCE(p_lock_time, `lock_time`), 
         `discount` = COALESCE(p_discount, `discount`)
     WHERE `account_id` = p_account_id;
+
+SELECT p_subscription;
 END$$
 
 CREATE PROCEDURE `process_payment` (IN `userId` INT, IN `subscriptionType` VARCHAR(10), IN `discountApplied` BIT)   BEGIN
@@ -783,11 +770,11 @@ DELIMITER ;
 --
 
 CREATE TABLE `episode` (
-  `episode_id` int(11) UNSIGNED NOT NULL,
-  `title` varchar(255) DEFAULT NULL,
+  `episode_id` int UNSIGNED NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `duration` time DEFAULT '00:00:00',
-  `series_id` int(11) UNSIGNED DEFAULT NULL,
-  `series` int(11) DEFAULT NULL
+  `series_id` int UNSIGNED DEFAULT NULL,
+  `series` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -797,8 +784,8 @@ CREATE TABLE `episode` (
 --
 
 CREATE TABLE `genre` (
-  `genre_id` int(11) UNSIGNED NOT NULL,
-  `genre_name` varchar(255) NOT NULL
+  `genre_id` int UNSIGNED NOT NULL,
+  `genre_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -818,7 +805,8 @@ INSERT INTO `genre` (`genre_id`, `genre_name`) VALUES
 (19, 'biography'),
 (20, 'History'),
 (21, 'musical'),
-(29, 'War');
+(29, 'War'),
+(30, 'war');
 
 -- --------------------------------------------------------
 
@@ -827,8 +815,8 @@ INSERT INTO `genre` (`genre_id`, `genre_name`) VALUES
 --
 
 CREATE TABLE `genreformovie` (
-  `genre_id` int(11) UNSIGNED NOT NULL,
-  `movie_id` int(11) UNSIGNED NOT NULL
+  `genre_id` int UNSIGNED NOT NULL,
+  `movie_id` int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -837,9 +825,9 @@ CREATE TABLE `genreformovie` (
 
 INSERT INTO `genreformovie` (`genre_id`, `movie_id`) VALUES
 (2, 1),
-(3, 3),
 (5, 1),
 (7, 2),
+(3, 3),
 (8, 3);
 
 -- --------------------------------------------------------
@@ -849,8 +837,8 @@ INSERT INTO `genreformovie` (`genre_id`, `movie_id`) VALUES
 --
 
 CREATE TABLE `genreforseries` (
-  `genre_id` int(11) UNSIGNED NOT NULL,
-  `series_id` int(11) UNSIGNED NOT NULL
+  `genre_id` int UNSIGNED NOT NULL,
+  `series_id` int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -860,8 +848,8 @@ CREATE TABLE `genreforseries` (
 --
 
 CREATE TABLE `genreforuser` (
-  `genre_id` int(11) UNSIGNED NOT NULL,
-  `account_id` bigint(20) UNSIGNED NOT NULL
+  `genre_id` int UNSIGNED NOT NULL,
+  `account_id` bigint UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -871,11 +859,18 @@ CREATE TABLE `genreforuser` (
 --
 
 CREATE TABLE `invitation` (
-  `id` bigint(20) NOT NULL,
-  `inviter_id` bigint(20) UNSIGNED NOT NULL,
-  `invitee_id` bigint(20) UNSIGNED NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` bigint NOT NULL,
+  `inviter_id` bigint UNSIGNED DEFAULT NULL,
+  `invitee_id` bigint UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `invitation`
+--
+
+INSERT INTO `invitation` (`id`, `inviter_id`, `invitee_id`, `created_at`) VALUES
+(1, 18, 19, '2025-01-16 21:34:26');
 
 -- --------------------------------------------------------
 
@@ -884,8 +879,8 @@ CREATE TABLE `invitation` (
 --
 
 CREATE TABLE `language` (
-  `language_id` int(11) UNSIGNED NOT NULL,
-  `name` varchar(255) DEFAULT NULL
+  `language_id` int UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -907,13 +902,13 @@ INSERT INTO `language` (`language_id`, `name`) VALUES
 --
 
 CREATE TABLE `movie` (
-  `movie_id` int(11) UNSIGNED NOT NULL,
-  `title` varchar(255) DEFAULT NULL,
+  `movie_id` int UNSIGNED NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `duration` time NOT NULL DEFAULT '00:00:00',
   `sd_available` bit(1) DEFAULT b'1',
   `hd_available` bit(1) DEFAULT b'0',
   `uhd_available` bit(1) DEFAULT b'0',
-  `minimum_age` int(3) NOT NULL DEFAULT 12
+  `minimum_age` int NOT NULL DEFAULT '12'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -932,8 +927,8 @@ INSERT INTO `movie` (`movie_id`, `title`, `duration`, `sd_available`, `hd_availa
 --
 
 CREATE TABLE `moviesprofilewatchlist` (
-  `profile_id` int(11) UNSIGNED NOT NULL,
-  `movie_id` int(11) UNSIGNED NOT NULL
+  `profile_id` int UNSIGNED NOT NULL,
+  `movie_id` int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -943,9 +938,9 @@ CREATE TABLE `moviesprofilewatchlist` (
 --
 
 CREATE TABLE `movieviewcount` (
-  `account_id` bigint(20) UNSIGNED NOT NULL,
-  `movie_id` int(11) UNSIGNED NOT NULL,
-  `number` int(11) DEFAULT NULL,
+  `account_id` bigint UNSIGNED NOT NULL,
+  `movie_id` int UNSIGNED NOT NULL,
+  `number` int DEFAULT NULL,
   `last_viewed` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -953,12 +948,13 @@ CREATE TABLE `movieviewcount` (
 -- Dumping data for table `movieviewcount`
 --
 
-INSERT INTO `movieviewcount` (`account_id`, `movie_id`, `number`) VALUES
-(1, 1, 3),
-(1, 2, 2),
-(1, 3, 1),
-(3, 1, 1),
-(5, 2, 2);
+INSERT INTO `movieviewcount` (`account_id`, `movie_id`, `number`, `last_viewed`) VALUES
+(1, 1, 3, NULL),
+(1, 2, 2, NULL),
+(1, 3, 1, NULL),
+(3, 1, 1, NULL),
+(5, 2, 2, NULL),
+(6, 3, 1, '2025-01-15 18:52:32');
 
 -- --------------------------------------------------------
 
@@ -967,15 +963,44 @@ INSERT INTO `movieviewcount` (`account_id`, `movie_id`, `number`) VALUES
 --
 
 CREATE TABLE `payments` (
-  `payment_id` bigint(20) NOT NULL,
-  `account_id` bigint(20) UNSIGNED NOT NULL,
+  `payment_id` bigint NOT NULL,
+  `account_id` bigint UNSIGNED DEFAULT NULL,
   `is_discount_applied` bit(1) DEFAULT b'0',
   `is_paid` bit(1) DEFAULT b'0',
   `payment_date` datetime DEFAULT NULL,
-  `subscription_type` enum('SD','HD','UHD') DEFAULT 'SD',
+  `subscription_type` enum('SD','HD','UHD') COLLATE utf8mb4_general_ci DEFAULT 'SD',
   `payment_amount` double NOT NULL,
   `next_billing_date` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `payments`
+--
+
+INSERT INTO `payments` (`payment_id`, `account_id`, `is_discount_applied`, `is_paid`, `payment_date`, `subscription_type`, `payment_amount`, `next_billing_date`) VALUES
+(1, 18, b'0', b'0', '2025-01-15 19:44:33', 'SD', 7.99, '2025-02-15 19:44:33'),
+(2, 19, b'0', b'0', '2025-01-15 19:44:33', 'SD', 7.99, '2025-02-15 19:44:33'),
+(3, 18, b'0', b'0', '2025-01-16 19:44:33', 'HD', 10.99, '2025-02-16 19:44:33'),
+(4, 19, b'0', b'0', '2025-01-16 19:44:33', 'HD', 10.99, '2025-02-16 19:44:33');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `paymentstatus`
+-- (See below for the actual view)
+--
+CREATE TABLE `paymentstatus` (
+`payment_id` bigint
+,`account_id` bigint unsigned
+,`email` varchar(255)
+,`subscription_type` enum('SD','HD','UHD')
+,`payment_amount` double
+,`is_paid` bit(1)
+,`is_discount_applied` bit(1)
+,`payment_date` datetime
+,`next_billing_date` datetime
+);
+
 -- --------------------------------------------------------
 
 --
@@ -983,12 +1008,12 @@ CREATE TABLE `payments` (
 --
 
 CREATE TABLE `profile` (
-  `profile_id` int(11) UNSIGNED NOT NULL,
-  `account_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `profile_image` varchar(255) DEFAULT NULL,
-  `age` int(3) NOT NULL DEFAULT 0,
-  `name` varchar(255) DEFAULT NULL,
-  `account` int(11) DEFAULT NULL
+  `profile_id` int UNSIGNED NOT NULL,
+  `account_id` bigint UNSIGNED DEFAULT NULL,
+  `profile_image` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `age` int NOT NULL DEFAULT '0',
+  `name` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `account` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -1006,9 +1031,9 @@ INSERT INTO `profile` (`profile_id`, `account_id`, `profile_image`, `age`, `name
 --
 
 CREATE TABLE `series` (
-  `series_id` int(11) UNSIGNED NOT NULL,
-  `title` varchar(255) DEFAULT NULL,
-  `minimum_age` int(3) NOT NULL DEFAULT 12
+  `series_id` int UNSIGNED NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `minimum_age` int NOT NULL DEFAULT '12'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -1025,8 +1050,8 @@ INSERT INTO `series` (`series_id`, `title`, `minimum_age`) VALUES
 --
 
 CREATE TABLE `seriesprofilewatchlist` (
-  `profile_id` int(11) UNSIGNED NOT NULL,
-  `series_id` int(11) UNSIGNED NOT NULL
+  `profile_id` int UNSIGNED NOT NULL,
+  `series_id` int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1036,30 +1061,45 @@ CREATE TABLE `seriesprofilewatchlist` (
 --
 
 CREATE TABLE `seriesviewcount` (
-  `account_id` bigint(20) UNSIGNED NOT NULL,
-  `series_id` int(11) UNSIGNED NOT NULL,
-  `number` int(11) DEFAULT NULL,
+  `account_id` bigint UNSIGNED NOT NULL,
+  `series_id` int UNSIGNED NOT NULL,
+  `number` int DEFAULT NULL,
   `last_viewed` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `subscription_cost`
+-- (See below for the actual view)
+--
+CREATE TABLE `subscription_cost` (
+`account_id` bigint unsigned
+,`subscription` enum('SD','HD','UHD')
+,`email` varchar(255)
+,`payment_method` varchar(255)
+,`subscription_cost` decimal(4,2)
+);
+
+-- --------------------------------------------------------
+
 --
 -- Table structure for table `user`
 --
 
 CREATE TABLE `user` (
-  `account_id` bigint(20) UNSIGNED NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `payment_method` varchar(255) DEFAULT 'Credit Card',
+  `account_id` bigint UNSIGNED NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `payment_method` varchar(255) COLLATE utf8mb4_general_ci DEFAULT 'Credit Card',
   `active` bit(1) DEFAULT b'0',
   `blocked` bit(1) DEFAULT b'0',
-  `subscription` enum('SD','HD','UHD') DEFAULT 'SD',
-  `trial_start_date` datetime DEFAULT current_timestamp(),
-  `trial_end_date` datetime DEFAULT (CURRENT_TIMESTAMP + INTERVAL 7 DAY),
-  `language_id` int(11) UNSIGNED DEFAULT NULL,
-  `role` enum('VIEWER','JUNIOR','MEDIOR','SENIOR') DEFAULT 'VIEWER',
-  `failed_attempts` int(11) DEFAULT 0,
+  `subscription` enum('SD','HD','UHD') COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `trial_start_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `trial_end_date` datetime DEFAULT NULL,
+  `language_id` int UNSIGNED DEFAULT NULL,
+  `role` enum('VIEWER','JUNIOR','MEDIOR','SENIOR') COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `failed_attempts` int DEFAULT '0',
   `lock_time` datetime DEFAULT NULL,
   `discount` bit(1) DEFAULT b'0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -1069,56 +1109,97 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `active`, `blocked`, `subscription`, `trial_start_date`, `trial_end_date`, `language_id`, `role`, `failed_attempts`, `lock_time`, `discount`) VALUES
-(1, 'fjodor.smorodins@gmail.com', '$2a$10$hszeHDUNOv4lnd24ZS9sOeOkOJUYo5zSi2H2makEPti1uznr4s5P2', 'abc', b'0', b'0', 'SD', '2024-12-07 14:32:59', '2024-12-14 14:32:59', 4, 'SENIOR', 0, NULL, b'0'),
-(2, 'fjodorsm@gmail.com', '$2a$10$2QlecdJ25ELwT/avANQAUelbxtS9tysiRO5LSE0omLATaWhdAPfZC', 'Credit Card', b'0', b'0', 'SD', '2024-12-07 14:33:33', '2024-12-14 14:33:33', 1, 'JUNIOR', 0, NULL, b'0'),
-(3, 'smorodins@gmail.com', '$2a$10$KhhGnFeK2q32DYG7/fMhNe/GEzf1dDJVkQqq5isK1vwuIO9h0zor.', 'CrC', b'0', b'0', 'SD', '2024-12-16 18:54:30', '2024-12-23 18:54:30', 3, 'VIEWER', 0, NULL, b'0'),
-(5, 'fjodors@hello.com', '$2a$10$hKsRL99MRpKUr.vrJPqsfuG3qhGkDjXQEYDxHytWFBYgW7HZJ/54W', 'golden bars', b'0', b'0', 'SD', '2024-12-20 16:19:25', '2024-12-27 16:19:25', 2, 'VIEWER', 0, NULL, b'0'),
-(6, 'artjoms.grishajevs@hello.com', '$2a$10$NboUZOHniHtnfHhFFECcF.dA64uJsp.8/OnD0B0NEuMvTyvIfN7we', 'children', b'0', b'0', 'SD', '2024-12-20 16:24:58', '2024-12-27 16:24:58', 1, 'JUNIOR', 0, NULL, b'0'),
-(7, 'somebody@hello.com', '$2a$10$4H41Ugw1ho9ga4DfTV1rwegl.uxbZcTbEu3/SBeklNzsHnXoYliTe', 'money', b'0', b'0', 'SD', '2024-12-20 17:08:59', '2024-12-27 17:08:59', 1, 'VIEWER', 0, NULL, b'0'),
-(9, 'somepersonwhatever@hello.com', '$2a$10$DhZSCWySz9rypM/jM8mR6.yzaCPIpugVlITMSWx9whkmEp1ciPK42', 'something', b'0', b'0', 'SD', '2024-12-20 17:24:39', '2024-12-27 17:24:39', 2, 'VIEWER', 0, NULL, b'0'),
-(10, 'iamsteve@hello.com', '$2a$10$92qxixAWTf94z9sK.Lf2iebtyLdBV9ckOx.xfzGLv4enlX5gdsis6', 'mastercard', b'0', b'0', 'SD', '2024-12-20 17:58:22', '2024-12-27 17:58:22', 3, 'VIEWER', 0, NULL, b'0'),
-(15, 'test1@.com', '$2a$10$aP97IvFmxH8yLGuL1012Xe4sfLd6s1SdokAAKOhG3.tvWCTkmfD2.', 'some method', b'0', b'0', 'SD', '2024-12-20 22:46:29', '2024-12-27 22:46:29', 3, 'VIEWER', 1, NULL, b'0'),
-(17, 'medior.fjodor@g.com', '$2a$10$gQuhxuEegp0Ypg.IrGiL8.bmQwV4sdMzXirKh7N0N4KbOXAq4xwFi', 'some money transfer method', b'0', b'0', 'SD', '2024-12-23 17:55:18', '2024-12-30 17:55:18', 3, 'JUNIOR', 0, NULL, b'0'),
-(18, 'billyJ@outlook.com', '$2a$10$3', 'IDEAL', b'1', b'0', 'SD', '2024-12-23 18:00:00', '2024-12-30 18:00:00', 3, 'JUNIOR', 0, NULL, b'0'),
-(19, 'random.user@gg.com', '$2a$10$MOir8H30oJGVlQTrcKrBZOi8CNBD5oYACgjg5/3TcOPyWwSP9TLYi', 'a transfer method', b'1', b'0', 'SD', '2025-01-06 15:54:13', '2025-01-13 15:54:13', 1, 'JUNIOR', 0, NULL, b'0');
+(1, 'fjodor.smorodins@gmail.com', '$2a$10$hszeHDUNOv4lnd24ZS9sOeOkOJUYo5zSi2H2makEPti1uznr4s5P2', 'secure card method', b'0', b'0', 'SD', '2019-12-07 14:32:59', '2030-12-14 14:32:59', 4, 'SENIOR', 0, '2025-01-15 16:04:09', b'1'),
+(2, 'fjodorsm@gmail.com', '$2a$10$2QlecdJ25ELwT/avANQAUelbxtS9tysiRO5LSE0omLATaWhdAPfZC', 'Credit Card', b'0', b'0', 'HD', '2024-12-07 14:33:33', '2024-12-14 14:33:33', 1, 'VIEWER', 0, NULL, b'0'),
+(3, 'smorodins@gmail.com', '$2a$10$KhhGnFeK2q32DYG7/fMhNe/GEzf1dDJVkQqq5isK1vwuIO9h0zor.', 'CrC', b'0', b'0', 'HD', '2024-12-16 18:54:30', '2024-12-23 18:54:30', 3, 'VIEWER', 0, NULL, b'0'),
+(5, 'fjodors@hello.com', '$2a$10$hKsRL99MRpKUr.vrJPqsfuG3qhGkDjXQEYDxHytWFBYgW7HZJ/54W', 'golden bars', b'0', b'0', 'HD', '2024-12-20 16:19:25', '2024-12-27 16:19:25', 2, 'VIEWER', 0, NULL, b'0'),
+(6, 'artjoms.grishajevs@hello.com', '$2a$10$NboUZOHniHtnfHhFFECcF.dA64uJsp.8/OnD0B0NEuMvTyvIfN7we', 'children', b'0', b'0', 'HD', '2024-12-20 16:24:58', '2024-12-27 16:24:58', 1, 'VIEWER', 0, NULL, b'0'),
+(7, 'somebody@hello.com', '$2a$10$4H41Ugw1ho9ga4DfTV1rwegl.uxbZcTbEu3/SBeklNzsHnXoYliTe', 'money', b'0', b'0', 'HD', '2024-12-20 17:08:59', '2024-12-27 17:08:59', 1, 'VIEWER', 0, NULL, b'0'),
+(9, 'somepersonwhatever@hello.com', '$2a$10$DhZSCWySz9rypM/jM8mR6.yzaCPIpugVlITMSWx9whkmEp1ciPK42', 'something', b'0', b'0', 'HD', '2024-12-20 17:24:39', '2024-12-27 17:24:39', 2, 'VIEWER', 0, NULL, b'0'),
+(10, 'iamsteve@hello.com', '$2a$10$92qxixAWTf94z9sK.Lf2iebtyLdBV9ckOx.xfzGLv4enlX5gdsis6', 'mastercard', b'0', b'0', 'HD', '2024-12-20 17:58:22', '2024-12-27 17:58:22', 3, 'VIEWER', 0, NULL, b'0'),
+(15, 'test1@.com', '$2a$10$aP97IvFmxH8yLGuL1012Xe4sfLd6s1SdokAAKOhG3.tvWCTkmfD2.', 'some method', b'0', b'0', 'HD', '2024-12-20 22:46:29', '2024-12-27 22:46:29', 3, 'VIEWER', 1, NULL, b'0'),
+(18, 'billyJ@outlook.com', '$2a$10$3', 'IDEAL', b'1', b'0', 'HD', '2024-12-23 18:00:00', '2024-12-30 18:00:00', 3, 'VIEWER', 0, NULL, b'1'),
+(19, 'random.user@gg.com', '$2a$10$MOir8H30oJGVlQTrcKrBZOi8CNBD5oYACgjg5/3TcOPyWwSP9TLYi', 'a transfer method', b'1', b'0', 'HD', '2025-01-06 15:54:13', '2025-01-13 15:54:13', 1, 'VIEWER', 0, NULL, b'1'),
+(20, 'billJe9@outlook.com', '$2a$10$YOyVFKoFH2r6hWhjR4zy1ujyiNiwjWA8rsWs7DFnPtqEsOR7bisAS', 'IDEAL', b'0', b'0', 'HD', '2025-01-15 15:32:25', NULL, 2, 'VIEWER', 0, NULL, b'0'),
+(21, 'здаровавсем@user.com', '$2a$10$9by5kbJ0/cLHnYX7gAe4f.mLZmMwN7Ht59gxAFnsdeVPH01gAXT8m', 'тинькоффбанк', b'0', b'0', 'HD', '2025-01-15 18:51:11', NULL, 1, 'VIEWER', 0, NULL, b'0'),
+(22, 'nyamochirgansog@fusdhfhsfkaas.com', '1234', 'norwegian whatever', b'0', b'0', 'HD', '2025-01-15 22:52:19', NULL, 1, 'VIEWER', 0, NULL, b'0'),
+(23, 'zhicheng@gmail', '0000', 'yes', b'0', b'0', 'HD', '2025-01-15 22:52:43', NULL, 4, 'VIEWER', 0, NULL, b'0'),
+(24, 'aleksejssmorodins@gmail.com', '1234', '1234', b'0', b'0', 'HD', '2025-01-15 22:54:23', NULL, 6, 'VIEWER', 0, NULL, b'0'),
+(25, 'bill@gmail.com', '$2a$10$TFQM08MvSHDYRhHAK.1Ca.IlnrfC.odfGTTfcPdug43qc2qFA6MUm', 'idk', b'0', b'0', 'HD', '2025-01-16 15:40:28', NULL, 1, 'VIEWER', 0, NULL, b'0'),
+(28, 'billJen2@outlook.com', '$2a$10$tHn9dInNHN9oOAio9n6C8eL5/e23y7AhlODym31U2AHOQ52ZYtg22', 'IDEAL', b'1', b'0', 'HD', '2025-01-16 20:40:58', NULL, 1, NULL, 0, NULL, b'0'),
+(29, 'billJen3@outlook.com', '$2a$10$uanqyE3AoGjT90E8HOa9Te7ketJeo8NYBlYWk5.paB.kQmZ9zz6Ym', 'IDEAL', b'1', b'0', 'HD', '2025-01-16 20:41:09', NULL, 1, NULL, 0, NULL, b'0'),
+(30, 'UHD.user.test@gmail.com', '$2a$10$wLrCvgg8QrUeM3H2e9enwuzpHCh/0n8tUEnhykU7jUIm074n13Sxe', 'method', b'0', b'0', 'UHD', '2025-01-16 21:44:01', NULL, 1, NULL, 0, NULL, b'0'),
+(31, 'SD.user.test@gmail.com', '$2a$10$T2gcordbUeUungqe0MF.PeD.9jPcwKfF..EbuRd8r3j2dmUIUYlDG', 'method', b'0', b'0', 'SD', '2025-01-16 21:44:18', NULL, 2, NULL, 0, NULL, b'0'),
+(32, 'HD.user@gmail.com', '$2a$10$x4yLHVwfkCljWU5epdOSY.NZLQ1C7m321SuyORTR6aorIK6Ema6iy', 'iDEAL', b'0', b'0', 'HD', '2025-01-16 22:09:57', NULL, 2, NULL, 0, NULL, b'0');
 
 -- --------------------------------------------------------
 
+--
+-- Stand-in structure for view `user_genre_count`
+-- (See below for the actual view)
+--
+CREATE TABLE `user_genre_count` (
+`user_id` bigint unsigned
+,`genre_id` int unsigned
+,`genre_name` varchar(255)
+,`total_views` decimal(33,0)
+);
 
-CREATE VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`account_id` AS `account_id`, `u`.`email` AS `email`, `p`.`subscription_type` AS `subscription_type`, `p`.`payment_amount` AS `payment_amount`, `p`.`is_paid` AS `is_paid`, `p`.`is_discount_applied` AS `is_discount_applied`, `p`.`payment_date` AS `payment_date`, `p`.`next_billing_date` AS `next_billing_date` FROM (`payments` `p` join `user` `u` on(`p`.`account_id` = `u`.`account_id`)) ;
+-- --------------------------------------------------------
 
+--
+-- Stand-in structure for view `user_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `user_view` (
+`account_id` bigint unsigned
+,`email` varchar(255)
+,`subscription` enum('SD','HD','UHD')
+,`trial_start_date` datetime
+,`trial_end_date` datetime
+,`language_id` int unsigned
+,`role` enum('VIEWER','JUNIOR','MEDIOR','SENIOR')
+);
 
-    CREATE VIEW subscription_cost AS
-    SELECT *
-    FROM (
-        SELECT 
-            u.account_id,
-            u.subscription,
-            u.email,
-            u.payment_method,
-            CASE
-                WHEN u.role IN ('Junior', 'Medior', 'Senior') THEN 0
-                WHEN u.discount = b'1' THEN -2.00
-                WHEN u.subscription = 'SD' THEN 7.99
-                WHEN u.subscription = 'HD' THEN 10.99
-                WHEN u.subscription = 'UHD' THEN 13.99
-            END AS subscription_cost
-        FROM 
-            user u
-    ) subquery
-    WHERE subscription_cost > 0;
+-- --------------------------------------------------------
 
+--
+-- Structure for view `paymentstatus`
+--
+DROP TABLE IF EXISTS `paymentstatus`;
 
-CREATE VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) AS `total_views` FROM ((((((`genre` `g` left join `genreformovie` `mg` on(`g`.`genre_id` = `mg`.`genre_id`)) left join `movie` `m` on(`mg`.`movie_id` = `m`.`movie_id`)) left join `movieviewcount` `mvc` on(`m`.`movie_id` = `mvc`.`movie_id`)) left join `genreforseries` `gfs` on(`g`.`genre_id` = `gfs`.`genre_id`)) left join `series` `s` on(`gfs`.`series_id` = `s`.`series_id`)) left join `seriesviewcount` `svc` on(`s`.`series_id` = `svc`.`series_id` and `svc`.`account_id` = `mvc`.`account_id`)) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0) DESC ;
+CREATE  VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`account_id` AS `account_id`, `u`.`email` AS `email`, `p`.`subscription_type` AS `subscription_type`, `p`.`payment_amount` AS `payment_amount`, `p`.`is_paid` AS `is_paid`, `p`.`is_discount_applied` AS `is_discount_applied`, `p`.`payment_date` AS `payment_date`, `p`.`next_billing_date` AS `next_billing_date` FROM (`payments` `p` join `user` `u` on((`p`.`account_id` = `u`.`account_id`))) ;
 
-DROP VIEW IF EXISTS netflix.user_view;
+-- --------------------------------------------------------
 
-CREATE VIEW netflix.user_view AS
-SELECT `account_id`, `email`, `subscription`, `trial_start_date`, `trial_end_date`, `language_id`, `role`
-FROM netflix.user;
+--
+-- Structure for view `subscription_cost`
+--
+DROP TABLE IF EXISTS `subscription_cost`;
 
-CREATE VIEW `user_for_junior` AS SELECT `account_id`,  `trial_start_date`, `trial_end_date`, `language_id`, `role` 
-FROM netflix.user;
+CREATE  VIEW `subscription_cost`  AS SELECT `subquery`.`account_id` AS `account_id`, `subquery`.`subscription` AS `subscription`, `subquery`.`email` AS `email`, `subquery`.`payment_method` AS `payment_method`, `subquery`.`subscription_cost` AS `subscription_cost` FROM (select `u`.`account_id` AS `account_id`,`u`.`subscription` AS `subscription`,`u`.`email` AS `email`,`u`.`payment_method` AS `payment_method`,(case when (`u`.`role` in ('Junior','Medior','Senior')) then 0 when (`u`.`discount` = 0x01) then -(2.00) when (`u`.`subscription` = 'SD') then 7.99 when (`u`.`subscription` = 'HD') then 10.99 when (`u`.`subscription` = 'UHD') then 13.99 end) AS `subscription_cost` from `user` `u`) AS `subquery` WHERE (`subquery`.`subscription_cost` > 0) ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `user_genre_count`
+--
+DROP TABLE IF EXISTS `user_genre_count`;
+
+CREATE  VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, (ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0)) AS `total_views` FROM ((((((`genre` `g` left join `genreformovie` `mg` on((`g`.`genre_id` = `mg`.`genre_id`))) left join `movie` `m` on((`mg`.`movie_id` = `m`.`movie_id`))) left join `movieviewcount` `mvc` on((`m`.`movie_id` = `mvc`.`movie_id`))) left join `genreforseries` `gfs` on((`g`.`genre_id` = `gfs`.`genre_id`))) left join `series` `s` on((`gfs`.`series_id` = `s`.`series_id`))) left join `seriesviewcount` `svc` on(((`s`.`series_id` = `svc`.`series_id`) and (`svc`.`account_id` = `mvc`.`account_id`)))) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, (ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0)) DESC ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `user_view`
+--
+DROP TABLE IF EXISTS `user_view`;
+
+CREATE  VIEW `user_view`  AS SELECT `user`.`account_id` AS `account_id`, `user`.`email` AS `email`, `user`.`subscription` AS `subscription`, `user`.`trial_start_date` AS `trial_start_date`, `user`.`trial_end_date` AS `trial_end_date`, `user`.`language_id` AS `language_id`, `user`.`role` AS `role` FROM `user` ;
+
+--
+-- Indexes for dumped tables
+--
 
 --
 -- Indexes for table `episode`
@@ -1239,55 +1320,55 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `episode`
 --
 ALTER TABLE `episode`
-  MODIFY `episode_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `episode_id` int UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `genre`
 --
 ALTER TABLE `genre`
-  MODIFY `genre_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `genre_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `invitation`
 --
 ALTER TABLE `invitation`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `language`
 --
 ALTER TABLE `language`
-  MODIFY `language_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `language_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `movie`
 --
 ALTER TABLE `movie`
-  MODIFY `movie_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `movie_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `payment_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `profile`
 --
 ALTER TABLE `profile`
-  MODIFY `profile_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `profile_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `series`
 --
 ALTER TABLE `series`
-  MODIFY `series_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `series_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `account_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `account_id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- Constraints for dumped tables
@@ -1380,20 +1461,3 @@ DELIMITER $$
 CREATE EVENT `InsertExpiredTrialsDaily` ON SCHEDULE EVERY 1 DAY STARTS '2025-01-04 19:44:33' ON COMPLETION NOT PRESERVE ENABLE DO CALL `InsertExpiredTrialsIntoPayments`()$$
 
 DELIMITER ;
-
--- START TRANSACTION;
-
--- BEGIN
---     -- Query 1: Attempt to insert an order
---     INSERT INTO orders (user_id, product_id, quantity) VALUES (1, 101, 2);
-
---     -- Query 2: Attempt to update inventory (might fail due to insufficient stock)
---     UPDATE inventory SET stock = stock - 2 WHERE product_id = 101;
-
---     -- If everything works, commit the transaction
---     COMMIT;
-
--- EXCEPTION
---     -- If an error occurs, rollback all changes
---     ROLLBACK;
--- END;
