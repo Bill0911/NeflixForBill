@@ -18,25 +18,25 @@ public class MovieDTO implements Serializable
     @Id
     private Long movieId;
 
-    private String movieName;
+    private String title;
 
-    public MovieDTO(String movieName)
+    public MovieDTO(String title)
     {
-        this.movieName = movieName;
+        this.title = title;
     }
 
     public MovieDTO() {
 
     }
 
-    public String getMovieName()
+    public String getTitle()
     {
-        return movieName;
+        return title;
     }
 
-    public void setMovieName(String movieName)
+    public void setTitle(String title)
     {
-        this.movieName = movieName;
+        this.title = title;
     }
 
     public void setMovieId(Long movieId) {
