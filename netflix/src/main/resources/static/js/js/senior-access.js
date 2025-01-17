@@ -1,7 +1,8 @@
-hdocument.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
     const loadTableButton = document.getElementById("loadTable");
     const tableSelect = document.getElementById("tableSelect");
     const tableContainer = document.getElementById("tableContainer");
+    const formContainer = document.getElementById("formContainer");
     const crudForm = document.getElementById("crudForm");
     const formFields = document.getElementById("formFields");
 
@@ -12,7 +13,6 @@ hdocument.addEventListener("DOMContentLoaded", () => {
 
     loadTableButton.addEventListener("click", () => loadTableData(tableSelect.value));
 
-    // Fetch data from the server
     async function fetchAPI(url, method, data = null) {
         const headers = {
             "Content-Type": "application/json",
@@ -47,64 +47,71 @@ hdocument.addEventListener("DOMContentLoaded", () => {
 
         const table = document.createElement("table");
         const headerRow = document.createElement("tr");
-        Object.keys(data[0]).forEach(key => headerRow.appendChild(createElement('th', key)));
-        headerRow.appendChild(createElement('th', 'Actions'));
+        Object.keys(data[0]).forEach(key => {
+            const th = document.createElement("th");
+            th.textContent = key;
+            headerRow.appendChild(th);
+        });
+        const actionTh = document.createElement("th");
+        actionTh.textContent = "Actions";
+        headerRow.appendChild(actionTh);
         table.appendChild(headerRow);
 
         data.forEach(item => {
             const tr = document.createElement("tr");
-            Object.entries(item).forEach(([key, value]) => tr.appendChild(createElement('td', value)));
-            const actionsTd = document.createElement("td");
-            actionsTd.appendChild(createActionButton('Edit', () => loadEditForm(item, tableName)));
-            actionsTd.appendChild(createActionButton('Delete', () => deleteRow(item.id, tableName)));
-            tr.appendChild(actionsTd);
+            Object.entries(item).forEach(([key, value]) => {
+                const td = document.createElement("td");
+                td.textContent = value;
+                tr.appendChild(td);
+            });
+
+            const actionTd = document.createElement("td");
+            const editButton = createActionButton('Edit', () => loadEditForm(item, tableName));
+            const deleteButton = createActionButton('Delete', () => deleteRow(item.id, tableName));
+            actionTd.appendChild(editButton);
+            actionTd.appendChild(deleteButton);
+            tr.appendChild(actionTd);
+
             table.appendChild(tr);
         });
         tableContainer.appendChild(table);
     }
 
-    function createElement(tag, content) {
-        const element = document.createElement(tag);
-        element.textContent = content;
-        return element;
-    }
-
     function createActionButton(text, action) {
         const button = document.createElement("button");
         button.textContent = text;
-        button.onclick = action;
+        button.addEventListener('click', action);
         return button;
     }
 
     function loadEditForm(item, tableName) {
-        crudForm.dataset.id = item.id; // Store the ID for use in PUT or PATCH requests
-        crudForm.dataset.table = tableName; // Store the table name for use in requests
-        formFields.innerHTML = ""; // Clear previous form fields
+        crudForm.dataset.id = item.id;
+        crudForm.dataset.table = tableName;
+        formFields.innerHTML = "";
         Object.entries(item).forEach(([key, value]) => {
             const label = document.createElement('label');
             label.textContent = key;
             const input = document.createElement('input');
+            input.type = key === 'id' ? 'text' : 'input'; // Adjust input types as necessary
             input.name = key;
             input.value = value;
             formFields.appendChild(label);
             formFields.appendChild(input);
         });
+        const saveButton = createActionButton('Save', submitForm);
+        formFields.appendChild(saveButton);
     }
 
     crudForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const data = Object.fromEntries(new FormData(crudForm));
-        const id = crudForm.dataset.id;
-        const tableName = crudForm.dataset.table;
-        const method = id ? 'PUT' : 'POST';
-        const url = `http://localhost:8081/api/${tableName}/${id}`;
+        const method = crudForm.dataset.id ? 'PUT' : 'POST';
+        const url = `http://localhost:8081/api/${crudForm.dataset.table}/${crudForm.dataset.id || ''}`;
 
         try {
             const result = await fetchAPI(url, method, data);
-            alert(`${id ? "Updated" : "Added"} successfully!`);
-            crudForm.reset();
-            delete crudForm.dataset.id; // Remove the stored ID after operation
-            loadTableData(tableName);
+            alert('Operation successful!');
+            loadTableData(crudForm.dataset.table);
         } catch (error) {
             console.error("Error saving entry:", error);
             alert(`Failed to save entry: ${error.message}`);
