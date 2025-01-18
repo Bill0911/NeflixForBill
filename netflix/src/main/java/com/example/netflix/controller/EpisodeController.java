@@ -53,7 +53,7 @@ public class EpisodeController {
     public ResponseEntity<String> patchEpisodeById(@PathVariable Integer id, @RequestBody Episode episode) {
         try {
             episodeService.patchEpisodeById(id, episode);
-            return ResponseEntity.ok("Episode has been patched successfully");
+            return ResponseEntity.ok("Episode title has been edited to " + episode.getTitle());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }

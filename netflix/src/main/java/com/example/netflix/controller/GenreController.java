@@ -41,7 +41,7 @@ public class GenreController {
     public ResponseEntity<String> updateGenre(@PathVariable Integer id, @RequestBody GenreDTO genre) {
         try {
             genreService.updateGenre(id, genre.getGenreName());
-            return ResponseEntity.ok("Genre " + id + " has been updated");
+            return ResponseEntity.ok("Genre id " + id + " has been renamed to " + genre.getGenreName());
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Failed to update genre with ID" + id + ": " + e.getMessage());
         }
@@ -51,7 +51,7 @@ public class GenreController {
     public ResponseEntity<String> patchGenre(@PathVariable Integer id, @RequestBody GenreDTO genre) {
         try {
             genreService.updateGenre(id, genre.getGenreName());
-            return ResponseEntity.ok("Genre " + id + " has been patched");
+            return ResponseEntity.ok("Genre " + id + " has been renamed to " + genre.getGenreName());
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Failed to patch genre with ID" + id + ": " + e.getMessage());
         }
