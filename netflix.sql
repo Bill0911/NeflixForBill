@@ -1,51 +1,71 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: mysql
+-- Generation Time: Jan 18, 2025 at 02:56 PM
+-- Server version: 8.0.40
+-- PHP Version: 8.2.27
 
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `netflix`
 --
 
 DELIMITER $$
 --
 -- Procedures
 --
-CREATE PROCEDURE `AddEpisode` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
+CREATE `AddEpisode` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     INSERT INTO `episode` (`title`, `duration`, `series_id`)
     VALUES (p_title, p_duration, p_series_id);
 END$$
 
-CREATE PROCEDURE `AddGenre` (IN `p_name` VARCHAR(255))   BEGIN
+CREATE `AddGenre` (IN `p_name` VARCHAR(255))   BEGIN
     INSERT INTO `genre` (`genre_name`)
     VALUES (p_name);
 END$$
 
-CREATE PROCEDURE `AddGenreForMovie` (IN `p_genreId` INT, IN `p_movieId` INT)   BEGIN
+CREATE `AddGenreForMovie` (IN `p_genreId` INT, IN `p_movieId` INT)   BEGIN
 	INSERT INTO `genreformovie` (`genre_id`, `movie_id`)
     VALUES (p_genreId, p_movieId);
 END$$
 
-CREATE PROCEDURE `AddGenreForSeries` (IN `p_genreId` INT, IN `p_seriesId` INT)   BEGIN
+CREATE `AddGenreForSeries` (IN `p_genreId` INT, IN `p_seriesId` INT)   BEGIN
 	INSERT INTO `genreforseries` (`genre_id`, `series_id`)
     VALUES (p_genreId, p_seriesId);
 END$$
 
-CREATE PROCEDURE `AddGenreForUser` (IN `p_genreId` INT, IN `p_accountId` INT)   BEGIN
+CREATE `AddGenreForUser` (IN `p_genreId` INT, IN `p_accountId` INT)   BEGIN
 	INSERT INTO `genreforuser` (`genre_id`, `account_id`)
     VALUES (p_genreId, p_accountId);
 END$$
 
-CREATE PROCEDURE `AddLanguage` (IN `p_name` VARCHAR(255))   BEGIN
+CREATE `AddLanguage` (IN `p_name` VARCHAR(255))   BEGIN
     INSERT INTO `language` (`name`)
     VALUES (p_name);
 END$$
 
-CREATE PROCEDURE `AddMovie` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
+CREATE `AddMovie` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
     INSERT INTO `movie` (`title`, `duration`, `sd_available`, `hd_available`, `uhd_available` , `minimum_age`)
     VALUES (p_title, p_duration, p_sd_available, p_hd_available, p_uhd_available, p_minimum_age);
 END$$
 
-CREATE PROCEDURE `AddMoviesProfileWatchlist` (IN `p_profileId` INT, IN `p_movieId` INT)   BEGIN
+CREATE `AddMoviesProfileWatchlist` (IN `p_profileId` INT, IN `p_movieId` INT)   BEGIN
 	INSERT INTO `moviesprofilewatchlist` (`profile_id`, `movie_id`)
     VALUES (p_profileId, p_movieId);
 END$$
 
-CREATE PROCEDURE `AddMovieViewCount` (IN `p_accountId` INT, IN `p_movieId` INT)   BEGIN
+CREATE `AddMovieViewCount` (IN `p_accountId` INT, IN `p_movieId` INT)   BEGIN
     
     IF EXISTS (
         SELECT 1 
@@ -71,22 +91,22 @@ CREATE PROCEDURE `AddMovieViewCount` (IN `p_accountId` INT, IN `p_movieId` INT) 
     AND movie_id = p_movieId;
 END$$
 
-CREATE PROCEDURE `AddProfile` (IN `p_account_id` BIGINT(20), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
+CREATE `AddProfile` (IN `p_account_id` BIGINT(20), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
     INSERT INTO `profile` (`account_id`, `profile_image`, `age`, `name`)
     VALUES (p_account_id, p_profile_image, p_age, p_name);
 END$$
 
-CREATE PROCEDURE `AddSeries` (IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(11))   BEGIN
+CREATE `AddSeries` (IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(11))   BEGIN
     INSERT INTO `series` (`title`, `minimum_age`)
     VALUES (p_title, p_minimum_age);
 END$$
 
-CREATE PROCEDURE `AddSeriesProfileWatchlist` (IN `p_profileId` INT, IN `p_seriesId` INT)   BEGIN
+CREATE `AddSeriesProfileWatchlist` (IN `p_profileId` INT, IN `p_seriesId` INT)   BEGIN
 	INSERT INTO `seriesprofilewatchlist` (`profile_id`, `series_id`)
     VALUES (p_profileId, p_seriesId);
 END$$
 
-CREATE PROCEDURE `AddSeriesViewCount` (IN `p_accountId` INT, IN `p_seriesId` INT)   BEGIN
+CREATE `AddSeriesViewCount` (IN `p_accountId` INT, IN `p_seriesId` INT)   BEGIN
     -- Check if the record exists in the seriesviewcount table
     IF EXISTS (
         SELECT 1 
@@ -112,21 +132,21 @@ CREATE PROCEDURE `AddSeriesViewCount` (IN `p_accountId` INT, IN `p_seriesId` INT
     AND series_id = p_seriesId;
 END$$
 
-CREATE PROCEDURE `AddUser` (IN `p_email` VARCHAR(255), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_language_id` INT(11), IN `p_subscription` ENUM('SD','HD','UHD'))   BEGIN
+CREATE `AddUser` (IN `p_email` VARCHAR(255), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_language_id` INT(11), IN `p_subscription` ENUM('SD','HD','UHD'))   BEGIN
     INSERT INTO `user` (`email`, `password`, `payment_method`, `language_id`, `subscription`)
     VALUES (p_email, p_password, p_payment_method, p_language_id, p_subscription);
 END$$
 
-CREATE PROCEDURE `DeleteEpisode` (IN `p_episode_id` INT)   BEGIN
+CREATE `DeleteEpisode` (IN `p_episode_id` INT)   BEGIN
     DELETE FROM `episode` WHERE `episode_id` = p_episode_id;
 END$$
 
-CREATE PROCEDURE `DeleteGenre` (IN `p_genre_id` INT)   BEGIN
+CREATE `DeleteGenre` (IN `p_genre_id` INT)   BEGIN
     DELETE FROM `genre`
     WHERE `genre_id` = p_genre_id;
 END$$
 
-CREATE PROCEDURE `DeleteGenreForMovie` (IN `p_genre_id` INT, IN `p_movie_id` INT)   BEGIN
+CREATE `DeleteGenreForMovie` (IN `p_genre_id` INT, IN `p_movie_id` INT)   BEGIN
     DELETE FROM genreformovie
     WHERE movie_id = p_movie_id AND genre_id = p_genre_id;
 
@@ -136,7 +156,7 @@ CREATE PROCEDURE `DeleteGenreForMovie` (IN `p_genre_id` INT, IN `p_movie_id` INT
     END IF;
 END$$
 
-CREATE PROCEDURE `DeleteGenreForSeries` (IN `p_genre_id` INT, IN `p_series_id` INT)   BEGIN
+CREATE `DeleteGenreForSeries` (IN `p_genre_id` INT, IN `p_series_id` INT)   BEGIN
     DELETE FROM genreforseries
     WHERE series_id = p_series_id AND genre_id = p_genre_id;
 
@@ -146,7 +166,7 @@ CREATE PROCEDURE `DeleteGenreForSeries` (IN `p_genre_id` INT, IN `p_series_id` I
     END IF;
 END$$
 
-CREATE PROCEDURE `DeleteGenreForUser` (IN `p_genre_id` INT, IN `p_account_id` BIGINT(20))   BEGIN
+CREATE `DeleteGenreForUser` (IN `p_genre_id` INT, IN `p_account_id` BIGINT(20))   BEGIN
     DELETE FROM genreforuser
     WHERE account_id = p_account_id AND genre_id = p_genre_id;
 
@@ -156,16 +176,16 @@ CREATE PROCEDURE `DeleteGenreForUser` (IN `p_genre_id` INT, IN `p_account_id` BI
     END IF;
 END$$
 
-CREATE PROCEDURE `DeleteLanguage` (IN `p_language_id` INT)   BEGIN
+CREATE `DeleteLanguage` (IN `p_language_id` INT)   BEGIN
     DELETE FROM `language` WHERE `language_id` = p_language_id;
 END$$
 
-CREATE PROCEDURE `DeleteMovie` (IN `p_movie_id` INT(11))   BEGIN
+CREATE `DeleteMovie` (IN `p_movie_id` INT(11))   BEGIN
     DELETE FROM `movie`
     WHERE `movie_id` = p_movie_id;
 END$$
 
-CREATE PROCEDURE `DeleteMoviesProfileWatchlist` (IN `p_profile_id` INT, IN `p_movie_id` INT)   BEGIN
+CREATE `DeleteMoviesProfileWatchlist` (IN `p_profile_id` INT, IN `p_movie_id` INT)   BEGIN
     DELETE FROM moviesprofilewatchlist
     WHERE profile_id = p_profile_id AND movie_id = p_movie_id;
 
@@ -175,7 +195,7 @@ CREATE PROCEDURE `DeleteMoviesProfileWatchlist` (IN `p_profile_id` INT, IN `p_mo
     END IF;
 END$$
 
-CREATE PROCEDURE `DeleteMovieViewCount` (IN `p_account_id` BIGINT(20), IN `p_movie_id` INT)   BEGIN
+CREATE `DeleteMovieViewCount` (IN `p_account_id` BIGINT(20), IN `p_movie_id` INT)   BEGIN
     DELETE FROM movieviewcount
     WHERE account_id = p_account_id AND movie_id = p_movie_id;
 
@@ -185,15 +205,15 @@ CREATE PROCEDURE `DeleteMovieViewCount` (IN `p_account_id` BIGINT(20), IN `p_mov
     END IF;
 END$$
 
-CREATE PROCEDURE `DeleteProfile` (IN `p_profile_id` INT)   BEGIN
+CREATE `DeleteProfile` (IN `p_profile_id` INT)   BEGIN
     DELETE FROM `profile` WHERE `profile_id` = p_profile_id;
 END$$
 
-CREATE PROCEDURE `DeleteSeries` (IN `p_series_id` INT)   BEGIN
+CREATE `DeleteSeries` (IN `p_series_id` INT)   BEGIN
     DELETE FROM `series` WHERE `series_id` = p_series_id;
 END$$
 
-CREATE PROCEDURE `DeleteSeriesProfileWatchlist` (IN `p_profile_id` INT, IN `p_series_id` INT)   BEGIN
+CREATE `DeleteSeriesProfileWatchlist` (IN `p_profile_id` INT, IN `p_series_id` INT)   BEGIN
     DELETE FROM seriesprofilewatchlist
     WHERE profile_id = p_profile_id AND series_id = p_series_id;
 
@@ -203,7 +223,7 @@ CREATE PROCEDURE `DeleteSeriesProfileWatchlist` (IN `p_profile_id` INT, IN `p_se
     END IF;
 END$$
 
-CREATE PROCEDURE `DeleteSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_series_id` INT)   BEGIN
+CREATE `DeleteSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_series_id` INT)   BEGIN
     DELETE FROM seriesviewcount
     WHERE account_id = p_account_id AND series_id = p_series_id;
 
@@ -213,110 +233,110 @@ CREATE PROCEDURE `DeleteSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_se
     END IF;
 END$$
 
-CREATE PROCEDURE `DeleteUser` (IN `p_account_id` BIGINT(20))   BEGIN
+CREATE `DeleteUser` (IN `p_account_id` BIGINT(20))   BEGIN
     DELETE FROM `user` WHERE `account_id` = p_account_id;
 END$$
 
-CREATE PROCEDURE `GetEpisodeById` (IN `p_episode_id` INT)   BEGIN
+CREATE `GetEpisodeById` (IN `p_episode_id` INT)   BEGIN
     SELECT * FROM `episode` WHERE `episode_id` = p_episode_id;
 END$$
 
-CREATE PROCEDURE `GetGenreById` (IN `p_genre_id` INT)   BEGIN
+CREATE `GetGenreById` (IN `p_genre_id` INT)   BEGIN
     SELECT * FROM `genre`
     WHERE `genre_id` = p_genre_id;
 END$$
 
-CREATE PROCEDURE `GetGenreForMovie` (IN `p_genre_id` INT, IN `p_movie_id` INT)   BEGIN
+CREATE `GetGenreForMovie` (IN `p_genre_id` INT, IN `p_movie_id` INT)   BEGIN
     SELECT * FROM `genreformovie`
     WHERE `genre_id` = p_genre_id AND `movie_id` = p_movie_id;
 END$$
 
-CREATE PROCEDURE `GetGenreForSeries` (IN `p_genre_id` INT, IN `p_series_id` INT)   BEGIN
+CREATE `GetGenreForSeries` (IN `p_genre_id` INT, IN `p_series_id` INT)   BEGIN
     SELECT * FROM `genreforseries`
     WHERE `genre_id` = p_genre_id AND `series_id` = p_series_id;
 END$$
 
-CREATE PROCEDURE `GetGenreForUser` (IN `p_genre_id` INT, IN `p_account_id` BIGINT(20))   BEGIN
+CREATE `GetGenreForUser` (IN `p_genre_id` INT, IN `p_account_id` BIGINT(20))   BEGIN
     SELECT * FROM `genreforuser`
     WHERE `genre_id` = p_genre_id AND `account_id` = p_account_id;
 END$$
 
-CREATE PROCEDURE `GetLanguageById` (IN `p_language_id` INT)   BEGIN
+CREATE `GetLanguageById` (IN `p_language_id` INT)   BEGIN
     SELECT * FROM `language`
     WHERE `language_id` = p_language_id;
 END$$
 
-CREATE PROCEDURE `GetManyEpisodes` ()   BEGIN
-    SELECT * FROM `episode`;
+CREATE `GetManyEpisodes` ()   BEGIN
+    SELECT * FROM `episode` LIMIT 49;
 END$$
 
-CREATE PROCEDURE `GetManyGenreForMovies` ()   BEGIN
-    SELECT * FROM `genreformovie`;
+CREATE `GetManyGenreForMovies` ()   BEGIN
+    SELECT * FROM `genreformovie` LIMIT 49;
 END$$
 
-CREATE PROCEDURE `GetManyGenreForSeries` ()   BEGIN
-    SELECT * FROM `genreforseries`;
+CREATE `GetManyGenreForSeries` ()   BEGIN
+    SELECT * FROM `genreforseries` LIMIT 49;
 END$$
 
-CREATE PROCEDURE `GetManyGenreForUsers` ()   BEGIN
-    SELECT * FROM `genreforuser`;
+CREATE `GetManyGenreForUsers` ()   BEGIN
+    SELECT * FROM `genreforuser` LIMIT 49;
 END$$
 
-CREATE PROCEDURE `GetManyGenres` ()   BEGIN
-    SELECT * FROM `genre`;
+CREATE `GetManyGenres` ()   BEGIN
+    SELECT * FROM `genre` LIMIT 49;
 END$$
 
-CREATE PROCEDURE `GetManyLanguages` ()   BEGIN
-    SELECT * FROM `language`;
+CREATE `GetManyLanguages` ()   BEGIN
+    SELECT * FROM `language` LIMIT 49;
 END$$
 
-CREATE PROCEDURE `GetManyMovies` ()   BEGIN
-    SELECT * FROM `movie`;
+CREATE `GetManyMovies` ()   BEGIN
+    SELECT * FROM `movie` LIMIT 49;
 END$$
 
-CREATE PROCEDURE `GetManyMoviesProfileWatchlists` ()   BEGIN
-    SELECT * FROM `moviesprofilewatchlist`;
+CREATE `GetManyMoviesProfileWatchlists` ()   BEGIN
+    SELECT * FROM `moviesprofilewatchlist` LIMIT 49;
 END$$
 
-CREATE PROCEDURE `GetManyMovieViewCounts` ()   BEGIN
-    SELECT * FROM `movieviewcount`;
+CREATE `GetManyMovieViewCounts` ()   BEGIN
+    SELECT * FROM `movieviewcount` LIMIT 49;
 END$$
 
-CREATE PROCEDURE `GetManyProfiles` ()   BEGIN
-        SELECT * FROM `profile`;
+CREATE `GetManyProfiles` ()   BEGIN
+        SELECT * FROM `profile` LIMIT 49;
     END$$
 
 CREATE DEFINER=`root`@`%` PROCEDURE `GetManySeries` ()   BEGIN
-    SELECT * FROM `series`;
+    SELECT * FROM `series` LIMIT 49;
 END$$
 
-CREATE PROCEDURE `GetManySeriesProfileWatchlists` ()   BEGIN
-    SELECT * FROM `seriesprofilewatchlist`;
+CREATE `GetManySeriesProfileWatchlists` ()   BEGIN
+    SELECT * FROM `seriesprofilewatchlist` LIMIT 49;
 END$$
 
-CREATE PROCEDURE `GetManySeriesViewCounts` ()   BEGIN
-    SELECT * FROM `seriesviewcount`;
+CREATE `GetManySeriesViewCounts` ()   BEGIN
+    SELECT * FROM `seriesviewcount` LIMIT 49;
 END$$
 
-CREATE PROCEDURE `GetManyUsers` ()   BEGIN
-    SELECT * FROM `user`;
+CREATE `GetManyUsers` ()   BEGIN
+    SELECT * FROM `user` LIMIT 49;
 END$$
 
-CREATE PROCEDURE `GetMovieById` (IN `p_movie_id` INT)   BEGIN
+CREATE `GetMovieById` (IN `p_movie_id` INT)   BEGIN
     SELECT * FROM `movie` WHERE `movie_id` = p_movie_id;
 END$$
 
-CREATE PROCEDURE `GetMoviesProfileWatchlist` (IN `p_profile_id` INT, IN `p_movie_id` INT)   BEGIN
+CREATE `GetMoviesProfileWatchlist` (IN `p_profile_id` INT, IN `p_movie_id` INT)   BEGIN
     SELECT * FROM moviesprofilewatchlist
     WHERE `profile_id` = p_profile_id AND `movie_id` = p_movie_id;
 END$$
 
-CREATE PROCEDURE `GetMovieViewCount` (IN `p_account_id` BIGINT(20), IN `p_movie_id` INT)   BEGIN
+CREATE `GetMovieViewCount` (IN `p_account_id` BIGINT(20), IN `p_movie_id` INT)   BEGIN
     SELECT * FROM movieviewcount
     WHERE `movie_id` = p_movie_id AND `account_id` = p_account_id;
 END$$
 
-CREATE PROCEDURE `GetPersonalizedOfferMovies` (IN `userId` BIGINT(20), IN `maxMovies` INT)   BEGIN
+CREATE `GetPersonalizedOfferMovies` (IN `userId` BIGINT(20), IN `maxMovies` INT)   BEGIN
     DECLARE done INT DEFAULT FALSE;
     DECLARE genreId INT;
     DECLARE genreViews INT;
@@ -334,7 +354,7 @@ CREATE PROCEDURE `GetPersonalizedOfferMovies` (IN `userId` BIGINT(20), IN `maxMo
     FROM user_genre_count
     WHERE user_id = userId;
 
-    CREATE TABLE TempPersonalizedOffer (
+    CREATE TEMPORARY TABLE TempPersonalizedOffer (
         movie_id INT,
         title VARCHAR(255)
     );
@@ -368,10 +388,10 @@ CREATE PROCEDURE `GetPersonalizedOfferMovies` (IN `userId` BIGINT(20), IN `maxMo
     FROM TempPersonalizedOffer
     LIMIT maxMovies;
 
-    DROP TABLE TempPersonalizedOffer;
+    DROP TEMPORARY TABLE TempPersonalizedOffer;
 END$$
 
-CREATE PROCEDURE `GetPersonalizedOfferSeries` (IN `userId` BIGINT(20), IN `maxSeries` INT)   BEGIN
+CREATE `GetPersonalizedOfferSeries` (IN `userId` BIGINT(20), IN `maxSeries` INT)   BEGIN
     DECLARE done INT DEFAULT FALSE;
     DECLARE genreId INT;
     DECLARE genreViews INT;
@@ -423,42 +443,42 @@ CREATE PROCEDURE `GetPersonalizedOfferSeries` (IN `userId` BIGINT(20), IN `maxSe
     FROM TempPersonalizedOffer
     LIMIT maxseries;
 
-    DROP TABLE TempPersonalizedOffer;
+    DROP TEMPORARY TABLE TempPersonalizedOffer;
 END$$
 
-CREATE PROCEDURE `GetProfileById` (IN `p_profile_id` INT)   BEGIN
-    SELECT * FROM `profile`
-    WHERE `profile_id` = p_profile_id;
-END$$
-
-CREATE DEFINER=`root`@`%` PROCEDURE `GetProfilesByAccountId` (IN `p_account_id` BIGINT(20))   BEGIN
+CREATE `GetProfilesByAccountId` (IN `p_account_id` INT)   BEGIN
     SELECT * FROM `profile`
     WHERE `account_id` = p_account_id;
 END$$
 
-CREATE PROCEDURE `GetSeriesById` (IN `p_series_id` INT(11))   BEGIN
+CREATE `GetProfileById` (IN `p_profile_id` INT)   BEGIN
+    SELECT * FROM `profile`
+    WHERE `profile_id` = p_profile_id;
+END$$
+
+CREATE `GetSeriesById` (IN `p_series_id` INT(11))   BEGIN
     SELECT * FROM `series` WHERE `series_id` = p_series_id;
 END$$
 
-CREATE PROCEDURE `GetSeriesProfileWatchlist` (IN `p_profile_id` INT, IN `p_series_id` INT)   BEGIN
+CREATE `GetSeriesProfileWatchlist` (IN `p_profile_id` INT, IN `p_series_id` INT)   BEGIN
     SELECT * FROM seriesprofilewatchlist
     WHERE `profile_id` = p_profile_id AND `eries_id` = p_series_id;
 END$$
 
-CREATE PROCEDURE `GetSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_series_id` INT)   BEGIN
+CREATE `GetSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_series_id` INT)   BEGIN
     SELECT * FROM seriesviewcount
     WHERE `series_id` = p_series_id AND `account_id` = p_account_id;
 END$$
 
-CREATE PROCEDURE `GetUserByEmail` (IN `p_email` VARCHAR(255))   BEGIN
+CREATE `GetUserByEmail` (IN `p_email` VARCHAR(255))   BEGIN
     SELECT * FROM user WHERE email = p_email COLLATE utf8mb4_unicode_ci LIMIT 1;
 END$$
 
-CREATE PROCEDURE `GetUserById` (IN `p_account_id` BIGINT(20))   BEGIN
+CREATE `GetUserById` (IN `p_account_id` BIGINT(20))   BEGIN
     SELECT * FROM `user` WHERE `account_id` = p_account_id;
 END$$
 
-CREATE PROCEDURE `InsertExpiredTrialsIntoPayments` ()   BEGIN
+CREATE `InsertExpiredTrialsIntoPayments` ()   BEGIN
     DECLARE done INT DEFAULT FALSE;
     DECLARE userId BIGINT (20);
     DECLARE subscriptionType ENUM('SD', 'HD', 'UHD');
@@ -501,7 +521,7 @@ CREATE PROCEDURE `InsertExpiredTrialsIntoPayments` ()   BEGIN
     CLOSE cur;
 END$$
 
-CREATE PROCEDURE `PatchEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
+CREATE `PatchEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     UPDATE `episode`
     SET 
         `title` = COALESCE(p_title, `title`),
@@ -510,7 +530,7 @@ CREATE PROCEDURE `PatchEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255
     WHERE `episode_id` = p_episode_id;
 END$$
 
-CREATE PROCEDURE `PatchGenreForMovie` (IN `p_old_genre_id` INT, IN `p_old_movie_id` INT, IN `p_new_genre_id` INT, IN `p_new_movie_id` INT)   BEGIN
+CREATE `PatchGenreForMovie` (IN `p_old_genre_id` INT, IN `p_old_movie_id` INT, IN `p_new_genre_id` INT, IN `p_new_movie_id` INT)   BEGIN
     UPDATE genreformovie
     SET
         genre_id = IFNULL(p_new_genre_id, genre_id),
@@ -518,7 +538,7 @@ CREATE PROCEDURE `PatchGenreForMovie` (IN `p_old_genre_id` INT, IN `p_old_movie_
     WHERE genre_id = p_old_genre_id AND movie_id = p_old_movie_id;
 END$$
 
-CREATE PROCEDURE `PatchGenreForSeries` (IN `p_old_genre_id` INT, IN `p_old_series_id` INT, IN `p_new_genre_id` INT, IN `p_new_series_id` INT)   BEGIN
+CREATE `PatchGenreForSeries` (IN `p_old_genre_id` INT, IN `p_old_series_id` INT, IN `p_new_genre_id` INT, IN `p_new_series_id` INT)   BEGIN
     UPDATE genreforseries
     SET
         genre_id = IFNULL(p_new_genre_id, genre_id),
@@ -526,7 +546,7 @@ CREATE PROCEDURE `PatchGenreForSeries` (IN `p_old_genre_id` INT, IN `p_old_serie
     WHERE genre_id = p_old_genre_id AND series_id = p_old_series_id;
 END$$
 
-CREATE PROCEDURE `PatchGenreForUser` (IN `p_old_user_id` INT, IN `p_old_genre_id` INT, IN `p_new_user_id` INT, IN `p_new_genre_id` INT)   BEGIN
+CREATE `PatchGenreForUser` (IN `p_old_user_id` INT, IN `p_old_genre_id` INT, IN `p_new_user_id` INT, IN `p_new_genre_id` INT)   BEGIN
 
     UPDATE GenreForUser
     SET
@@ -535,7 +555,7 @@ CREATE PROCEDURE `PatchGenreForUser` (IN `p_old_user_id` INT, IN `p_old_genre_id
     WHERE user_id = p_old_user_id AND genre_id = p_old_genre_id;
 END$$
 
-CREATE PROCEDURE `PatchMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
+CREATE `PatchMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
     UPDATE `movie`
     SET 
         `title` = COALESCE(p_title, `title`),
@@ -547,7 +567,7 @@ CREATE PROCEDURE `PatchMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255
     WHERE `movie_id` = p_movie_id;
 END$$
 
-CREATE PROCEDURE `PatchMoviesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_movie_id` INT, IN `p_new_profile_id` INT, IN `p_new_movie_id` INT)   BEGIN
+CREATE `PatchMoviesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_movie_id` INT, IN `p_new_profile_id` INT, IN `p_new_movie_id` INT)   BEGIN
     UPDATE moviesprofilewatchlist
     SET
         profile_id = IFNULL(p_new_profile_id, profile_id),
@@ -555,7 +575,7 @@ CREATE PROCEDURE `PatchMoviesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p
     WHERE profile_id = p_old_profile_id AND movie_id = p_old_movie_id;
 END$$
 
-CREATE PROCEDURE `PatchMovieViewCount` (IN `p_account_id` BIGINT(20), IN `p_movie_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
+CREATE `PatchMovieViewCount` (IN `p_account_id` BIGINT(20), IN `p_movie_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
     UPDATE movieviewcount
     SET
         number = IFNULL(p_new_number, number),
@@ -563,7 +583,7 @@ CREATE PROCEDURE `PatchMovieViewCount` (IN `p_account_id` BIGINT(20), IN `p_movi
     WHERE account_id = p_account_id AND movie_id = p_movie_id;
 END$$
 
-CREATE PROCEDURE `PatchProfile` (IN `p_profile_id` INT(11), IN `p_account_id` BIGINT(20), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
+CREATE `PatchProfile` (IN `p_profile_id` INT(11), IN `p_account_id` BIGINT(20), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
     UPDATE `profile`
     SET 
         `account_id` = COALESCE(p_account_id, `account_id`),
@@ -573,7 +593,7 @@ CREATE PROCEDURE `PatchProfile` (IN `p_profile_id` INT(11), IN `p_account_id` BI
     WHERE `profile_id` = p_profile_id;
 END$$
 
-CREATE PROCEDURE `PatchSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(3))   BEGIN
+CREATE `PatchSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(3))   BEGIN
     UPDATE `series`
     SET 
         `title` = COALESCE(p_title, `title`),
@@ -581,7 +601,7 @@ CREATE PROCEDURE `PatchSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(2
     WHERE `series_id` = p_series_id;
 END$$
 
-CREATE PROCEDURE `PatchSeriesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_series_id` INT, IN `p_new_profile_id` INT, IN `p_new_series_id` INT)   BEGIN
+CREATE `PatchSeriesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_series_id` INT, IN `p_new_profile_id` INT, IN `p_new_series_id` INT)   BEGIN
     UPDATE seriesprofilewatchlist
     SET
         profile_id = IFNULL(p_new_profile_id, profile_id),
@@ -589,7 +609,7 @@ CREATE PROCEDURE `PatchSeriesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p
     WHERE profile_id = p_old_profile_id AND series_id = p_old_series_id;
 END$$
 
-CREATE PROCEDURE `PatchSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_series_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
+CREATE `PatchSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_series_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
     UPDATE seriesviewcount
     SET
         number = IFNULL(p_new_number, number),
@@ -597,7 +617,7 @@ CREATE PROCEDURE `PatchSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_ser
     WHERE account_id = p_account_id AND series_id = p_series_id;
 END$$
 
-CREATE PROCEDURE `PatchUser` (IN `p_account_id` BIGINT(20), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_active` BIT(1), IN `p_blocked` BIT(1), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_trial_end_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('VIEWER','JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
+CREATE `PatchUser` (IN `p_account_id` BIGINT(20), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_active` BIT(1), IN `p_blocked` BIT(1), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_trial_end_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('VIEWER','JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
     UPDATE `user`
     SET 
         `password` = COALESCE(p_password, `password`),
@@ -613,11 +633,9 @@ CREATE PROCEDURE `PatchUser` (IN `p_account_id` BIGINT(20), IN `p_password` VARC
         `lock_time` = COALESCE(p_lock_time, `lock_time`), 
         `discount` = COALESCE(p_discount, `discount`)
     WHERE `account_id` = p_account_id;
-
-SELECT p_subscription;
 END$$
 
-CREATE PROCEDURE `process_payment` (IN `userId` INT, IN `subscriptionType` VARCHAR(10), IN `discountApplied` BIT)   BEGIN
+CREATE `process_payment` (IN `userId` INT, IN `subscriptionType` VARCHAR(10), IN `discountApplied` BIT)   BEGIN
     DECLARE paymentAmount DECIMAL(10, 2);
     IF subscriptionType = 'SD' THEN
         SET paymentAmount = 7.99;
@@ -635,7 +653,7 @@ CREATE PROCEDURE `process_payment` (IN `userId` INT, IN `subscriptionType` VARCH
     VALUES (userId, subscriptionType, paymentAmount, discountApplied, b'1');
 END$$
 
-CREATE PROCEDURE `UpdateEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
+CREATE `UpdateEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     UPDATE `episode`
     SET 
         `title` = p_title,
@@ -644,13 +662,13 @@ CREATE PROCEDURE `UpdateEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(25
     WHERE `episode_id` = p_episode_id;
 END$$
 
-CREATE PROCEDURE `UpdateGenre` (IN `p_genre_id` INT, IN `p_genre_name` VARCHAR(255))   BEGIN
+CREATE `UpdateGenre` (IN `p_genre_id` INT, IN `p_genre_name` VARCHAR(255))   BEGIN
     UPDATE `genre`
     SET `genre_name` = p_genre_name
     WHERE `genre_id` = p_genre_id;
 END$$
 
-CREATE PROCEDURE `UpdateGenreForMovie` (IN `p_old_genre_id` INT, IN `p_old_movie_id` INT, IN `p_new_genre_id` INT, IN `p_new_movie_id` INT)   BEGIN
+CREATE `UpdateGenreForMovie` (IN `p_old_genre_id` INT, IN `p_old_movie_id` INT, IN `p_new_genre_id` INT, IN `p_new_movie_id` INT)   BEGIN
     UPDATE genreformovie
     SET
         genre_id = p_new_genre_id,
@@ -658,7 +676,7 @@ CREATE PROCEDURE `UpdateGenreForMovie` (IN `p_old_genre_id` INT, IN `p_old_movie
     WHERE genre_id = p_old_genre_id AND movie_id = p_old_movie_id;
 END$$
 
-CREATE PROCEDURE `UpdateGenreForSeries` (IN `p_old_genre_id` INT, IN `p_old_series_id` INT, IN `p_new_genre_id` INT, IN `p_new_series_id` INT)   BEGIN
+CREATE `UpdateGenreForSeries` (IN `p_old_genre_id` INT, IN `p_old_series_id` INT, IN `p_new_genre_id` INT, IN `p_new_series_id` INT)   BEGIN
     UPDATE genreforseries
     SET
         genre_id = p_new_genre_id,
@@ -666,7 +684,7 @@ CREATE PROCEDURE `UpdateGenreForSeries` (IN `p_old_genre_id` INT, IN `p_old_seri
     WHERE genre_id = p_old_genre_id AND series_id = p_old_series_id;
 END$$
 
-CREATE PROCEDURE `UpdateGenreForUser` (IN `p_old_user_id` INT, IN `p_old_genre_id` INT, IN `p_new_user_id` INT, IN `p_new_genre_id` INT)   BEGIN
+CREATE `UpdateGenreForUser` (IN `p_old_user_id` INT, IN `p_old_genre_id` INT, IN `p_new_user_id` INT, IN `p_new_genre_id` INT)   BEGIN
 
     UPDATE GenreForUser
     SET
@@ -675,13 +693,13 @@ CREATE PROCEDURE `UpdateGenreForUser` (IN `p_old_user_id` INT, IN `p_old_genre_i
     WHERE user_id = p_old_user_id AND genre_id = p_old_genre_id;
 END$$
 
-CREATE PROCEDURE `UpdateLanguage` (IN `p_language_id` INT(11), IN `p_name` VARCHAR(255))   BEGIN
+CREATE `UpdateLanguage` (IN `p_language_id` INT(11), IN `p_name` VARCHAR(255))   BEGIN
     UPDATE `language`
     SET `name` = p_name
     WHERE `language_id` = p_language_id;
 END$$
 
-CREATE PROCEDURE `UpdateMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
+CREATE `UpdateMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
     UPDATE `movie`
     SET 
         `title` = p_title,
@@ -693,7 +711,7 @@ CREATE PROCEDURE `UpdateMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(25
     WHERE `movie_id` = p_movie_id;
 END$$
 
-CREATE PROCEDURE `UpdateMovieProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_movie_id` INT, IN `p_new_profile_id` INT, IN `p_new_movie_id` INT)   BEGIN
+CREATE `UpdateMovieProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_movie_id` INT, IN `p_new_profile_id` INT, IN `p_new_movie_id` INT)   BEGIN
     UPDATE movieprofilewatchlist
     SET
         profile_id = p_new_profile_id,
@@ -701,7 +719,7 @@ CREATE PROCEDURE `UpdateMovieProfileWatchlist` (IN `p_old_profile_id` INT, IN `p
     WHERE profile_id = p_old_profile_id AND movie_id = p_old_movie_id;
 END$$
 
-CREATE PROCEDURE `UpdateMovieViewCount` (IN `p_account_id` BIGINT(20), IN `p_movie_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
+CREATE `UpdateMovieViewCount` (IN `p_account_id` BIGINT(20), IN `p_movie_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
     UPDATE movieviewcount
     SET
         number = p_new_number,
@@ -709,7 +727,7 @@ CREATE PROCEDURE `UpdateMovieViewCount` (IN `p_account_id` BIGINT(20), IN `p_mov
     WHERE account_id = p_account_id AND movie_id = p_movie_id;
 END$$
 
-CREATE PROCEDURE `UpdateProfile` (IN `p_profile_id` INT(11), IN `p_accountId` INT(11), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
+CREATE `UpdateProfile` (IN `p_profile_id` INT(11), IN `p_accountId` INT(11), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
     UPDATE `profile`
     SET 
         `account_id` = p_account_id, 
@@ -719,7 +737,7 @@ CREATE PROCEDURE `UpdateProfile` (IN `p_profile_id` INT(11), IN `p_accountId` IN
     WHERE `profile_id` = p_profile_id;
 END$$
 
-CREATE PROCEDURE `UpdateSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(3))   BEGIN
+CREATE `UpdateSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(3))   BEGIN
     UPDATE `series`
     SET 
         `title` = p_title,
@@ -727,7 +745,7 @@ CREATE PROCEDURE `UpdateSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(
     WHERE `series_id` = p_series_id;
 END$$
 
-CREATE PROCEDURE `UpdateSeriesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_series_id` INT, IN `p_new_profile_id` INT, IN `p_new_series_id` INT)   BEGIN
+CREATE `UpdateSeriesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_series_id` INT, IN `p_new_profile_id` INT, IN `p_new_series_id` INT)   BEGIN
     UPDATE seriesprofilewatchlist
     SET
         profile_id = p_new_profile_id,
@@ -735,7 +753,7 @@ CREATE PROCEDURE `UpdateSeriesProfileWatchlist` (IN `p_old_profile_id` INT, IN `
     WHERE profile_id = p_old_profile_id AND series_id = p_old_series_id;
 END$$
 
-CREATE PROCEDURE `UpdateSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_series_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
+CREATE `UpdateSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_series_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
     UPDATE seriesviewcount
     SET
         number = p_new_number,
@@ -743,7 +761,7 @@ CREATE PROCEDURE `UpdateSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_se
     WHERE account_id = p_account_id AND series_id = p_series_id;
 END$$
 
-CREATE PROCEDURE `UpdateUser` (IN `p_account_id` BIGINT(20), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_active` BIT(1), IN `p_blocked` BIT(1), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_trial_end_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('VIEWER','JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
+CREATE `UpdateUser` (IN `p_account_id` BIGINT(20), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_active` BIT(1), IN `p_blocked` BIT(1), IN `p_subscription` ENUM('SD','HD','UHD'), IN `p_trial_start_date` DATETIME, IN `p_trial_end_date` DATETIME, IN `p_language_id` INT(11), IN `p_role` ENUM('VIEWER','JUNIOR','MEDIOR','SENIOR'), IN `p_failed_attempts` INT(11), IN `p_lock_time` DATETIME, IN `p_discount` BIT(1))   BEGIN
     UPDATE `user`
     SET 
         `password` = p_password,
@@ -777,6 +795,20 @@ CREATE TABLE `episode` (
   `series` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `episode`
+--
+
+INSERT INTO `episode` (`episode_id`, `title`, `duration`, `series_id`, `series`) VALUES
+(2, 'Dom is vanished', '00:23:00', 2, NULL),
+(3, 'Dom is vanished', '00:23:00', 2, NULL),
+(4, 'Dom is vanished', '00:23:00', 2, NULL),
+(5, 'Dom is vanished', '00:23:00', 2, NULL),
+(6, 'Dom is vanished', '00:23:00', 2, NULL),
+(7, 'Dom is vanished', '00:23:00', 2, NULL),
+(8, 'Dom is vanished', '00:23:00', 2, NULL),
+(9, 'Dom is vanished', '00:23:00', 2, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -806,7 +838,16 @@ INSERT INTO `genre` (`genre_id`, `genre_name`) VALUES
 (20, 'History'),
 (21, 'musical'),
 (29, 'War'),
-(30, 'war');
+(30, 'war'),
+(31, 'war'),
+(32, 'war'),
+(33, 'war'),
+(34, 'war'),
+(35, 'war'),
+(36, 'war'),
+(37, 'war'),
+(38, 'war'),
+(39, 'war');
 
 -- --------------------------------------------------------
 
@@ -826,7 +867,8 @@ CREATE TABLE `genreformovie` (
 INSERT INTO `genreformovie` (`genre_id`, `movie_id`) VALUES
 (2, 1),
 (5, 1),
-(7, 2),
+(1, 3),
+(2, 3),
 (3, 3),
 (8, 3);
 
@@ -841,6 +883,13 @@ CREATE TABLE `genreforseries` (
   `series_id` int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `genreforseries`
+--
+
+INSERT INTO `genreforseries` (`genre_id`, `series_id`) VALUES
+(1, 2);
+
 -- --------------------------------------------------------
 
 --
@@ -852,6 +901,37 @@ CREATE TABLE `genreforuser` (
   `account_id` bigint UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `genreforuser`
+--
+
+INSERT INTO `genreforuser` (`genre_id`, `account_id`) VALUES
+(1, 2),
+(1, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `genres_without_movie`
+-- (See below for the actual view)
+--
+CREATE TABLE `genres_without_movie` (
+`genre_id` int unsigned
+,`genre_name` varchar(255)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `genre_total_views`
+-- (See below for the actual view)
+--
+CREATE TABLE `genre_total_views` (
+`genre_id` int unsigned
+,`genre_name` varchar(255)
+,`total_views` decimal(55,0)
+);
+
 -- --------------------------------------------------------
 
 --
@@ -860,8 +940,8 @@ CREATE TABLE `genreforuser` (
 
 CREATE TABLE `invitation` (
   `id` bigint NOT NULL,
-  `inviter_id` bigint UNSIGNED DEFAULT NULL,
-  `invitee_id` bigint UNSIGNED DEFAULT NULL,
+  `inviter_id` bigint UNSIGNED NOT NULL,
+  `invitee_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -870,7 +950,7 @@ CREATE TABLE `invitation` (
 --
 
 INSERT INTO `invitation` (`id`, `inviter_id`, `invitee_id`, `created_at`) VALUES
-(1, 18, 19, '2025-01-16 21:34:26');
+(1, 23, 24, '2025-01-17 13:47:07');
 
 -- --------------------------------------------------------
 
@@ -888,12 +968,21 @@ CREATE TABLE `language` (
 --
 
 INSERT INTO `language` (`language_id`, `name`) VALUES
-(1, 'english'),
+(1, NULL),
 (2, 'latvian'),
 (3, 'lithuanian'),
 (4, 'dutch'),
 (5, 'spanish'),
-(6, 'ukranian');
+(6, 'ukranian'),
+(7, 'Swedish'),
+(9, 'Swedish'),
+(10, 'Swedish'),
+(11, 'Swedish'),
+(12, 'indonesian'),
+(13, 'indonesian'),
+(14, 'indonesian'),
+(15, 'indonesian'),
+(16, 'indonesian');
 
 -- --------------------------------------------------------
 
@@ -916,9 +1005,18 @@ CREATE TABLE `movie` (
 --
 
 INSERT INTO `movie` (`movie_id`, `title`, `duration`, `sd_available`, `hd_available`, `uhd_available`, `minimum_age`) VALUES
-(1, 'womp-womp, funny', '01:32:00', b'1', b'1', b'0', 14),
-(2, 'lordoftherings', '03:30:52', b'1', b'1', b'0', 12),
-(3, 'star wars', '00:31:16', b'1', b'1', b'0', 12);
+(1, 'woops', '01:32:00', b'1', b'1', b'0', 16),
+(3, 'star wars', '00:31:16', b'1', b'1', b'0', 12),
+(4, 'fast X', '02:22:00', b'1', b'1', b'0', 16),
+(5, 'fast X', '02:22:00', b'1', b'1', b'0', 16),
+(6, 'fast X', '02:22:00', b'1', b'1', b'0', 16),
+(7, 'fast X', '02:22:00', b'1', b'1', b'0', 16),
+(8, 'fast X', '02:22:00', b'1', b'1', b'0', 16),
+(9, 'fast X', '02:22:00', b'1', b'1', b'0', 16),
+(10, 'fast X', '02:22:00', b'1', b'1', b'0', 16),
+(11, 'fast X', '02:22:00', b'1', b'1', b'0', 16),
+(12, 'fast X', '02:22:00', b'1', b'1', b'0', 16),
+(13, 'fast X', '02:22:00', b'1', b'1', b'0', 16);
 
 -- --------------------------------------------------------
 
@@ -930,6 +1028,24 @@ CREATE TABLE `moviesprofilewatchlist` (
   `profile_id` int UNSIGNED NOT NULL,
   `movie_id` int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `moviesprofilewatchlist`
+--
+
+INSERT INTO `moviesprofilewatchlist` (`profile_id`, `movie_id`) VALUES
+(2, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `movies_without_genre`
+-- (See below for the actual view)
+--
+CREATE TABLE `movies_without_genre` (
+`movie_id` int unsigned
+,`title` varchar(255)
+);
 
 -- --------------------------------------------------------
 
@@ -949,12 +1065,12 @@ CREATE TABLE `movieviewcount` (
 --
 
 INSERT INTO `movieviewcount` (`account_id`, `movie_id`, `number`, `last_viewed`) VALUES
-(1, 1, 3, NULL),
-(1, 2, 2, NULL),
+(1, 1, 1, '2025-01-17 12:00:00'),
 (1, 3, 1, NULL),
-(3, 1, 1, NULL),
-(5, 2, 2, NULL),
-(6, 3, 1, '2025-01-15 18:52:32');
+(2, 1, 5, '2025-01-17 18:57:00'),
+(2, 3, 1, '2025-01-17 13:20:31'),
+(2, 4, 1, '2025-01-17 13:27:03'),
+(3, 1, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -964,7 +1080,7 @@ INSERT INTO `movieviewcount` (`account_id`, `movie_id`, `number`, `last_viewed`)
 
 CREATE TABLE `payments` (
   `payment_id` bigint NOT NULL,
-  `account_id` bigint UNSIGNED DEFAULT NULL,
+  `account_id` bigint UNSIGNED NOT NULL,
   `is_discount_applied` bit(1) DEFAULT b'0',
   `is_paid` bit(1) DEFAULT b'0',
   `payment_date` datetime DEFAULT NULL,
@@ -978,10 +1094,8 @@ CREATE TABLE `payments` (
 --
 
 INSERT INTO `payments` (`payment_id`, `account_id`, `is_discount_applied`, `is_paid`, `payment_date`, `subscription_type`, `payment_amount`, `next_billing_date`) VALUES
-(1, 18, b'0', b'0', '2025-01-15 19:44:33', 'SD', 7.99, '2025-02-15 19:44:33'),
-(2, 19, b'0', b'0', '2025-01-15 19:44:33', 'SD', 7.99, '2025-02-15 19:44:33'),
-(3, 18, b'0', b'0', '2025-01-16 19:44:33', 'HD', 10.99, '2025-02-16 19:44:33'),
-(4, 19, b'0', b'0', '2025-01-16 19:44:33', 'HD', 10.99, '2025-02-16 19:44:33');
+(1, 18, b'0', b'0', '2025-01-17 19:44:33', 'SD', 7.99, '2025-02-17 19:44:33'),
+(2, 19, b'0', b'0', '2025-01-17 19:44:33', 'SD', 7.99, '2025-02-17 19:44:33');
 
 -- --------------------------------------------------------
 
@@ -1021,8 +1135,8 @@ CREATE TABLE `profile` (
 --
 
 INSERT INTO `profile` (`profile_id`, `account_id`, `profile_image`, `age`, `name`, `account`) VALUES
-(1, 2, 'pizdiets.png', 16, 'krutoy patsan', NULL),
-(2, 2, 'abcdefg.png', 12, 'tupoy loshara', NULL);
+(2, 2, 'abcdefg.png', 12, 'tupoy loshara', NULL),
+(3, NULL, 'http://example.com/image.jpg', 30, 'JimmyJ', NULL);
 
 -- --------------------------------------------------------
 
@@ -1041,7 +1155,15 @@ CREATE TABLE `series` (
 --
 
 INSERT INTO `series` (`series_id`, `title`, `minimum_age`) VALUES
-(1, 'Sex education', 18);
+(2, 'Sex education', 18),
+(3, 'Sex education', 18),
+(4, 'Sex education', 18),
+(5, 'Sex education', 18),
+(6, 'Sex education', 18),
+(7, 'Sex education', 18),
+(8, 'Sex education', 18),
+(9, 'Sex education', 18),
+(10, 'Sex education', 18);
 
 -- --------------------------------------------------------
 
@@ -1053,6 +1175,14 @@ CREATE TABLE `seriesprofilewatchlist` (
   `profile_id` int UNSIGNED NOT NULL,
   `series_id` int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `seriesprofilewatchlist`
+--
+
+INSERT INTO `seriesprofilewatchlist` (`profile_id`, `series_id`) VALUES
+(2, 2),
+(2, 3);
 
 -- --------------------------------------------------------
 
@@ -1066,6 +1196,13 @@ CREATE TABLE `seriesviewcount` (
   `number` int DEFAULT NULL,
   `last_viewed` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `seriesviewcount`
+--
+
+INSERT INTO `seriesviewcount` (`account_id`, `series_id`, `number`, `last_viewed`) VALUES
+(2, 3, 5, '2025-01-17 18:57:00');
 
 -- --------------------------------------------------------
 
@@ -1094,11 +1231,11 @@ CREATE TABLE `user` (
   `payment_method` varchar(255) COLLATE utf8mb4_general_ci DEFAULT 'Credit Card',
   `active` bit(1) DEFAULT b'0',
   `blocked` bit(1) DEFAULT b'0',
-  `subscription` enum('SD','HD','UHD') COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `subscription` enum('SD','HD','UHD') COLLATE utf8mb4_general_ci DEFAULT 'SD',
   `trial_start_date` datetime DEFAULT CURRENT_TIMESTAMP,
   `trial_end_date` datetime DEFAULT NULL,
   `language_id` int UNSIGNED DEFAULT NULL,
-  `role` enum('VIEWER','JUNIOR','MEDIOR','SENIOR') COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `role` enum('VIEWER','JUNIOR','MEDIOR','SENIOR') COLLATE utf8mb4_general_ci DEFAULT 'VIEWER',
   `failed_attempts` int DEFAULT '0',
   `lock_time` datetime DEFAULT NULL,
   `discount` bit(1) DEFAULT b'0'
@@ -1109,28 +1246,39 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `active`, `blocked`, `subscription`, `trial_start_date`, `trial_end_date`, `language_id`, `role`, `failed_attempts`, `lock_time`, `discount`) VALUES
-(1, 'fjodor.smorodins@gmail.com', '$2a$10$hszeHDUNOv4lnd24ZS9sOeOkOJUYo5zSi2H2makEPti1uznr4s5P2', 'secure card method', b'0', b'0', 'SD', '2019-12-07 14:32:59', '2030-12-14 14:32:59', 4, 'SENIOR', 0, '2025-01-15 16:04:09', b'1'),
-(2, 'fjodorsm@gmail.com', '$2a$10$2QlecdJ25ELwT/avANQAUelbxtS9tysiRO5LSE0omLATaWhdAPfZC', 'Credit Card', b'0', b'0', 'HD', '2024-12-07 14:33:33', '2024-12-14 14:33:33', 1, 'VIEWER', 0, NULL, b'0'),
-(3, 'smorodins@gmail.com', '$2a$10$KhhGnFeK2q32DYG7/fMhNe/GEzf1dDJVkQqq5isK1vwuIO9h0zor.', 'CrC', b'0', b'0', 'HD', '2024-12-16 18:54:30', '2024-12-23 18:54:30', 3, 'VIEWER', 0, NULL, b'0'),
-(5, 'fjodors@hello.com', '$2a$10$hKsRL99MRpKUr.vrJPqsfuG3qhGkDjXQEYDxHytWFBYgW7HZJ/54W', 'golden bars', b'0', b'0', 'HD', '2024-12-20 16:19:25', '2024-12-27 16:19:25', 2, 'VIEWER', 0, NULL, b'0'),
-(6, 'artjoms.grishajevs@hello.com', '$2a$10$NboUZOHniHtnfHhFFECcF.dA64uJsp.8/OnD0B0NEuMvTyvIfN7we', 'children', b'0', b'0', 'HD', '2024-12-20 16:24:58', '2024-12-27 16:24:58', 1, 'VIEWER', 0, NULL, b'0'),
-(7, 'somebody@hello.com', '$2a$10$4H41Ugw1ho9ga4DfTV1rwegl.uxbZcTbEu3/SBeklNzsHnXoYliTe', 'money', b'0', b'0', 'HD', '2024-12-20 17:08:59', '2024-12-27 17:08:59', 1, 'VIEWER', 0, NULL, b'0'),
-(9, 'somepersonwhatever@hello.com', '$2a$10$DhZSCWySz9rypM/jM8mR6.yzaCPIpugVlITMSWx9whkmEp1ciPK42', 'something', b'0', b'0', 'HD', '2024-12-20 17:24:39', '2024-12-27 17:24:39', 2, 'VIEWER', 0, NULL, b'0'),
-(10, 'iamsteve@hello.com', '$2a$10$92qxixAWTf94z9sK.Lf2iebtyLdBV9ckOx.xfzGLv4enlX5gdsis6', 'mastercard', b'0', b'0', 'HD', '2024-12-20 17:58:22', '2024-12-27 17:58:22', 3, 'VIEWER', 0, NULL, b'0'),
-(15, 'test1@.com', '$2a$10$aP97IvFmxH8yLGuL1012Xe4sfLd6s1SdokAAKOhG3.tvWCTkmfD2.', 'some method', b'0', b'0', 'HD', '2024-12-20 22:46:29', '2024-12-27 22:46:29', 3, 'VIEWER', 1, NULL, b'0'),
-(18, 'billyJ@outlook.com', '$2a$10$3', 'IDEAL', b'1', b'0', 'HD', '2024-12-23 18:00:00', '2024-12-30 18:00:00', 3, 'VIEWER', 0, NULL, b'1'),
-(19, 'random.user@gg.com', '$2a$10$MOir8H30oJGVlQTrcKrBZOi8CNBD5oYACgjg5/3TcOPyWwSP9TLYi', 'a transfer method', b'1', b'0', 'HD', '2025-01-06 15:54:13', '2025-01-13 15:54:13', 1, 'VIEWER', 0, NULL, b'1'),
-(20, 'billJe9@outlook.com', '$2a$10$YOyVFKoFH2r6hWhjR4zy1ujyiNiwjWA8rsWs7DFnPtqEsOR7bisAS', 'IDEAL', b'0', b'0', 'HD', '2025-01-15 15:32:25', NULL, 2, 'VIEWER', 0, NULL, b'0'),
-(21, 'здаровавсем@user.com', '$2a$10$9by5kbJ0/cLHnYX7gAe4f.mLZmMwN7Ht59gxAFnsdeVPH01gAXT8m', 'тинькоффбанк', b'0', b'0', 'HD', '2025-01-15 18:51:11', NULL, 1, 'VIEWER', 0, NULL, b'0'),
-(22, 'nyamochirgansog@fusdhfhsfkaas.com', '1234', 'norwegian whatever', b'0', b'0', 'HD', '2025-01-15 22:52:19', NULL, 1, 'VIEWER', 0, NULL, b'0'),
-(23, 'zhicheng@gmail', '0000', 'yes', b'0', b'0', 'HD', '2025-01-15 22:52:43', NULL, 4, 'VIEWER', 0, NULL, b'0'),
-(24, 'aleksejssmorodins@gmail.com', '1234', '1234', b'0', b'0', 'HD', '2025-01-15 22:54:23', NULL, 6, 'VIEWER', 0, NULL, b'0'),
-(25, 'bill@gmail.com', '$2a$10$TFQM08MvSHDYRhHAK.1Ca.IlnrfC.odfGTTfcPdug43qc2qFA6MUm', 'idk', b'0', b'0', 'HD', '2025-01-16 15:40:28', NULL, 1, 'VIEWER', 0, NULL, b'0'),
-(28, 'billJen2@outlook.com', '$2a$10$tHn9dInNHN9oOAio9n6C8eL5/e23y7AhlODym31U2AHOQ52ZYtg22', 'IDEAL', b'1', b'0', 'HD', '2025-01-16 20:40:58', NULL, 1, NULL, 0, NULL, b'0'),
-(29, 'billJen3@outlook.com', '$2a$10$uanqyE3AoGjT90E8HOa9Te7ketJeo8NYBlYWk5.paB.kQmZ9zz6Ym', 'IDEAL', b'1', b'0', 'HD', '2025-01-16 20:41:09', NULL, 1, NULL, 0, NULL, b'0'),
-(30, 'UHD.user.test@gmail.com', '$2a$10$wLrCvgg8QrUeM3H2e9enwuzpHCh/0n8tUEnhykU7jUIm074n13Sxe', 'method', b'0', b'0', 'UHD', '2025-01-16 21:44:01', NULL, 1, NULL, 0, NULL, b'0'),
-(31, 'SD.user.test@gmail.com', '$2a$10$T2gcordbUeUungqe0MF.PeD.9jPcwKfF..EbuRd8r3j2dmUIUYlDG', 'method', b'0', b'0', 'SD', '2025-01-16 21:44:18', NULL, 2, NULL, 0, NULL, b'0'),
-(32, 'HD.user@gmail.com', '$2a$10$x4yLHVwfkCljWU5epdOSY.NZLQ1C7m321SuyORTR6aorIK6Ema6iy', 'iDEAL', b'0', b'0', 'HD', '2025-01-16 22:09:57', NULL, 2, NULL, 0, NULL, b'0');
+(1, 'fjodor.smorodins@gmail.com', '$2a$10$hszeHDUNOv4lnd24ZS9sOeOkOJUYo5zSi2H2makEPti1uznr4s5P2', 'abc', b'0', b'0', 'SD', '2024-12-07 14:32:59', '2024-12-14 14:32:59', 4, 'SENIOR', 0, NULL, b'0'),
+(2, 'fjodorsm@gmail.com', '$2a$10$2QlecdJ25ELwT/avANQAUelbxtS9tysiRO5LSE0omLATaWhdAPfZC', 'Credit Card', b'0', b'0', 'SD', '2024-12-07 14:33:33', '2024-12-14 14:33:33', 1, 'JUNIOR', 0, NULL, b'0'),
+(3, 'smorodins@gmail.com', '$2a$10$KhhGnFeK2q32DYG7/fMhNe/GEzf1dDJVkQqq5isK1vwuIO9h0zor.', 'CrC', b'0', b'0', 'SD', '2024-12-16 18:54:30', '2024-12-23 18:54:30', 3, 'VIEWER', 0, NULL, b'0'),
+(5, 'fjodors@hello.com', '$2a$10$hKsRL99MRpKUr.vrJPqsfuG3qhGkDjXQEYDxHytWFBYgW7HZJ/54W', 'golden bars', b'0', b'0', 'SD', '2024-12-20 16:19:25', '2024-12-27 16:19:25', 2, 'VIEWER', 0, NULL, b'0'),
+(6, 'artjoms.grishajevs@hello.com', '$2a$10$NboUZOHniHtnfHhFFECcF.dA64uJsp.8/OnD0B0NEuMvTyvIfN7we', 'children', b'0', b'0', 'SD', '2024-12-20 16:24:58', '2024-12-27 16:24:58', 1, 'JUNIOR', 0, NULL, b'0'),
+(7, 'somebody@hello.com', '$2a$10$4H41Ugw1ho9ga4DfTV1rwegl.uxbZcTbEu3/SBeklNzsHnXoYliTe', 'money', b'0', b'0', 'SD', '2024-12-20 17:08:59', '2024-12-27 17:08:59', 1, 'VIEWER', 0, NULL, b'0'),
+(9, 'somepersonwhatever@hello.com', '$2a$10$DhZSCWySz9rypM/jM8mR6.yzaCPIpugVlITMSWx9whkmEp1ciPK42', 'something', b'0', b'0', 'SD', '2024-12-20 17:24:39', '2024-12-27 17:24:39', 2, 'VIEWER', 0, NULL, b'0'),
+(10, 'iamsteve@hello.com', '$2a$10$92qxixAWTf94z9sK.Lf2iebtyLdBV9ckOx.xfzGLv4enlX5gdsis6', 'mastercard', b'0', b'0', 'SD', '2024-12-20 17:58:22', '2024-12-27 17:58:22', 3, 'VIEWER', 0, NULL, b'0'),
+(15, 'test1@.com', '$2a$10$aP97IvFmxH8yLGuL1012Xe4sfLd6s1SdokAAKOhG3.tvWCTkmfD2.', 'some method', b'0', b'0', 'SD', '2024-12-20 22:46:29', '2024-12-27 22:46:29', 3, 'VIEWER', 1, NULL, b'0'),
+(17, 'medior.fjodor@g.com', '$2a$10$gQuhxuEegp0Ypg.IrGiL8.bmQwV4sdMzXirKh7N0N4KbOXAq4xwFi', 'some money transfer method', b'0', b'0', 'SD', '2024-12-23 17:55:18', '2024-12-30 17:55:18', 3, 'JUNIOR', 0, NULL, b'0'),
+(18, 'billyJ@outlook.com', '$2a$10$3', 'IDEAL', b'1', b'0', 'SD', '2024-12-23 18:00:00', '2024-12-30 18:00:00', 3, 'JUNIOR', 0, NULL, b'0'),
+(19, 'random.user@gg.com', '$2a$10$MOir8H30oJGVlQTrcKrBZOi8CNBD5oYACgjg5/3TcOPyWwSP9TLYi', 'a transfer method', b'1', b'0', 'SD', '2025-01-06 15:54:13', '2025-01-13 15:54:13', 1, 'JUNIOR', 0, NULL, b'0'),
+(20, 'zhichengliang@gmail.com', '$2a$10$XvJIvdYAT9IXdMeA2VpuR.11JGQlt/3yVwGVTS8BU2ZjNUeS6da..', 'PayPal', b'0', b'0', 'UHD', '2025-01-17 10:33:29', NULL, 1, 'SENIOR', 0, NULL, b'0'),
+(21, 'zhizhi@gmail.com', '$2a$10$i69jO1ulvaMpmWhfquAWTeRin88ooKwGuidwBN4Gxfi3.VE3DKp82', 'iDEAL', b'0', b'0', 'HD', '2025-01-17 12:21:38', NULL, 1, 'VIEWER', 0, NULL, b'0'),
+(22, 'billJen2@outlook.com', '$2a$10$RYVZBqoWVgcTgO6ngheslO8XVIT9WxBzSqoobyX6L6ci/c3nTnKq.', 'IDEAL', b'0', b'0', 'HD', '2025-01-17 13:24:22', NULL, 1, 'VIEWER', 0, NULL, b'0'),
+(23, 'billJen4@outlook.com', '$2a$10$LeuRelq82wLgCr0eoaXmp.VEk6FRZiloihP9W92v3gy/ATwydrCBO', 'IDEAL', b'1', b'0', 'HD', '2025-01-17 13:28:55', NULL, 1, 'VIEWER', 0, NULL, b'1'),
+(24, 'billJen5@outlook.com', '$2a$10$oWiphCEfMAbJK9tRAsiejuSawwGw6TgO.hJIGSdZ663vWJhRntW0q', 'IDEAL', b'1', b'0', 'HD', '2025-01-17 13:34:45', NULL, 1, 'VIEWER', 0, NULL, b'1'),
+(25, 'janjassen@gmail.com', '$2a$10$7v5Ho908rYS1FPGp.N.7nOjJuJcRxnkSkaFPNFtXVPwHJhlREVW12', 'Credit Card', b'0', b'0', 'SD', '2025-01-17 13:40:42', NULL, 1, 'VIEWER', 0, NULL, b'0'),
+(26, 'billJ1@outlook.com', '$2a$10$cvns7c5I6KUpgymcO610D.6CBWdZJAl90undCy/AZzLsIGSFkvJXi', 'IDEAL', b'1', b'0', 'HD', '2025-01-17 17:35:17', NULL, 1, 'VIEWER', 0, NULL, b'0');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `user_for_junior`
+-- (See below for the actual view)
+--
+CREATE TABLE `user_for_junior` (
+`account_id` bigint unsigned
+,`trial_start_date` datetime
+,`trial_end_date` datetime
+,`language_id` int unsigned
+,`role` enum('VIEWER','JUNIOR','MEDIOR','SENIOR')
+);
 
 -- --------------------------------------------------------
 
@@ -1148,18 +1296,29 @@ CREATE TABLE `user_genre_count` (
 -- --------------------------------------------------------
 
 --
--- Stand-in structure for view `user_view`
--- (See below for the actual view)
+-- Structure for view `genres_without_movie`
 --
-CREATE TABLE `user_view` (
-`account_id` bigint unsigned
-,`email` varchar(255)
-,`subscription` enum('SD','HD','UHD')
-,`trial_start_date` datetime
-,`trial_end_date` datetime
-,`language_id` int unsigned
-,`role` enum('VIEWER','JUNIOR','MEDIOR','SENIOR')
-);
+DROP TABLE IF EXISTS `genres_without_movie`;
+
+CREATE VIEW `genres_without_movie`  AS SELECT `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name` FROM (`genre` `g` left join `genreformovie` `gfm` on((`g`.`genre_id` = `gfm`.`genre_id`))) WHERE (`gfm`.`movie_id` is null) ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `genre_total_views`
+--
+DROP TABLE IF EXISTS `genre_total_views`;
+
+CREATE VIEW `genre_total_views`  AS SELECT `user_genre_count`.`genre_id` AS `genre_id`, `user_genre_count`.`genre_name` AS `genre_name`, sum(`user_genre_count`.`total_views`) AS `total_views` FROM `user_genre_count` GROUP BY `user_genre_count`.`genre_id` ORDER BY `total_views` DESC ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `movies_without_genre`
+--
+DROP TABLE IF EXISTS `movies_without_genre`;
+
+CREATE VIEW `movies_without_genre`  AS SELECT `m`.`movie_id` AS `movie_id`, `m`.`title` AS `title` FROM (`movie` `m` left join `genreformovie` `gfm` on((`m`.`movie_id` = `gfm`.`movie_id`))) WHERE (`gfm`.`genre_id` is null) ;
 
 -- --------------------------------------------------------
 
@@ -1168,7 +1327,7 @@ CREATE TABLE `user_view` (
 --
 DROP TABLE IF EXISTS `paymentstatus`;
 
-CREATE  VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`account_id` AS `account_id`, `u`.`email` AS `email`, `p`.`subscription_type` AS `subscription_type`, `p`.`payment_amount` AS `payment_amount`, `p`.`is_paid` AS `is_paid`, `p`.`is_discount_applied` AS `is_discount_applied`, `p`.`payment_date` AS `payment_date`, `p`.`next_billing_date` AS `next_billing_date` FROM (`payments` `p` join `user` `u` on((`p`.`account_id` = `u`.`account_id`))) ;
+CREATE VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`account_id` AS `account_id`, `u`.`email` AS `email`, `p`.`subscription_type` AS `subscription_type`, `p`.`payment_amount` AS `payment_amount`, `p`.`is_paid` AS `is_paid`, `p`.`is_discount_applied` AS `is_discount_applied`, `p`.`payment_date` AS `payment_date`, `p`.`next_billing_date` AS `next_billing_date` FROM (`payments` `p` join `user` `u` on((`p`.`account_id` = `u`.`account_id`))) ;
 
 -- --------------------------------------------------------
 
@@ -1177,7 +1336,16 @@ CREATE  VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`a
 --
 DROP TABLE IF EXISTS `subscription_cost`;
 
-CREATE  VIEW `subscription_cost`  AS SELECT `subquery`.`account_id` AS `account_id`, `subquery`.`subscription` AS `subscription`, `subquery`.`email` AS `email`, `subquery`.`payment_method` AS `payment_method`, `subquery`.`subscription_cost` AS `subscription_cost` FROM (select `u`.`account_id` AS `account_id`,`u`.`subscription` AS `subscription`,`u`.`email` AS `email`,`u`.`payment_method` AS `payment_method`,(case when (`u`.`role` in ('Junior','Medior','Senior')) then 0 when (`u`.`discount` = 0x01) then -(2.00) when (`u`.`subscription` = 'SD') then 7.99 when (`u`.`subscription` = 'HD') then 10.99 when (`u`.`subscription` = 'UHD') then 13.99 end) AS `subscription_cost` from `user` `u`) AS `subquery` WHERE (`subquery`.`subscription_cost` > 0) ;
+CREATE VIEW `subscription_cost`  AS SELECT `subquery`.`account_id` AS `account_id`, `subquery`.`subscription` AS `subscription`, `subquery`.`email` AS `email`, `subquery`.`payment_method` AS `payment_method`, `subquery`.`subscription_cost` AS `subscription_cost` FROM (select `u`.`account_id` AS `account_id`,`u`.`subscription` AS `subscription`,`u`.`email` AS `email`,`u`.`payment_method` AS `payment_method`,(case when (`u`.`role` in ('Junior','Medior','Senior')) then 0 when (`u`.`discount` = 0x01) then -(2.00) when (`u`.`subscription` = 'SD') then 7.99 when (`u`.`subscription` = 'HD') then 10.99 when (`u`.`subscription` = 'UHD') then 13.99 end) AS `subscription_cost` from `user` `u`) AS `subquery` WHERE (`subquery`.`subscription_cost` > 0) ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `user_for_junior`
+--
+DROP TABLE IF EXISTS `user_for_junior`;
+
+CREATE VIEW `user_for_junior`  AS SELECT `user`.`account_id` AS `account_id`, `user`.`trial_start_date` AS `trial_start_date`, `user`.`trial_end_date` AS `trial_end_date`, `user`.`language_id` AS `language_id`, `user`.`role` AS `role` FROM `user` ;
 
 -- --------------------------------------------------------
 
@@ -1186,16 +1354,7 @@ CREATE  VIEW `subscription_cost`  AS SELECT `subquery`.`account_id` AS `account_
 --
 DROP TABLE IF EXISTS `user_genre_count`;
 
-CREATE  VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, (ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0)) AS `total_views` FROM ((((((`genre` `g` left join `genreformovie` `mg` on((`g`.`genre_id` = `mg`.`genre_id`))) left join `movie` `m` on((`mg`.`movie_id` = `m`.`movie_id`))) left join `movieviewcount` `mvc` on((`m`.`movie_id` = `mvc`.`movie_id`))) left join `genreforseries` `gfs` on((`g`.`genre_id` = `gfs`.`genre_id`))) left join `series` `s` on((`gfs`.`series_id` = `s`.`series_id`))) left join `seriesviewcount` `svc` on(((`s`.`series_id` = `svc`.`series_id`) and (`svc`.`account_id` = `mvc`.`account_id`)))) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, (ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0)) DESC ;
-
--- --------------------------------------------------------
-
---
--- Structure for view `user_view`
---
-DROP TABLE IF EXISTS `user_view`;
-
-CREATE  VIEW `user_view`  AS SELECT `user`.`account_id` AS `account_id`, `user`.`email` AS `email`, `user`.`subscription` AS `subscription`, `user`.`trial_start_date` AS `trial_start_date`, `user`.`trial_end_date` AS `trial_end_date`, `user`.`language_id` AS `language_id`, `user`.`role` AS `role` FROM `user` ;
+CREATE VIEW `user_genre_count`  AS SELECT `mvc`.`account_id` AS `user_id`, `g`.`genre_id` AS `genre_id`, `g`.`genre_name` AS `genre_name`, (ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0)) AS `total_views` FROM ((((((`genre` `g` left join `genreformovie` `mg` on((`g`.`genre_id` = `mg`.`genre_id`))) left join `movie` `m` on((`mg`.`movie_id` = `m`.`movie_id`))) left join `movieviewcount` `mvc` on((`m`.`movie_id` = `mvc`.`movie_id`))) left join `genreforseries` `gfs` on((`g`.`genre_id` = `gfs`.`genre_id`))) left join `series` `s` on((`gfs`.`series_id` = `s`.`series_id`))) left join `seriesviewcount` `svc` on(((`s`.`series_id` = `svc`.`series_id`) and (`svc`.`account_id` = `mvc`.`account_id`)))) GROUP BY `mvc`.`account_id`, `g`.`genre_id` ORDER BY `mvc`.`account_id` ASC, (ifnull(sum(`mvc`.`number`),0) + ifnull(sum(`svc`.`number`),0)) DESC ;
 
 --
 -- Indexes for dumped tables
@@ -1320,13 +1479,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `episode`
 --
 ALTER TABLE `episode`
-  MODIFY `episode_id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `episode_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `genre`
 --
 ALTER TABLE `genre`
-  MODIFY `genre_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `genre_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `invitation`
@@ -1338,37 +1497,37 @@ ALTER TABLE `invitation`
 -- AUTO_INCREMENT for table `language`
 --
 ALTER TABLE `language`
-  MODIFY `language_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `language_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `movie`
 --
 ALTER TABLE `movie`
-  MODIFY `movie_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `movie_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `payment_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `profile`
 --
 ALTER TABLE `profile`
-  MODIFY `profile_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `profile_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `series`
 --
 ALTER TABLE `series`
-  MODIFY `series_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `series_id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `account_id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `account_id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- Constraints for dumped tables
@@ -1458,6 +1617,11 @@ DELIMITER $$
 --
 -- Events
 --
-CREATE EVENT `InsertExpiredTrialsDaily` ON SCHEDULE EVERY 1 DAY STARTS '2025-01-04 19:44:33' ON COMPLETION NOT PRESERVE ENABLE DO CALL `InsertExpiredTrialsIntoPayments`()$$
+CREATE DEFINER=`root`@`localhost` EVENT `InsertExpiredTrialsDaily` ON SCHEDULE EVERY 1 DAY STARTS '2025-01-04 19:44:33' ON COMPLETION NOT PRESERVE ENABLE DO CALL `InsertExpiredTrialsIntoPayments`()$$
 
 DELIMITER ;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

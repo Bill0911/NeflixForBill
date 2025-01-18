@@ -34,7 +34,6 @@ GRANT SELECT, UPDATE, INSERT, DELETE ON netflix.seriesviewcount TO medior;
 GRANT SELECT, UPDATE, INSERT, DELETE ON netflix.user TO medior;
 GRANT SELECT ON netflix.user_for_junior TO medior;
 GRANT SELECT ON netflix.user_genre_count TO medior;
-GRANT SELECT ON netflix.user_view TO medior;
 -- ---------------------------------------------------------
 
 -- ---------------JUNIOR PERMISSIONS------------------------
@@ -109,6 +108,7 @@ GRANT EXECUTE ON PROCEDURE `netflix`.`GetMovieViewCount` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetPersonalizedOfferMovies` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetPersonalizedOfferSeries` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetProfileById` TO api;
+GRANT EXECUTE ON PROCEDURE `netflix`.`GetProfileByAccountId` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetSeriesById` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetSeriesProfileWatchlist` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetSeriesViewCount` TO api;
@@ -145,9 +145,11 @@ GRANT EXECUTE ON PROCEDURE `netflix`.`UpdateUser` TO api;
 
 GRANT SELECT ON `netflix`.`paymentstatus` TO api;
 GRANT SELECT ON `netflix`.`subscription_cost` TO api;
+GRANT SELECT ON `netflix`.`genres_without_movie` TO api;
+GRANT SELECT ON `netflix`.`genre_total_views` TO api;
+GRANT SELECT ON `netflix`.`movies_without_genre` TO api;
 GRANT SELECT ON `netflix`.`user_genre_count` TO api;
-GRANT SELECT ON `netflix`.`moviesprofilewatchlist` TO 'main_api_user';
-GRANT SELECT, INSERT, UPDATE, DELETE ON `netflix`.`language` TO 'main_api_user';
+GRANT SELECT ON `netflix`.`user_for_junior` TO api;
 GRANT SELECT, INSERT, UPDATE, DELETE ON `netflix`.`invitation` TO 'main_api_user';
 
 -- -------------------------IMPORTANT-------------------------
