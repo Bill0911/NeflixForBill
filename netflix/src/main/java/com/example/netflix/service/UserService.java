@@ -4,19 +4,22 @@ import com.example.netflix.dto.SubscriptionOverview;
 import com.example.netflix.entity.*;
 import com.example.netflix.repository.*;
 import com.example.netflix.security.JwtUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     private final UserRepository userRepository;
@@ -67,7 +70,10 @@ public class UserService {
         System.out.println("CHECKPOINT - 7");
         //userRepository.save(user); // Save the user directly using the repository
         System.out.println("CHECKPOINT - 9");
+        user.setTrialStartDate(LocalDateTime.now());
 
+        // Set the trial end date to 7 days after the trial start date
+        user.setTrialEndDate(user.getTrialEndDate());
         addUser(user);
 
         // Debug statement to check the encoded password
@@ -220,6 +226,7 @@ public class UserService {
         System.out.println("Inviter saved with discount: " + inviter.isDiscount());
         System.out.println("Invitee saved with discount: " + invitee.isDiscount());
 
+        // Verify the discount was applied
         User updatedInviter = userRepository.findByEmail(inviterEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Inviter not found after save"));
         User updatedInvitee = userRepository.findByEmail(inviteeEmail)
@@ -228,40 +235,23 @@ public class UserService {
         System.out.println("Updated inviter discount: " + updatedInviter.isDiscount());
         System.out.println("Updated invitee discount: " + updatedInvitee.isDiscount());
 
+        // Save the invitation
         Invitation invitation = new Invitation();
         invitation.setInviter(inviter);
         invitation.setInvitee(invitee);
         invitationRepository.save(invitation);
         System.out.println("Invitation saved");
-    }
-    
-    //I know this code right here is quite controversial
-    // as I already implemented these in payment service
-    // but for some reasons it does not update table after getting 200 OK,
-    // so I just did like this as a temporary solution.
 
-    private double calculatePaymentAmount(SubscriptionType subscriptionType, boolean discountApplied)
-    {
-        double amount;
-        switch (subscriptionType)
-        {
-            case SD:
-                amount = 7.99;
-                break;
-            case HD:
-                amount = 10.99;
-                break;
-            case UHD:
-                amount = 13.99;
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown subscription type: " + subscriptionType);
+        // Query the view to check if it reflects the changes
+        List<SubscriptionOverview> subscriptionCosts = getAllSubscriptionCosts();
+        subscriptionCosts.forEach(cost -> System.out.println("Subscription cost: " + cost));
+
+        // Directly query the view to verify the data using EntityManager
+        Query query = entityManager.createNativeQuery("SELECT * FROM subscription_cost");
+        List<Object[]> viewData = query.getResultList();
+        for (Object[] row : viewData) {
+            System.out.println("View Data: " + Arrays.toString(row));
         }
-        if (discountApplied)
-        {
-            amount -= 2.00;
-        }
-        return amount;
     }
 
     public List<SubscriptionOverview> getAllSubscriptionCosts() {

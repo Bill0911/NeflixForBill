@@ -1319,10 +1319,31 @@ CREATE VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`ac
 --
 -- Structure for view `subscription_cost`
 --
-DROP TABLE IF EXISTS `subscription_cost`;
+DROP VIEW IF EXISTS `subscription_cost`;
 
-CREATE VIEW `subscription_cost`  AS SELECT `subquery`.`account_id` AS `account_id`, `subquery`.`subscription` AS `subscription`, `subquery`.`email` AS `email`, `subquery`.`payment_method` AS `payment_method`, `subquery`.`subscription_cost` AS `subscription_cost` FROM (select `u`.`account_id` AS `account_id`,`u`.`subscription` AS `subscription`,`u`.`email` AS `email`,`u`.`payment_method` AS `payment_method`,(case when (`u`.`role` in ('Junior','Medior','Senior')) then 0 when (`u`.`discount` = 0x01) then -(2.00) when (`u`.`subscription` = 'SD') then 7.99 when (`u`.`subscription` = 'HD') then 10.99 when (`u`.`subscription` = 'UHD') then 13.99 end) AS `subscription_cost` from `user` `u`) AS `subquery` WHERE (`subquery`.`subscription_cost` > 0) ;
-
+CREATE VIEW `subscription_cost` AS
+SELECT 
+    `subquery`.`account_id` AS `account_id`, 
+    `subquery`.`subscription` AS `subscription`, 
+    `subquery`.`email` AS `email`, 
+    `subquery`.`payment_method` AS `payment_method`, 
+    `subquery`.`subscription_cost` AS `subscription_cost`
+FROM (
+    SELECT 
+        `u`.`account_id` AS `account_id`,
+        `u`.`subscription` AS `subscription`,
+        `u`.`email` AS `email`,
+        `u`.`payment_method` AS `payment_method`,
+        (CASE 
+            WHEN (`u`.`role` IN ('Junior','Medior','Senior')) THEN 0 
+            WHEN (`u`.`discount` = 1) THEN -(2.00) 
+            WHEN (`u`.`subscription` = 'SD') THEN 7.99 
+            WHEN (`u`.`subscription` = 'HD') THEN 10.99 
+            WHEN (`u`.`subscription` = 'UHD') THEN 13.99 
+        END) AS `subscription_cost`
+    FROM `user` `u`
+) AS `subquery`
+WHERE (`subquery`.`subscription_cost` > 0);
 -- --------------------------------------------------------
 
 --
