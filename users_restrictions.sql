@@ -150,7 +150,7 @@ GRANT SELECT ON `netflix`.`genre_total_views` TO api;
 GRANT SELECT ON `netflix`.`movies_without_genre` TO api;
 GRANT SELECT ON `netflix`.`user_genre_count` TO api;
 GRANT SELECT ON `netflix`.`user_for_junior` TO api;
-GRANT SELECT, INSERT, UPDATE, DELETE ON `netflix`.`invitation` TO 'main_api_user';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `netflix`.`invitation` TO api;
 
 -- -------------------------IMPORTANT-------------------------
 
