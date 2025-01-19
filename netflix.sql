@@ -1319,7 +1319,7 @@ CREATE VIEW `paymentstatus`  AS SELECT `p`.`payment_id` AS `payment_id`, `u`.`ac
 --
 -- Structure for view `subscription_cost`
 --
-DROP VIEW IF EXISTS `subscription_cost`;
+DROP TABLE IF EXISTS `subscription_cost`;
 
 CREATE VIEW `subscription_cost` AS
 SELECT 
