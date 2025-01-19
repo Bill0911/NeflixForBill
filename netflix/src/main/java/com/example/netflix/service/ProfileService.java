@@ -47,6 +47,9 @@ public class ProfileService {
     }
 
     public void addProfile(Profile profile) {
+        if (profileRepository.findProfilesByAccountId(profile.getUser()).size() >= 4) {
+            throw new RuntimeException("4 profiles max for 1 user");
+        }
         profileRepository.addProfile(profile.getUser(), profile.getProfileImage(), profile.getAge(), profile.getName());
     }
 

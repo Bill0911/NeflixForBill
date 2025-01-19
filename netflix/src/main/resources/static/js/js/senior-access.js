@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tableContainer.innerHTML = "<p>Loading...</p>";
         try {
             const data = await fetchAPI(`http://localhost:8081/api/${tableName}`, "GET");
+            console.log(data);
             renderTable(data, tableName);
         } catch (error) {
             console.error("Error loading table data:", error);

@@ -19,6 +19,9 @@ import java.util.Optional;
 @Repository
 public interface ProfileRepository extends JpaRepository<Profile, Integer> {
 
+    @Query(value = "CALL GetProfilesByAccountId(:accountId)", nativeQuery = true)
+    List<Profile> findProfilesByAccountId(@Param("accountId") Integer accountId);
+
     @Modifying
     @Transactional
     @Query(value = "CALL AddProfile(:accountId, :profileImage, :age, :name)", nativeQuery = true)
