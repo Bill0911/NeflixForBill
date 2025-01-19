@@ -14,7 +14,6 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             body: JSON.stringify({ email, password }),
         });
 
-        // Check if the response is JSON
         const contentType = response.headers.get('Content-Type');
         if (!response.ok || !contentType || !contentType.includes('application/json')) {
             const responseText = await response.text(); // Fallback for non-JSON error
@@ -23,13 +22,11 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             return;
         }
 
-        // Parse JSON response
         const data = await response.json();
 
         if (data.token) {
             localStorage.setItem('token', data.token); // Save the token
 
-            // Redirect based on role
             switch (data.role) {
                 case 'JUNIOR':
                     window.location.href = 'junior-dashboard.html';

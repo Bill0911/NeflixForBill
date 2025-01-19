@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const loadTableButton = document.getElementById("loadTable");
     const tableSelect = document.getElementById("tableSelect");
     const tableContainer = document.getElementById("tableContainer");
-    const formContainer = document.getElementById("formContainer");
     const crudForm = document.getElementById("crudForm");
     const formFields = document.getElementById("formFields");
 
@@ -13,28 +12,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
     loadTableButton.addEventListener("click", () => loadTableData(tableSelect.value));
 
+    function getIdFieldName(tableName) {
+        const idFieldNames = {
+            users: 'accountId',
+            movies: 'movieId',
+            episodes: 'episodeId',
+            genres: 'genreId',
+            languages: 'languageId',
+            payments: 'paymentId',
+            series: 'seriesId',
+            invitations: 'invitationId',
+            profiles: 'profileId'
+        };
+        return idFieldNames[tableName] || 'id';
+    }
+
     async function fetchAPI(url, method, data = null) {
-        const headers = {
+        const headers = new Headers({
             "Content-Type": "application/json",
             "Authorization": `Bearer ${localStorage.getItem("token")}`
-        };
-        const response = await fetch(url, {
-            method: method,
-            headers: headers,
-            body: data ? JSON.stringify(data) : null
         });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        return response.json();
+
+        const fetchOptions = {
+            method: method,
+            headers: headers
+        };
+
+        if (data && method !== "GET" && method !== "DELETE") {
+            fetchOptions.body = JSON.stringify(data);
+        }
+
+        try {
+            const response = await fetch(url, fetchOptions);
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP error! Status: ${response.status}: ${errorText}`);
+            }
+            return method === "DELETE" ? response.text() : response.json();
+        } catch (error) {
+            throw error;
+        }
     }
 
     async function loadTableData(tableName) {
         tableContainer.innerHTML = "<p>Loading...</p>";
         try {
             const data = await fetchAPI(`http://localhost:8081/api/${tableName}`, "GET");
-            console.log(data);
             renderTable(data, tableName);
         } catch (error) {
-            console.error("Error loading table data:", error);
             tableContainer.innerHTML = `<p>Error loading table data: ${error.message}</p>`;
         }
     }
@@ -67,8 +92,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             const actionTd = document.createElement("td");
+            const idFieldName = getIdFieldName(tableName); // Get the identifier field name dynamically
             const editButton = createActionButton('Edit', () => loadEditForm(item, tableName));
-            const deleteButton = createActionButton('Delete', () => deleteRow(item.id, tableName));
+            const deleteButton = createActionButton('Delete', () => deleteRow(item[idFieldName], tableName));
             actionTd.appendChild(editButton);
             actionTd.appendChild(deleteButton);
             tr.appendChild(actionTd);
@@ -81,38 +107,39 @@ document.addEventListener("DOMContentLoaded", () => {
     function createActionButton(text, action) {
         const button = document.createElement("button");
         button.textContent = text;
-        button.addEventListener('click', action);
+        button.onclick = action;
         return button;
     }
 
     function loadEditForm(item, tableName) {
-        crudForm.dataset.id = item.id;
+        const idFieldName = getIdFieldName(tableName);
+        crudForm.dataset.id = item[idFieldName];
         crudForm.dataset.table = tableName;
         formFields.innerHTML = "";
         Object.entries(item).forEach(([key, value]) => {
             const label = document.createElement('label');
             label.textContent = key;
             const input = document.createElement('input');
-            input.type = key === 'id' ? 'text' : 'input'; // Adjust input types as necessary
+            input.type = 'text';
             input.name = key;
             input.value = value;
             formFields.appendChild(label);
             formFields.appendChild(input);
         });
-        const saveButton = createActionButton('Save', submitForm);
-        formFields.appendChild(saveButton);
     }
 
     crudForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+        const id = crudForm.dataset.id;
+        const tableName = crudForm.dataset.table;
         const data = Object.fromEntries(new FormData(crudForm));
-        const method = crudForm.dataset.id ? 'PUT' : 'POST';
-        const url = `http://localhost:8081/api/${crudForm.dataset.table}/${crudForm.dataset.id || ''}`;
+        const url = `http://localhost:8081/api/${tableName}/${id}`;
+        const method = id ? 'PUT' : 'POST';
 
         try {
-            const result = await fetchAPI(url, method, data);
+            await fetchAPI(url, method, data);
             alert('Operation successful!');
-            loadTableData(crudForm.dataset.table);
+            loadTableData(tableName);
         } catch (error) {
             console.error("Error saving entry:", error);
             alert(`Failed to save entry: ${error.message}`);
@@ -120,10 +147,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     async function deleteRow(id, tableName) {
+        if (!id) {
+            console.error("Attempted to delete an item with undefined ID.");
+            alert("Cannot delete this item due to a missing ID.");
+            return;
+        }
         if (!confirm("Are you sure you want to delete this entry?")) return;
-
+        const url = `http://localhost:8081/api/${tableName}/${id}`;
         try {
-            await fetchAPI(`http://localhost:8081/api/${tableName}/${id}`, "DELETE");
+            await fetchAPI(url, "DELETE");
             alert("Deleted successfully!");
             loadTableData(tableName);
         } catch (error) {

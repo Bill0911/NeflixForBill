@@ -3,31 +3,43 @@ document.addEventListener("DOMContentLoaded", () => {
     const loadTableButton = document.getElementById("loadTable");
     const tableContainer = document.getElementById("tableContainer");
 
-    // Hide payment option from Junior users
-    if (tableSelect) {
-        Array.from(tableSelect.options).forEach(option => {
-            if (option.value === "payments") {
-                option.style.display = "none";
-            }
-        });
+    function getIdFieldName(tableName) {
+        const idFieldNames = {
+            users: 'accountId',
+            movies: 'movieId',
+            episodes: 'episodeId',
+            genres: 'genreId',
+            languages: 'languageId',
+            payments: 'paymentId',
+            series: 'seriesId',
+            invitations: 'invitationId',
+            profiles: 'profileId'
+        };
+        return idFieldNames[tableName] || 'id';
     }
 
-    loadTableButton.addEventListener("click", () => {
-        const selectedTable = tableSelect.value;
-        if (selectedTable !== "payments") { // Prevent loading payment table
-            loadTableData(selectedTable);
-        } else {
-            alert("You do not have permission to access this data.");
-        }
-    });
+    function isSensitiveInformation(tableName, key) {
+        // Add sensitive tables and their sensitive fields
+        const sensitiveData = {
+            payments: ['amount', 'paymentMethod'],
+        };
+        return sensitiveData[tableName] && sensitiveData[tableName].includes(key);
+    }
+
+    loadTableButton.addEventListener("click", () => loadTableData(tableSelect.value));
 
     async function loadTableData(tableName) {
+        tableContainer.innerHTML = "<p>Loading...</p>";
         const response = await fetch(`http://localhost:8081/api/${tableName}`, {
             method: "GET",
             headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
         });
-        const data = await response.json();
-        renderTable(data, tableName);
+        if (response.ok) {
+            const data = await response.json();
+            renderTable(data, tableName);
+        } else {
+            tableContainer.innerHTML = "<p>Error loading data. Please check permissions.</p>";
+        }
     }
 
     function renderTable(data, tableName) {
@@ -39,30 +51,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const table = document.createElement("table");
         const headerRow = document.createElement("tr");
-
-        // Filter out sensitive columns
         Object.keys(data[0]).forEach(key => {
-            if (!["email", "password"].includes(key)) {
+            if (!isSensitiveInformation(tableName, key)) {
                 const th = document.createElement("th");
                 th.textContent = key;
                 headerRow.appendChild(th);
             }
         });
 
+        const actionTh = document.createElement("th");
+        actionTh.textContent = "Actions";
+        headerRow.appendChild(actionTh);
         table.appendChild(headerRow);
 
         data.forEach(item => {
-            const row = document.createElement("tr");
+            const tr = document.createElement("tr");
             Object.entries(item).forEach(([key, value]) => {
-                if (!["email", "password"].includes(key)) {
+                if (!isSensitiveInformation(tableName, key)) {
                     const td = document.createElement("td");
                     td.textContent = value;
-                    row.appendChild(td);
+                    tr.appendChild(td);
                 }
             });
-            table.appendChild(row);
+
+            const actionsTd = document.createElement("td");
+            const editButton = createActionButton('Edit', () => editItem(item, tableName));
+            const deleteButton = createActionButton('Delete', () => deleteItem(item[getIdFieldName(tableName)], tableName));
+            actionsTd.appendChild(editButton);
+            actionsTd.appendChild(deleteButton);
+            tr.appendChild(actionsTd);
+
+            table.appendChild(tr);
         });
 
         tableContainer.appendChild(table);
+    }
+
+    function createActionButton(text, action) {
+        const button = document.createElement("button");
+        button.textContent = text;
+        button.onclick = action;
+        return button;
+    }
+
+    async function editItem(item, tableName) {
+        console.log("Edit Item:", item);
+        // Implement editing logic here or open an edit form
+    }
+
+    async function deleteItem(id, tableName) {
+        if (!confirm("Are you sure you want to delete this entry?")) return;
+        const response = await fetch(`http://localhost:8081/api/${tableName}/${id}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+        });
+        if (response.ok) {
+            alert("Deleted successfully!");
+            loadTableData(tableName);
+        } else {
+            const errorText = await response.text();
+            alert(`Failed to delete: ${errorText}`);
+        }
     }
 });
