@@ -97,7 +97,6 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Object> loginUser(@RequestBody LoginRequest loginRequest) {
         try {
-            // Authenticate user and generate token
             User user = userService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
             String token = jwtUtil.generateToken(user.getAccountId(), Role.valueOf(user.getRole().name()));
 
@@ -110,7 +109,6 @@ public class UserController {
             return ResponseEntity.ok(response);
 
         } catch (RuntimeException e) {
-            // Handle login failure
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
                     "error", e.getMessage(),
                     "message", "Login failed. Please check your credentials."
@@ -130,26 +128,22 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Integer id) throws Exception {
-//        userService.enforceRoleRestriction(token, Role.MEDIOR);
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @GetMapping("/email/{email}")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email) throws Exception {
-//        userService.enforceRoleRestriction(token, Role.MEDIOR);
         return ResponseEntity.ok(userService.getUserByEmail(email));
     }
 
     @GetMapping()
     public ResponseEntity<Object> getManyUsers() throws Exception {
-//        userService.enforceRoleRestriction(token, Role.MEDIOR);
         return ResponseEntity.ok(userService.getManyUsers());
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteUserById(@PathVariable Integer id) throws Exception {
         try {
-//            userService.enforceRoleRestriction(token, Role.MEDIOR);
             userService.deleteUserById(id);
             return ResponseEntity.ok("User has been deleted successfully");
         } catch (RuntimeException e) {
@@ -219,7 +213,6 @@ public class UserController {
 
     @GetMapping("/subscription-costs")
     public ResponseEntity<List<SubscriptionOverview>> getSubscriptionCosts() throws Exception {
-//        userService.enforceRoleRestriction(token, Role.SENIOR);
         return ResponseEntity.ok(userService.getAllSubscriptionCosts());
     }
 }

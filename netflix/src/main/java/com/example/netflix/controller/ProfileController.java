@@ -93,21 +93,4 @@ public class ProfileController {
 
         return ResponseEntity.ok("Movie has not been watched" + fitsMovieAgeRestrictions.getMessage());
     }
-
-//    @PostMapping("/watch-series")
-//    public ResponseEntity<String> watchSeries(@RequestParam Integer profileId, @RequestParam Integer seriesId, @RequestHeader("Authorization") String token) {
-//        String jwt = token.substring(7);
-//        int id = jwtUtil.extractId(jwt);
-//        MethodResponse fitsMovieAgeRestrictions = profileService.fitsMovieAgeRestrictions(profileId, seriesId);
-//
-//        if (fitsMovieAgeRestrictions.isSuccess())
-//        {
-//            seriesViewCountService.addSeriesToViewCount(id, seriesId);
-//            return ResponseEntity.ok("Series has been watched!");
-//        }
-//
-//        return ResponseEntity.ok("Series has not been watched: " + fitsMovieAgeRestrictions.getMessage());
-//    }
-
-
 }
