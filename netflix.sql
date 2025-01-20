@@ -1,24 +1,4 @@
-USE `netflix`;
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: mysql
--- Generation Time: Jan 18, 2025 at 02:56 PM
--- Server version: 8.0.40
--- PHP Version: 8.2.27
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
 -- Database: `netflix`
 --
 
@@ -1247,10 +1227,7 @@ INSERT INTO `user` (`account_id`, `email`, `password`, `payment_method`, `active
 (21, 'zhizhi@gmail.com', '$2a$10$i69jO1ulvaMpmWhfquAWTeRin88ooKwGuidwBN4Gxfi3.VE3DKp82', 'iDEAL', b'0', b'0', 'HD', '2025-01-17 12:21:38', NULL, 1, 'VIEWER', 0, NULL, b'0'),
 (22, 'billJen2@outlook.com', '$2a$10$RYVZBqoWVgcTgO6ngheslO8XVIT9WxBzSqoobyX6L6ci/c3nTnKq.', 'IDEAL', b'0', b'0', 'HD', '2025-01-17 13:24:22', NULL, 1, 'VIEWER', 0, NULL, b'0'),
 (23, 'billJen4@outlook.com', '$2a$10$LeuRelq82wLgCr0eoaXmp.VEk6FRZiloihP9W92v3gy/ATwydrCBO', 'IDEAL', b'1', b'0', 'HD', '2025-01-17 13:28:55', NULL, 1, 'VIEWER', 0, NULL, b'1'),
-(24, 'billJen5@outlook.com', '$2a$10$oWiphCEfMAbJK9tRAsiejuSawwGw6TgO.hJIGSdZ663vWJhRntW0q', 'IDEAL', b'1', b'0', 'HD', '2025-01-17 13:34:45', NULL, 1, 'VIEWER', 0, NULL, b'1'),
-(25, 'janjassen@gmail.com', '$2a$10$7v5Ho908rYS1FPGp.N.7nOjJuJcRxnkSkaFPNFtXVPwHJhlREVW12', 'Credit Card', b'1', b'0', 'SD', '2025-01-06 15:54:13', '2025-01-13 15:54:13', 1, 'VIEWER', 0, NULL, b'0'),
-(26, 'billJ1@outlook.com', '$2a$10$cvns7c5I6KUpgymcO610D.6CBWdZJAl90undCy/AZzLsIGSFkvJXi', 'IDEAL', b'1', b'0', 'HD', '2025-01-06 15:54:13', '2025-01-13 15:54:13', 1, 'VIEWER', 0, NULL, b'0');
-
+(24, 'billJen5@outlook.com', '$2a$10$oWiphCEfMAbJK9tRAsiejuSawwGw6TgO.hJIGSdZ663vWJhRntW0q', 'IDEAL', b'1', b'0', 'HD', '2025-01-17 13:34:45', NULL, 1, 'VIEWER', 0, NULL, b'1');
 -- --------------------------------------------------------
 
 --
@@ -1626,9 +1603,19 @@ DELIMITER $$
 CREATE EVENT `InsertExpiredTrialsDaily` ON SCHEDULE EVERY 1 DAY STARTS '2025-01-04 19:44:33' ON COMPLETION NOT PRESERVE ENABLE DO CALL `InsertExpiredTrialsIntoPayments`()$$
 
 DELIMITER ;
+
+
+START TRANSACTION
+
+INSERT INTO `user` (25, 'janjassen@gmail.com', '$2a$10$7v5Ho908rYS1FPGp.N.7nOjJuJcRxnkSkaFPNFtXVPwHJhlREVW12', 'Credit Card', b'1', b'0', 'SD', '2025-01-06 15:54:13', '2025-01-13 15:54:13', 1, 'VIEWER', 0, NULL, b'0'),
+(26, 'billJ1@outlook.com', '$2a$10$cvns7c5I6KUpgymcO610D.6CBWdZJAl90undCy/AZzLsIGSFkvJXi', 'IDEAL', b'1', b'0', 'HD', '2025-01-06 15:54:13', '2025-01-13 15:54:13', 1, 'VIEWER', 0, NULL, b'0');
+
+UPDATE `user` SET `payment_method` = 'newly created card' WHERE `account_id` = 3;
+
+SAVEPOINT savepoint1;
+
+DELETE FROM `genre` WHERE `genre_id` = 29;
+
+ROLLBACK TO savepoint1;
+
 COMMIT;
-
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
