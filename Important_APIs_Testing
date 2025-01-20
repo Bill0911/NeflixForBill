@@ -1,0 +1,472 @@
+{
+	"info": {
+		"_postman_id": "e1515638-ca7a-4e29-a280-403a55834f72",
+		"name": "New Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39815162",
+		"_collection_link": "https://netflixforbill.postman.co/workspace/NetflixForBill-Workspace~d9135880-b161-47e8-8b94-15fc618c44ce/collection/39815162-e1515638-ca7a-4e29-a280-403a55834f72?action=share&source=collection_link&creator=39815162"
+	},
+	"item": [
+		{
+			"name": "register user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Render activation link\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    var activationLink = jsonData.activationLink;\r",
+							"    pm.visualizer.set(`\r",
+							"        <html>\r",
+							"            <body>\r",
+							"                <p>User registered successfully. Click the link to activate your account:</p>\r",
+							"                <a href=\"{{activationLink}}\">Activate me</a>\r",
+							"            </body>\r",
+							"        </html>\r",
+							"    `, { activationLink: activationLink });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"ActivationLink is a non-empty string\", function () {\r",
+							"  const responseData = pm.response.json();\r",
+							"\r",
+							"  pm.expect(responseData.activationLink).to.be.a('string').and.to.have.lengthOf.at.least(1, \"ActivationLink should not be empty\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/json\", function () {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"  pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"billJ1@outlook.com\",\r\n  \"password\": \"0000\",\r\n  \"paymentMethod\": \"IDEAL\",\r\n  \"subscription\": \"HD\",\r\n  \"language\": 1\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/users/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"billJen4@outlook.com\",\r\n  \"password\": \"0001\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add profile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50X2lkIjoxLCJyb2xlIjoiU0VOSU9SIiwiaWF0IjoxNzM2MjgzNzkyLCJleHAiOjE3MzYyODczOTJ9.W6HvVW1QUVc1494TmceCQmDpQ9g2GaBJEOKBFzLA_oo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"profileImage\": \"http://example.com/image.jpg\",\r\n  \"name\": \"JimmyJ\",\r\n  \"age\": 30\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/profiles",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"profiles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "payment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/payments?userId=18&subscriptionType=SD&discountApplied=false",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"payments"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "18"
+						},
+						{
+							"key": "subscriptionType",
+							"value": "SD"
+						},
+						{
+							"key": "discountApplied",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "forget password",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"billJen4@outlook.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/users/request-password-reset",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"users",
+						"request-password-reset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reset password",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImJpbGxKZW40QG91dGxvb2suY29tIiwiaWF0IjoxNzM2NzY4NzQwLCJleHAiOjE3MzY4NTUxNDB9.U3YW_O8tYdXl5MM-qn25dTi0EBMyT8RB8Ik9kzgkAWo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"newPassword\": \"0001\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/users/reset-password",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"users",
+						"reset-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Personalized-offer",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50X2lkIjoxOCwicm9sZSI6IkpVTklPUiIsImlhdCI6MTczNTY4MTU1MiwiZXhwIjoxNzM1Njg1MTUyfQ.mNYWsOuUHnniSYn3x1-CdWJ7Rk2edqfax3Rj9wfUFYk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/preferences/personalized-offer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"preferences",
+						"personalized-offer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "activate account",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/users/activate?token=eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IkppbW15QG91dGxvb2suY29tIiwiaWF0IjoxNzM1OTM0MTY0LCJleHAiOjE3MzYwMjA1NjR9.bWYwMAOJ3dTtqMbIY3zF2hFWZRxznPfq5C3MkImpadw",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"users",
+						"activate"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IkppbW15QG91dGxvb2suY29tIiwiaWF0IjoxNzM1OTM0MTY0LCJleHAiOjE3MzYwMjA1NjR9.bWYwMAOJ3dTtqMbIY3zF2hFWZRxznPfq5C3MkImpadw"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAllEndPoints",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/admin/endpoints",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"admin",
+						"endpoints"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "view subscription",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/users/subscription-costs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"users",
+						"subscription-costs"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
