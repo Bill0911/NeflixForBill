@@ -107,7 +107,8 @@ GRANT EXECUTE ON PROCEDURE `netflix`.`GetMoviesProfileWatchlist` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetMovieViewCount` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetPersonalizedOfferMovies` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetPersonalizedOfferSeries` TO api;
-
+GRANT EXECUTE ON PROCEDURE `netflix`.`GetProfileById` TO api;
+GRANT EXECUTE ON PROCEDURE `netflix`.`GetProfileByAccountId` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetSeriesById` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetSeriesProfileWatchlist` TO api;
 GRANT EXECUTE ON PROCEDURE `netflix`.`GetSeriesViewCount` TO api;
