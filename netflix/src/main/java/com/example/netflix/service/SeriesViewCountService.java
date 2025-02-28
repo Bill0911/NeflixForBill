@@ -54,6 +54,7 @@ public class SeriesViewCountService {
         seriesViewCountRepository.update(seriesViewCount.getUser(), seriesViewCount.getSeries(), seriesViewCount.getNumber(), seriesViewCount.getLastViewed());
     }
 
+
 /*
     public void addSeriesToViewCount(Integer accountId, Integer seriesId) {
         Optional<User> userOpt = userRepository.findById(accountId);
