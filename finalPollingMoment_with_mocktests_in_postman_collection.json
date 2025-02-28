@@ -1,0 +1,3115 @@
+{
+	"info": {
+		"_postman_id": "6a7580f5-a6be-4ebd-b76d-128a25ce45a5",
+		"name": "finalPollingMoment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40052295",
+		"_collection_link": "https://netflixforbill.postman.co/workspace/d9135880-b161-47e8-8b94-15fc618c44ce/collection/39815162-6a7580f5-a6be-4ebd-b76d-128a25ce45a5?action=share&source=collection_link&creator=40052295"
+	},
+	"item": [
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains token\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('token');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains role\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('role');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Login successful!\");\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());\r",
+							"var template = `\r",
+							"<style type=\"text/css\">\r",
+							"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+							"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+							"    .tftable tr {background-color:#ffffff;}\r",
+							"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+							"    .tftable tr:hover {background-color:#e0ffff;}\r",
+							"</style>\r",
+							"\r",
+							"<table class=\"tftable\" border=\"1\">\r",
+							"    <tr>\r",
+							"        <th>Role</th>\r",
+							"        <th>Message</th>\r",
+							"        <th>Token</th>\r",
+							"    </tr>\r",
+							"    <tr>\r",
+							"        <td>{{response.role}}</td>\r",
+							"        <td>{{response.message}}</td>\r",
+							"        <td>{{response.token}}</td>\r",
+							"    </tr>\r",
+							"</table>\r",
+							"`;\r",
+							"\r",
+							"function constructVisualizerPayload() {\r",
+							"    return { response: pm.response.json() }\r",
+							"}\r",
+							"\r",
+							"pm.visualizer.set(template, constructVisualizerPayload());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"billJ1@outlook.com\",\r\n  \"password\": \"0000\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add new genre",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"New genre\");\r",
+							"    pm.expect(responseText).to.include(\"added\");\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "text/plain",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"genreName\": \"bebra\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/genres",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genres"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add new language",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Language has been created\");\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "text/plain",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "qwerty",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/languages",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"languages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add new movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Movie has been created\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 400 when there is an error\", function () {\r",
+							"    if (pm.response.code === 400) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "text/plain",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"fast XXX\",\r\n    \"duration\": \"02:25:00\",\r\n    \"sdAvailable\": true,\r\n    \"hdAvailable\": true,\r\n    \"uhdAvailable\": false,\r\n    \"minimumAge\": 16\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/movies",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add movie to watchlist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Profile - Movie relation has been created\");\r",
+							"});\r",
+							"\r",
+							"// Check if the response status is 409 when the relation already exists\r",
+							"pm.test(\"Status code is 409 when relation already exists\", function () {\r",
+							"    if (pm.response.code === 409) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error: The profile-movie relation already exists\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when there is an error\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"// Log the response body\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/movie-watchlist/2/13",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movie-watchlist",
+						"2",
+						"13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "increment movie view",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Movie - User relation has been created\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when there is an error\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/movie-view-count/2/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movie-view-count",
+						"2",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add new series",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Series has been created\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 400 when there is an error\", function () {\r",
+							"    if (pm.response.code === 400) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Sex education\",\r\n    \"duration\": \"02:22:00\",\r\n    \"sdAvailable\": true,\r\n    \"hdAvailable\": true,\r\n    \"uhdAvailable\": false,\r\n    \"minimumAge\": 18\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/series",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"series"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "increment series view",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Series - User relation has been created\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when there is an error\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/series-view-count/2/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"series-view-count",
+						"2",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add series to watchlist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Profile - series relation has been created\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when there is an error\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/series-watchlist/2/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"series-watchlist",
+						"2",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add new episode",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Episode has been created\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 400 when there is an error\", function () {\r",
+							"    if (pm.response.code === 400) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"episodeId\": 2,\r\n    \"title\": \"Dom is vanished\",\r\n    \"duration\": \"00:23:00\",\r\n    \"seriesId\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/episodes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"episodes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "attach genre to movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Genre - Movie relation has been created\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when there is an error\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/genre-for-movie/2/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genre-for-movie",
+						"2",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "attach genre to series",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Genre - Series relation has been created\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when there is an error\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"episodeId\": 2,\r\n    \"title\": \"Dom is vanished\",\r\n    \"duration\": \"00:23:00\",\r\n    \"seriesId\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/genre-for-series/1/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genre-for-series",
+						"1",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add genre for user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Genre - User relation has been created\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when there is an error\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/genre-for-user/1/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genre-for-user",
+						"1",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "invite user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Invitation sent successfully\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 400 when there is an error\", function () {\r",
+							"    if (pm.response.code === 400) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"inviterEmail\": \"billJen4@outlook.com\",\r\n    \"inviteeEmail\": \"billJen5@outlook.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/users/invite",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"users",
+						"invite"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add profile",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "    <item>\r\n        <name>newprofgile_12345</name>\r\n        <user>1</user>\r\n        <profileImage>helloworld.png</profileImage>\r\n        <age>18</age>\r\n    </item>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/profiles",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"profiles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an object\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains user data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('accountId');\r",
+							"    pm.expect(jsonData).to.have.property('email');\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/users/10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"users",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all genres",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains genre data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    if (jsonData.length > 0) {\r",
+							"        pm.expect(jsonData[0]).to.have.property('genreId');\r",
+							"        pm.expect(jsonData[0]).to.have.property('genreName');\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/genres",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genres"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get genre by Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains genre data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('genreId');\r",
+							"    pm.expect(jsonData).to.have.property('genreName');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 404 when genre is not found\", function () {\r",
+							"    if (pm.response.code === 404) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/genres/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genres",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all movies",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains movie data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    if (jsonData.length > 0) {\r",
+							"        pm.expect(jsonData[0]).to.have.property('movieId');\r",
+							"        pm.expect(jsonData[0]).to.have.property('title');\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/movies",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all series",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains series data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    if (jsonData.length > 0) {\r",
+							"        pm.expect(jsonData[0]).to.have.property('seriesId');\r",
+							"        pm.expect(jsonData[0]).to.have.property('title');\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/series",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"series"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all profiles",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains profile data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    if (jsonData.length > 0) {\r",
+							"        pm.expect(jsonData[0]).to.have.property('profileId');\r",
+							"        pm.expect(jsonData[0]).to.have.property('name');\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/profiles",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"profiles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all movie watchlists",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains movies profile watchlist data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    if (jsonData.length > 0) {\r",
+							"        pm.expect(jsonData[0]).to.have.property('profile');\r",
+							"        pm.expect(jsonData[0]).to.have.property('movie');\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8081/api/movie-watchlist",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movie-watchlist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get total views of all movies",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains expected data\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(7);\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/movie-view-count",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movie-view-count"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get a movie with total views",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains expected data\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(1);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 404 when movie view count is not found\", function () {\r",
+							"    if (pm.response.code === 404) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/movie-view-count/1/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movie-view-count",
+						"1",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get a movie from a watchlist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    var pathVariables = pm.request.url.path;\r",
+							"    var id1 = pathVariables[pathVariables.length - 2];\r",
+							"    var id2 = pathVariables[pathVariables.length - 1];\r",
+							"    pm.expect(responseText).to.include(\"Profile \" + id1 + \" - Movie \" + id2 + \" relation exists\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when no relation is found\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"No such relation found\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/movie-watchlist/2/13",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movie-watchlist",
+						"2",
+						"13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user by email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains user data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('accountId');\r",
+							"    pm.expect(jsonData).to.have.property('email');\r",
+							"    pm.expect(jsonData.email).to.eql(\"fjodor.smorodins@gmail.com\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 404 when user is not found\", function () {\r",
+							"    if (pm.response.code === 404) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/users/email/fjodor.smorodins@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"users",
+						"email",
+						"fjodor.smorodins@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get a series with total views",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains expected data\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(2);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 404 when movie view count is not found\", function () {\r",
+							"    if (pm.response.code === 404) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/series-view-count/2/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"series-view-count",
+						"2",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get genre for user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    var pathVariables = pm.request.url.path;\r",
+							"    var id1 = pathVariables[pathVariables.length - 2];\r",
+							"    var id2 = pathVariables[pathVariables.length - 1];\r",
+							"    pm.expect(responseText).to.include(\"Genre \" + id1 + \" - User \" + id2 + \" relation exists\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when no relation is found\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"No such relation found\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/genre-for-user/1/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genre-for-user",
+						"1",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "view subscription",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains subscription overview data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    if (jsonData.length > 0) {\r",
+							"        pm.expect(jsonData[0]).to.have.property('accountId');\r",
+							"        pm.expect(jsonData[0]).to.have.property('subscription');\r",
+							"        pm.expect(jsonData[0]).to.have.property('email');\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/users/subscription-costs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"users",
+						"subscription-costs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "genres without movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains genre data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    if (jsonData.length > 0) {\r",
+							"        pm.expect(jsonData[0]).to.have.property('genreId');\r",
+							"        pm.expect(jsonData[0]).to.have.property('genreName');\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/genres/without-movie",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genres",
+						"without-movie"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "genres - view counts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is in XML format\", function () {\r",
+							"    var contentType = pm.response.headers.get(\"Content-Type\");\r",
+							"    pm.expect(contentType).to.match(/application\\/xml/);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains view count data\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"<genreId>\");\r",
+							"    pm.expect(responseText).to.include(\"<totalViews>\");\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8081/api/genres/view-counts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genres",
+						"view-counts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "movies without genre",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains movie data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    if (jsonData.length > 0) {\r",
+							"        pm.expect(jsonData[0]).to.have.property('movieId');\r",
+							"        pm.expect(jsonData[0]).to.have.property('title');\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/movies/without-genre",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movies",
+						"without-genre"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "patch watchlist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"->\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when there is an error\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/movie-watchlist/1/3/1/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movie-watchlist",
+						"1",
+						"3",
+						"1",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "edit movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Movie has been patched successfully\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 400 when there is an error\", function () {\r",
+							"    if (pm.response.code === 400) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Bob Marley tribute\",\r\n    \"duration\": \"03:22:00\",\r\n    \"sdAvailable\": null,\r\n    \"hdAvailable\": null,\r\n    \"uhdAvailable\": false,\r\n    \"minimumAge\": 16\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/movies/7",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movies",
+						"7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "edit series info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Tried\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 404 when series is not found\", function () {\r",
+							"    if (pm.response.code === 404) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Walking Dead\",\r\n    \"duration\": null,\r\n    \"sdAvailable\": null,\r\n    \"hdAvailable\": null,\r\n    \"uhdAvailable\": false,\r\n    \"minimumAge\": 16\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/series/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"series",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "edit episode",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Episode title has been edited to Angelina is vanished\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 400 when there is an error\", function () {\r",
+							"    if (pm.response.code === 400) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"episodeId\": 1,\r\n    \"title\": \"Angelina is vanished\",\r\n    \"duration\": \"00:23:00\",\r\n    \"seriesId\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/episodes/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"episodes",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "insert movie views",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains movie view count data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('user');\r",
+							"    pm.expect(jsonData).to.have.property('movie');\r",
+							"    pm.expect(jsonData).to.have.property('number');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when there is an error\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n    \"user\": 1,\r\n    \"movie\": 1,\r\n    \"number\": 1,\r\n    \"lastViewed\": \"2025-01-17T12:00:00\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/movie-view-count",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movie-view-count"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "insert series views",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains movie view count data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property('user');\r",
+							"    pm.expect(jsonData).to.have.property('series');\r",
+							"    pm.expect(jsonData).to.have.property('number');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when there is an error\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n    \"user\": 1,\r\n    \"movie\": 1,\r\n    \"number\": 1,\r\n    \"lastViewed\": \"2025-01-17T12:00:00\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/series-view-count",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"series-view-count"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "patch genre for movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"->\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when there is an error\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n    \"user\": 1,\r\n    \"movie\": 1,\r\n    \"number\": 1,\r\n    \"lastViewed\": \"2025-01-17T12:00:00\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/genre-for-movie/1/2/2/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genre-for-movie",
+						"1",
+						"2",
+						"2",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "patch profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/xml",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "    <item>\r\n        <name>stupdiprofile_5</name>\r\n        <user>1</user>\r\n        <profileImage>helloworld5.png</profileImage>\r\n        <age>17</age>\r\n    </item>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/profiles/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"profiles",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rename genre",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Genre id \" + pm.request.url.variables[0].value + \" has been renamed to History\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 403 when there is an error\", function () {\r",
+							"    if (pm.response.code === 403) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Failed to patch genre with ID\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"genreName\": \"History\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/genres/20",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genres",
+						"20"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "switch genre to other movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"->\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when there is an error\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/genre-for-movie/1/3/1/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genre-for-movie",
+						"1",
+						"3",
+						"1",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "switch genre to other series",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"->\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when there is an error\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"genreName\": \"History\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/genre-for-series/2/2/1/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genre-for-series",
+						"2",
+						"2",
+						"1",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "switch subtitle",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Language has been updated successfully\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 400 when there is an error\", function () {\r",
+							"    if (pm.response.code === 400) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 2,\r\n    \"country\": \"thai\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/languages/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"languages",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove genre",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Genre deleted successfully.\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 403 when there is a foreign key constraint error\", function () {\r",
+							"    if (pm.response.code === 403) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"This genres' id is mention in other table's rows as foreign key\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 403 when there is another error\", function () {\r",
+							"    if (pm.response.code === 403) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Deletion failed:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/genres/6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genres",
+						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Movie deleted successfully\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 400 when there is an error\", function () {\r",
+							"    if (pm.response.code === 400) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/movies/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movies",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove series",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Series deleted successfully.\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 400 when there is an error\", function () {\r",
+							"    if (pm.response.code === 400) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/series/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"series",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove episode",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Episode has been deleted successfully\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 400 when there is an error\", function () {\r",
+							"    if (pm.response.code === 400) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/episodes/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"episodes",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove profiles",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Profile has been deleted successfully\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 400 when there is an error\", function () {\r",
+							"    if (pm.response.code === 400) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/profiles/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"profiles",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove genre out of movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Genre - Movie relation has been deleted\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when there is an error\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/genre-for-movie/2/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genre-for-movie",
+						"2",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove genre out of series",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Genre - Series relation has been deleted\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 422 when there is an error\", function () {\r",
+							"    if (pm.response.code === 422) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/genre-for-series/1/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genre-for-series",
+						"1",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove language",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains success message\", function () {\r",
+							"    var responseText = pm.response.text();\r",
+							"    pm.expect(responseText).to.include(\"Language deleted successfully\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code is 400 when there is an error\", function () {\r",
+							"    if (pm.response.code === 400) {\r",
+							"        var responseText = pm.response.text();\r",
+							"        pm.expect(responseText).to.include(\"Error:\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.text());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/languages/8",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"languages",
+						"8"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
