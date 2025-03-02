@@ -32,46 +32,4 @@ public class InvitationService
         this.invitationRepository = invitationRepository;
     }
 
-    public
-
-    public List<Invitation> getAllGenres() {
-        return invitationRepository.findMany();
-    }
-
-    public Optional<Genre> getGenreById(Integer id) {
-        return genreRepository.findByGenreId(id);
-    }
-
-    public void addGenre(String genreName) {
-        System.out.println("Genre has not been added yet");
-        genreRepository.addGenre(genreName);
-        System.out.println("Genre has been added ");
-    }
-
-    public void updateGenre(Integer id, String genreName) {
-        genreRepository.updateById(id, genreName);;
-    }
-
-    public Genre patchGenre(Integer id, Genre patchData) {
-        return genreRepository.findById(id)
-                .map(existingGenre -> {
-                    if (patchData.getGenreName() != null) {
-                        existingGenre.setGenreName(patchData.getGenreName());
-                    }
-                    return genreRepository.save(existingGenre);
-                })
-                .orElseThrow(() -> new RuntimeException("Genre not found with ID: " + id));
-    }
-
-    public void deleteGenre(Integer id) {
-        genreRepository.deleteById(id);
-    }
-
-    public List<GenreDTO> getGenresWithoutMovie() {
-        return  genreDTORepository.findGenresWithoutMovie();
-    }
-
-    public List<GenreViewCount> getViewCounts() {
-        return  genreViewCountRepository.findGenreViewCounts();
-    }
 }

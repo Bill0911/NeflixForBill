@@ -1,30 +1,46 @@
-# Getting Started
+# Web Application for Neflix
+This file contains guidlines for the usage of the Netflix API system build by NHL Stenden students Fjodor Smorodins, Zhi Cheng and Bill. 
+Our language for API is Java and our database is MySQL.
 
-### Reference Documentation
-For further reference, please consider the following sections:
 
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/3.4.0/maven-plugin)
-* [Create an OCI image](https://docs.spring.io/spring-boot/3.4.0/maven-plugin/build-image.html)
-* [Distributed Tracing Reference Guide](https://docs.micrometer.io/tracing/reference/index.html)
-* [Getting Started with Distributed Tracing](https://docs.spring.io/spring-boot/3.4.0/reference/actuator/tracing.html)
-* [Spring Web](https://docs.spring.io/spring-boot/3.4.0/reference/web/servlet.html)
-* [Spring Security](https://docs.spring.io/spring-boot/3.4.0/reference/web/spring-security.html)
+## MySQL
 
-### Guides
-The following guides illustrate how to use some features concretely:
+* ### Setup
 
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
-* [Securing a Web Application](https://spring.io/guides/gs/securing-web/)
-* [Spring Boot and OAuth2](https://spring.io/guides/tutorials/spring-boot-oauth2/)
-* [Authenticating a User with LDAP](https://spring.io/guides/gs/authenticating-ldap/)
+1. #### Download
+Firstly, you need to download mysql installer through https://dev.mysql.com/downloads/windows/installer/8.0.html. 
+You need to choose `.msi` file with version 8.0.41. 
 
-### Maven Parent overrides
+2. #### Installation
+Using this installer, you should install MySQL Server and MySQL Workbench both having versions 8.0.41.
 
-Due to Maven's design, elements are inherited from the parent POM to the project POM.
-While most of the inheritance is fine, it also inherits unwanted elements like `<license>` and `<developers>` from the parent.
-To prevent this, the project POM contains empty overrides for these elements.
-If you manually switch to a different parent and actually want the inheritance, you need to remove those overrides.
+3. #### User adding
+Somewhere in the process of installation or right after that you wiLl be asked to create root user AND another user aswell. 
+I highly suggest adding another user with all privileges, just in case.
 
+4. #### Connection
+
+In order to access databases you need to add connection in MySQL Workbench, by pressing "+" behind "MySQL connection" writing.
+Then there will appear another panel. 
+There you leave everything the same except changing the credentials of the user, accordingly to what user you created during user adding.
+You then press ok and try connecting.
+
+5. #### Database upload.
+
+After connecting, go to "Data Import", then select "Import from Self-Contained File". Then to "Default Target Schema" add new schema/database (I will call it `netflix`) and upload the file `netflix.sql`. 
+
+* ### Transactions
+
+In the `netflix.sql` file at the end of the file you case see the transaction.
+
+* ### User roles, restrictions
+
+In `user_restrictions.sql` file you can see...
+
+## Java Springboot App project
+a
+
+
+## Testing on Postman
+1. ### Program setup
+Download Postman app via this link: https://www.postman.com/downloads/ , then log in.
