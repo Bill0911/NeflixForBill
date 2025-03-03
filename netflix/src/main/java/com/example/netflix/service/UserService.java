@@ -195,22 +195,20 @@ public class UserService {
         userRepository.patchByAccountId(user.getAccountId(), passwordEncoder.encode(newPassword), null, null, null, null, null, null, null, null, 0, null,  null);
     }
 
+    @Transactional
     public void inviteUser(String inviterEmail, String inviteeEmail) {
         System.out.println("Inviter Email: " + inviterEmail);
         System.out.println("Invitee Email: " + inviteeEmail);
 
         User inviter = userRepository.findByEmail(inviterEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Inviter not found"));
-        System.out.println("Inviter found: " + inviter.getEmail());
-
         User invitee = userRepository.findByEmail(inviteeEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Invitee not found"));
-        System.out.println("Invitee found: " + invitee.getEmail());
 
-        if (invitationRepository.existsByInviter_AccountIdAndInvitee_AccountId(inviter.getAccountId(), invitee.getAccountId())) {
+        if (invitationRepository.existsByInviter_AccountIdAndInvitee_AccountId(
+                inviter.getAccountId(), invitee.getAccountId())) {
             throw new IllegalArgumentException("Invitation already exists");
         }
-
         if (!inviter.isActive() || !invitee.isActive()) {
             throw new IllegalArgumentException("Both users must have an active account to receive the discount");
         }
@@ -218,35 +216,22 @@ public class UserService {
         // Apply discount to both users
         inviter.setDiscount(true);
         invitee.setDiscount(true);
-        System.out.println("Inviter discount set to: " + inviter.isDiscount());
-        System.out.println("Invitee discount set to: " + invitee.isDiscount());
-
         userRepository.save(inviter);
         userRepository.save(invitee);
-        System.out.println("Inviter saved with discount: " + inviter.isDiscount());
-        System.out.println("Invitee saved with discount: " + invitee.isDiscount());
+        System.out.println("Discount applied to inviter and invitee.");
 
-        // Verify the discount was applied
-        User updatedInviter = userRepository.findByEmail(inviterEmail)
-                .orElseThrow(() -> new IllegalArgumentException("Inviter not found after save"));
-        User updatedInvitee = userRepository.findByEmail(inviteeEmail)
-                .orElseThrow(() -> new IllegalArgumentException("Invitee not found after save"));
-
-        System.out.println("Updated inviter discount: " + updatedInviter.isDiscount());
-        System.out.println("Updated invitee discount: " + updatedInvitee.isDiscount());
-
-        // Save the invitation
+        // Save the invitation record
         Invitation invitation = new Invitation();
         invitation.setInviter(inviter);
         invitation.setInvitee(invitee);
         invitationRepository.save(invitation);
-        System.out.println("Invitation saved");
+        System.out.println("Invitation saved.");
 
-        // Query the view to check if it reflects the changes
+        // (Optional logging) Verify the discount effect on subscription costs view
         List<SubscriptionOverview> subscriptionCosts = getAllSubscriptionCosts();
-        subscriptionCosts.forEach(cost -> System.out.println("Subscription cost: " + cost));
-
-        // Directly query the view to verify the data using EntityManager
+        subscriptionCosts.forEach(cost ->
+                System.out.println("Subscription cost: " + cost));
+        // Directly query the view via EntityManager for debugging
         Query query = entityManager.createNativeQuery("SELECT * FROM subscription_cost");
         List<Object[]> viewData = query.getResultList();
         for (Object[] row : viewData) {

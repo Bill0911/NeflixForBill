@@ -5,6 +5,44 @@
 DELIMITER $$
 --
 -- Procedures
+
+-- Create Invitation (add a new invitation record)
+DELIMITER $$
+CREATE PROCEDURE AddInvitation(IN p_inviterId BIGINT, IN p_inviteeId BIGINT)
+BEGIN
+    INSERT INTO invitation (inviter_id, invitee_id, created_at)
+    VALUES (p_inviterId, p_inviteeId, NOW());
+END $$
+DELIMITER ;
+
+-- Retrieve all Invitations
+DELIMITER $$
+CREATE PROCEDURE GetManyInvitations()
+BEGIN
+    SELECT * 
+    FROM invitation;
+END $$
+DELIMITER ;
+
+-- Delete an Invitation by ID
+DELIMITER $$
+CREATE PROCEDURE DeleteInvitation(IN p_invitationId BIGINT)
+BEGIN
+    DELETE FROM invitation 
+    WHERE id = p_invitationId;
+END $$
+DELIMITER ;
+
+-- Update an Invitation (e.g., change the invitee of an invitation)
+DELIMITER $$
+CREATE PROCEDURE UpdateInvitation(IN p_invitationId BIGINT, IN p_newInviteeId BIGINT)
+BEGIN
+    UPDATE invitation 
+    SET invitee_id = p_newInviteeId
+    WHERE id = p_invitationId;
+END $$
+DELIMITER ;
+
 --
 CREATE PROCEDURE `AddEpisode` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     INSERT INTO `episode` (`title`, `duration`, `series_id`)

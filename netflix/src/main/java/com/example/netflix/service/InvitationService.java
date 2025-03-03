@@ -31,5 +31,4 @@ public class InvitationService
     {
         this.invitationRepository = invitationRepository;
     }
-
 }
