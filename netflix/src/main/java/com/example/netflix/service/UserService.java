@@ -196,46 +196,13 @@ public class UserService {
     }
 
     @Transactional
-    public void inviteUser(String inviterEmail, String inviteeEmail) {
-        System.out.println("Inviter Email: " + inviterEmail);
-        System.out.println("Invitee Email: " + inviteeEmail);
-
-        User inviter = userRepository.findByEmail(inviterEmail)
-                .orElseThrow(() -> new IllegalArgumentException("Inviter not found"));
-        User invitee = userRepository.findByEmail(inviteeEmail)
-                .orElseThrow(() -> new IllegalArgumentException("Invitee not found"));
-
-        if (invitationRepository.existsByInviter_AccountIdAndInvitee_AccountId(
-                inviter.getAccountId(), invitee.getAccountId())) {
-            throw new IllegalArgumentException("Invitation already exists");
+    public void inviteUser(Integer inviterId, Integer inviteeId) {
+        if (this.getUserById(inviterId) != null && this.getUserById(inviteeId) != null) {
+            userRepository.patchByAccountId(inviterId, null, null, null, null, null, null, null, null, null, null, null, true);
+            userRepository.patchByAccountId(inviteeId, null, null, null, null, null, null, null, null, null, null, null, true);
         }
-        if (!inviter.isActive() || !invitee.isActive()) {
-            throw new IllegalArgumentException("Both users must have an active account to receive the discount");
-        }
-
-        // Apply discount to both users
-        inviter.setDiscount(true);
-        invitee.setDiscount(true);
-        userRepository.save(inviter);
-        userRepository.save(invitee);
-        System.out.println("Discount applied to inviter and invitee.");
-
-        // Save the invitation record
-        Invitation invitation = new Invitation();
-        invitation.setInviter(inviter);
-        invitation.setInvitee(invitee);
-        invitationRepository.save(invitation);
-        System.out.println("Invitation saved.");
-
-        // (Optional logging) Verify the discount effect on subscription costs view
-        List<SubscriptionOverview> subscriptionCosts = getAllSubscriptionCosts();
-        subscriptionCosts.forEach(cost ->
-                System.out.println("Subscription cost: " + cost));
-        // Directly query the view via EntityManager for debugging
-        Query query = entityManager.createNativeQuery("SELECT * FROM subscription_cost");
-        List<Object[]> viewData = query.getResultList();
-        for (Object[] row : viewData) {
-            System.out.println("View Data: " + Arrays.toString(row));
+        else {
+            throw new IllegalArgumentException("Invitee or inviter do not exists");
         }
     }
 

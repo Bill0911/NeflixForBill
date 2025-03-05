@@ -13,13 +13,11 @@ public class Invitation
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "inviter_id", nullable = false)
-    private User inviter;
+    @Column(name = "inviter_id", nullable = false)
+    private Integer inviter;
 
-    @ManyToOne
-    @JoinColumn(name = "invitee_id", nullable = false)
-    private User invitee;
+    @Column(name = "invitee_id", nullable = false)
+    private Integer invitee;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -34,22 +32,22 @@ public class Invitation
         this.id = id;
     }
 
-    public User getInviter()
+    public Integer getInviter()
     {
         return inviter;
     }
 
-    public void setInviter(User inviter)
+    public void setInviter(Integer inviter)
     {
         this.inviter = inviter;
     }
 
-    public User getInvitee()
+    public Integer getInvitee()
     {
         return invitee;
     }
 
-    public void setInvitee(User invitee)
+    public void setInvitee(Integer invitee)
     {
         this.invitee = invitee;
     }
