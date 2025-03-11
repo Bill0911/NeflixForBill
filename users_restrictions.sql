@@ -149,7 +149,7 @@ GRANT SELECT ON `netflix`.`genres_without_movie` TO api;
 GRANT SELECT ON `netflix`.`genre_total_views` TO api;
 GRANT SELECT ON `netflix`.`movies_without_genre` TO api;
 GRANT SELECT ON `netflix`.`user_genre_count` TO api;
-GRANT SELECT ON `netflix`.`user_for_junior` TO api;
+GRANT SELECT ON `netflix`.`user_for_junior` TO api  ;
 
 -- -------------------------IMPORTANT-------------------------
 

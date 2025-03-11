@@ -31,9 +31,6 @@ public class UserService {
     private final ProfileRepository profileRepository;
 
     @Autowired
-    private final InvitationRepository invitationRepository;
-
-    @Autowired
     private final PaymentRepository paymentRepository;
 
     @Autowired
@@ -45,11 +42,10 @@ public class UserService {
     @Autowired
     private final SubscriptionCostRepository subscriptionCostRepository;
 
-    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, InvitationRepository invitationRepository, PaymentRepository paymentRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, SubscriptionCostRepository subscriptionCostRepository) {
+    public UserService(UserRepository userRepository, LanguageRepository languageRepository, ProfileRepository profileRepository, PaymentRepository paymentRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, SubscriptionCostRepository subscriptionCostRepository) {
         this.userRepository = userRepository;
         this.languageRepository = languageRepository;
         this.profileRepository = profileRepository;
-        this.invitationRepository = invitationRepository;
         this.paymentRepository = paymentRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
