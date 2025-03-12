@@ -8,6 +8,7 @@ import com.example.netflix.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -22,28 +23,35 @@ public class ProfileService {
         this.movieRepository = movieRepository;
     }
 
-    public MethodResponse fitsMovieAgeRestrictions(Integer profileId, Integer movieId)
+    public boolean fitsForMovieWatching(Integer profileId, Integer movieId, Integer accountId)
     {
-        MethodResponse methodResponse = new MethodResponse();
 
         Optional<Profile> profileOptional = profileRepository.findByProfileId(profileId);
         Optional<Movie> movieOptional = movieRepository.findByMovieId(movieId);
+        Optional<User> userOptional = userRepository.findByAccountId(accountId);
 
-        if(movieOptional.isEmpty() || profileOptional.isEmpty()) {
-            methodResponse.setMessage("No such profile or movie");
-            return methodResponse;
+
+        if(movieOptional.isEmpty() || profileOptional.isEmpty() || userOptional.isEmpty() || !profileBelongsToUser(profileId, accountId)) {
+            return false;
         }
 
-        if (profileOptional.get().getAge() >= movieOptional.get().getMinimumAge())
+        if (profileOptional.get().getAge() < movieOptional.get().getMinimumAge())
         {
-            methodResponse.setMessage("You fits movie's age restrictions!");
-            methodResponse.setSuccess(true);
-            return methodResponse;
+            return false;
         }
 
-        methodResponse.setMessage("You cannot watch movie due to age restrictions");
+        return true;
+    }
 
-        return methodResponse;
+    public boolean profileBelongsToUser(Integer profileId, Integer accountId)
+    {
+        for (Profile profile : this.profileRepository.findProfilesByAccountId(accountId)) {
+            if (Objects.equals(profile.getProfileId(), profileId)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void addProfile(Profile profile) {

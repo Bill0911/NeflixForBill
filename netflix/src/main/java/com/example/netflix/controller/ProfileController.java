@@ -2,7 +2,6 @@ package com.example.netflix.controller;
 
 import com.example.netflix.dto.MethodResponse;
 import com.example.netflix.entity.Profile;
-import com.example.netflix.entity.User;
 import com.example.netflix.security.JwtUtil;
 import com.example.netflix.service.MovieViewCountService;
 import com.example.netflix.service.ProfileService;
@@ -18,15 +17,11 @@ public class ProfileController {
     private final UserService userService;
     private final ProfileService profileService;
     private final MovieViewCountService movieViewCountService;
-    private final SeriesViewCountService seriesViewCountService;
-    private final JwtUtil jwtUtil;
 
-    public ProfileController(UserService userService, ProfileService profileService, MovieViewCountService movieViewCountService, SeriesViewCountService seriesViewCountService, JwtUtil jwtUtil) {
+    public ProfileController(UserService userService, ProfileService profileService, MovieViewCountService movieViewCountService) {
         this.userService = userService;
         this.profileService = profileService;
         this.movieViewCountService = movieViewCountService;
-        this.seriesViewCountService = seriesViewCountService;
-        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping()
@@ -79,18 +74,14 @@ public class ProfileController {
         }
     }
 
-    @PostMapping("/watch-movie")
-    public ResponseEntity<String> watchMovie(@RequestParam Integer profileId, @RequestParam Integer movieId, @RequestHeader("Authorization") String token) {
-        String jwt = token.substring(7);
-        int id = jwtUtil.extractId(jwt);
-        MethodResponse fitsMovieAgeRestrictions = profileService.fitsMovieAgeRestrictions(profileId, movieId);
-
-        if (fitsMovieAgeRestrictions.isSuccess())
+    @PatchMapping("/watch-movie")
+    public ResponseEntity<String> watchMovie(@RequestParam Integer profileId, @RequestParam Integer movieId, @RequestParam Integer accountId) {
+        if (profileService.fitsForMovieWatching(profileId, movieId, accountId))
         {
-            movieViewCountService.addMovieViewCount(id, movieId);
+            movieViewCountService.addMovieViewCount(accountId, movieId);
             return ResponseEntity.ok("Movie has been watched!");
         }
 
-        return ResponseEntity.ok("Movie has not been watched" + fitsMovieAgeRestrictions.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Movie cannot be watched");
     }
 }

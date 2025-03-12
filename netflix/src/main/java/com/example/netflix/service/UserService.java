@@ -193,12 +193,20 @@ public class UserService {
 
     @Transactional
     public void inviteUser(Integer inviterId, Integer inviteeId) {
-        if (this.getUserById(inviterId) != null && this.getUserById(inviteeId) != null) {
-            userRepository.patchByAccountId(inviterId, null, null, null, null, null, null, null, null, null, null, null, true);
-            userRepository.patchByAccountId(inviteeId, null, null, null, null, null, null, null, null, null, null, null, true);
+        throwErrorIfUsersDontExists(inviterId, inviteeId);
+
+        if (this.getUserById(inviterId) == this.getUserById(inviteeId) || this.getUserById(inviterId).isDiscount() || this.getUserById(inviteeId).isDiscount()) {
+            throw new IllegalArgumentException("User cannot perform this invitation");
         }
-        else {
-            throw new IllegalArgumentException("Invitee or inviter do not exists");
+
+        userRepository.patchByAccountId(inviterId, null, null, null, null, null, null, null, null, null, null, null, true);
+        userRepository.patchByAccountId(inviteeId, null, null, null, null, null, null, null, null, null, null, null, true);
+    }
+
+    public void throwErrorIfUsersDontExists(Integer inviterId, Integer inviteeId)
+    {
+        if (this.getUserById(inviterId) == null && this.getUserById(inviteeId) == null) {
+            throw new IllegalArgumentException("Users do not exist");
         }
     }
 
