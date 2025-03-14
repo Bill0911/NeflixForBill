@@ -75,7 +75,7 @@ There is a file called `finalPollingMoment.postman_collection.json` which needs 
 
 3) ### Mock testing server
 
-In a workspace click on the 3 dots near the collection and click on "Mock collection". There you select an exsiting collection which is this one, while doing that check the "Save the mock server URL..." checkbox and create it. After that go to the mock server, click on the collection, then click to the "Runs" section and finally proceed with clicking "Run collection".
+In a workspace click on the 3 dots near the collection and click on "Mock collection". There you select an exsiting collection which is this one, while doing that check the "Save the mock server URL..." checkbox and create it. After that go to the mock server, copy url base, and put it in place of the url of every API call base how it would be for your app, in our case the base is `localhost:8081`. So every API call in the collection should start with the base and then `/api/...`
 
 ### Purpose of mock testing.
 The mock tests, in this case, are tests of API calls on the copy of the existing database which is re-created to the same state every time the tests are run. They are needed so that if some mutational APIs are called, for example, adding new user, it will not cause any errors after re-running it, even if the api code checks if this new user's email exists which would call errors in a normal testing.
