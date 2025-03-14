@@ -67,6 +67,10 @@ Open `NetflixApplication.java` (the main class with @SpringBootApplication locat
 
 ## Testing on Postman
 
+### !NOTE!
+
+Some api calls may throw errors when it's not expected in the tests. That is because API requests try to add rows to tables that already exists, add rows with duplicate unique identifiers, or maybe delete something that does not exist. It is possible to try experimenting with different values like, for example, adding `genre-for-user` entry with `userID = 13` and `genreID = 15` if those exist in their respective databases. 
+
 1) ### Program setup
 Download Postman app via this link: https://www.postman.com/downloads/ , then log in.
 
