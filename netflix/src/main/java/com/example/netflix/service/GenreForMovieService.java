@@ -1,21 +1,18 @@
 package com.example.netflix.service;
 
+import com.example.netflix.dto.GenreForMovieDTO;
 import com.example.netflix.entity.GenreForMovie;
-import com.example.netflix.entity.GenreForMovie;
-import com.example.netflix.id.GenreForMovieId;
-import com.example.netflix.repository.GenreForMovieRepository;
 import com.example.netflix.repository.GenreForMovieRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GenreForMovieService {
     private final GenreForMovieRepository genreForMovieRepository;
 
-
-    public GenreForMovieService(GenreForMovieRepository genreForMovieRepository)
-    {
+    public GenreForMovieService(GenreForMovieRepository genreForMovieRepository) {
         this.genreForMovieRepository = genreForMovieRepository;
     }
 
@@ -23,12 +20,17 @@ public class GenreForMovieService {
         genreForMovieRepository.add(id1, id2);
     }
 
-    public GenreForMovie getGenreForMovie(Integer id1, Integer id2) {
-        return genreForMovieRepository.find(id1, id2).orElse(null);
+    public GenreForMovieDTO getGenreForMovie(Integer id1, Integer id2) {
+        return genreForMovieRepository.find(id1, id2)
+                .map(this::toDTO)
+                .orElse(null);
     }
 
-    public List<GenreForMovie> getManyGenreForMovies() {
-        return genreForMovieRepository.findMany();
+    public List<GenreForMovieDTO> getManyGenreForMovies() {
+        return genreForMovieRepository.findMany()
+                .stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     public void deleteGenreForMovie(Integer id1, Integer id2) {
@@ -36,12 +38,17 @@ public class GenreForMovieService {
     }
 
     public void patchGenreForMovie(Integer id1, Integer id2, Integer newId1, Integer newId2) {
-        System.out.println("CHECKPOINT - 3");
         genreForMovieRepository.patch(id1, id2, newId1, newId2);
-        System.out.println("CHECKPOINT - 4");
     }
 
     public void updateGenreForMovie(Integer id1, Integer id2, Integer newId1, Integer newId2) {
         genreForMovieRepository.update(id1, id2, newId1, newId2);
+    }
+
+    private GenreForMovieDTO toDTO(GenreForMovie entity) {
+        GenreForMovieDTO dto = new GenreForMovieDTO();
+        dto.setGenreId(entity.getGenre());
+        dto.setMovieId(entity.getMovie());
+        return dto;
     }
 }

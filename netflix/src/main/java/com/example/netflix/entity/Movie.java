@@ -43,73 +43,59 @@ public class Movie
         this.minimumAge = minimumAge;
     }
 
-    public Integer getMovieId()
-    {
+    public Integer getMovieId() {
         return movieId;
     }
 
-    public void setMovieId(Integer movieId)
-    {
+    public void setMovieId(Integer movieId) {
         this.movieId = movieId;
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title)
-    {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public LocalTime getDuration()
-    {
+    public LocalTime getDuration() {
         return duration;
     }
 
-    public void setDuration(LocalTime duration)
-    {
+    public void setDuration(LocalTime duration) {
         this.duration = duration;
     }
 
-    public Integer getMinimumAge()
-    {
+    public Integer getMinimumAge() {
         return minimumAge;
     }
 
-    public void setMinimumAge(Integer minimumAge)
-    {
+    public void setMinimumAge(Integer minimumAge) {
         this.minimumAge = minimumAge;
     }
 
-    public Boolean isSdAvailable()
-    {
+    public Boolean getSdAvailable() {
         return sdAvailable;
     }
 
-    public void setSdAvailable(Boolean sdAvailable)
-    {
+    public void setSdAvailable(Boolean sdAvailable) {
         this.sdAvailable = sdAvailable;
     }
 
-    public Boolean isHdAvailable()
-    {
+    public Boolean getHdAvailable() {
         return hdAvailable;
     }
 
-    public void setHdAvailable(Boolean hdAvailable)
-    {
+    public void setHdAvailable(Boolean hdAvailable) {
         this.hdAvailable = hdAvailable;
     }
 
-    public Boolean isUhdAvailable()
-    {
+    public Boolean getUhdAvailable() {
         return uhdAvailable;
     }
 
-    public void setUhdAvailable(Boolean uhdAvailable)
-    {
+    public void setUhdAvailable(Boolean uhdAvailable) {
         this.uhdAvailable = uhdAvailable;
     }
 }

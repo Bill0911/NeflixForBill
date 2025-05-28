@@ -4,11 +4,12 @@ import com.example.netflix.service.SeriesService;
 import com.example.netflix.service.GenreForSeriesService;
 import com.example.netflix.service.GenreService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/genre-for-series")
+@RequestMapping(value = "/api/genre-for-series", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public class GenreForSeriesController {
     private GenreService genreService;
     private SeriesService seriesService;

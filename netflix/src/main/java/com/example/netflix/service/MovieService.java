@@ -2,52 +2,72 @@ package com.example.netflix.service;
 
 import com.example.netflix.dto.MovieDTO;
 import com.example.netflix.entity.Movie;
-import com.example.netflix.entity.Profile;
-import com.example.netflix.repository.MovieDTORepository;
 import com.example.netflix.repository.MovieRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MovieService {
 
     private final MovieRepository movieRepository;
-    private final MovieDTORepository movieDTORepository;
 
-    public MovieService(MovieRepository movieRepository, MovieDTORepository movieDTORepository) {
+    public MovieService(MovieRepository movieRepository) {
         this.movieRepository = movieRepository;
-        this.movieDTORepository = movieDTORepository;
     }
 
-    public void addMovie(Movie movie) {
-        movieRepository.addMovie(movie.getTitle(), movie.getDuration(), movie.isSdAvailable(), movie.isHdAvailable(), movie.isUhdAvailable(), movie.getMinimumAge());
+    public void addMovie(MovieDTO dto) {
+        Movie movie = toEntity(dto);
+        movieRepository.save(movie);
     }
 
-    public Movie getMovieById(Integer id) {
-        Optional<Movie> movie = movieRepository.findByMovieId(id);
-        return movie.orElse(null);
+    public Optional<MovieDTO> getMovieById(Integer id) {
+        return movieRepository.findById(id).map(this::toDTO);
     }
 
-    public List<Movie> getManyMovies() {
-        return movieRepository.findMany();
+    public List<MovieDTO> getManyMovies() {
+        return movieRepository.findAll().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     public void deleteMovieById(Integer movieId) {
-        movieRepository.deleteByMovieId(movieId);
+        movieRepository.deleteById(movieId);
     }
 
-    public void patchMovieById(Integer movieId, Movie patchData) {
-        movieRepository.patchByMovieId(movieId, patchData.getTitle(), patchData.getDuration(), patchData.isSdAvailable(), patchData.isHdAvailable(), patchData.isUhdAvailable(), patchData.getMinimumAge());
+    public void patchMovieById(Integer movieId, MovieDTO patchData) {
+        movieRepository.findById(movieId).ifPresent(movie -> {
+            if (patchData.getTitle() != null) movie.setTitle(patchData.getTitle());
+            // Add more patchable fields as needed
+            movieRepository.save(movie);
+        });
     }
 
-    public void updateMovieById(Integer movieId, Movie patchData) {
-        movieRepository.updateByMovieId(movieId, patchData.getTitle(), patchData.getDuration(), patchData.isSdAvailable(), patchData.isHdAvailable(), patchData.isUhdAvailable(), patchData.getMinimumAge());
+    public void updateMovieById(Integer movieId, MovieDTO patchData) {
+        movieRepository.findById(movieId).ifPresent(movie -> {
+            movie.setTitle(patchData.getTitle());
+            // Add more updatable fields as needed
+            movieRepository.save(movie);
+        });
     }
 
-    public List<MovieDTO> getMoviesWithoutGenre()
-    {
-        return movieDTORepository.findMoviesWithoutGenre();
+    public List<MovieDTO> getMoviesWithoutGenre() {
+        return movieRepository.findMoviesWithoutGenre().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    private MovieDTO toDTO(Movie movie) {
+        return new MovieDTO(movie.getMovieId(), movie.getTitle());
+    }
+
+    private Movie toEntity(MovieDTO dto) {
+        Movie movie = new Movie();
+        movie.setMovieId(dto.getMovieId());
+        movie.setTitle(dto.getTitle());
+        // Set more fields as needed
+        return movie;
     }
 }

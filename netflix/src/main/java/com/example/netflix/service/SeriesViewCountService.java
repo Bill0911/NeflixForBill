@@ -53,43 +53,4 @@ public class SeriesViewCountService {
     public void updateSeriesViewCount(SeriesViewCount seriesViewCount) {
         seriesViewCountRepository.update(seriesViewCount.getUser(), seriesViewCount.getSeries(), seriesViewCount.getNumber(), seriesViewCount.getLastViewed());
     }
-
-
-/*
-    public void addSeriesToViewCount(Integer accountId, Integer seriesId) {
-        Optional<User> userOpt = userRepository.findById(accountId);
-        Optional<Series> seriesOpt = seriesRepository.findById(seriesId);
-
-        if (userOpt.isPresent() && seriesOpt.isPresent()) {
-            User user = userOpt.get();
-            Series series = seriesOpt.get();
-
-            // Find the first episode of the series
-            Optional<Episode> firstEpisodeOpt = episodeRepository.findFirstBySeries_SeriesIdOrderByEpisodeIdAsc(seriesId);
-            if (firstEpisodeOpt.isPresent()) {
-                Episode firstEpisode = firstEpisodeOpt.get();
-
-                SeriesViewCount seriesViewCount = seriesViewCountRepository.findByUser_AccountIdAndSeries_SeriesIdAndEpisode_EpisodeId(accountId, seriesId, firstEpisode.getEpisodeId())
-                        .orElse(new SeriesViewCount());
-
-                seriesViewCount.setUser(user);
-                seriesViewCount.setSeries(series);
-                seriesViewCount.setEpisode(firstEpisode);
-                seriesViewCount.incrementViewCount();
-                seriesViewCountRepository.save(seriesViewCount);
-            } else {
-                System.out.println("No episodes found for seriesId: " + seriesId);
-            }
-        } else {
-            if (userOpt.isEmpty()) {
-                System.out.println("User not found with accountId: " + accountId);
-            }
-            if (seriesOpt.isEmpty()) {
-                System.out.println("Series not found with seriesId: " + seriesId);
-            }
-        }
-    }
-
- */
-
 }

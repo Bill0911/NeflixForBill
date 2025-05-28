@@ -6,11 +6,12 @@ import com.example.netflix.service.MovieService;
 import com.example.netflix.service.MovieViewCountService;
 import com.example.netflix.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/movie-view-count")
+@RequestMapping(value = "/api/movie-view-count", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public class MovieViewCountController {
 
     private final MovieViewCountService movieViewCountService;

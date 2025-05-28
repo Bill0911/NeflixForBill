@@ -57,4 +57,7 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
                         @Param("hd_available") Boolean hd_available,
                         @Param("uhd_available") Boolean uhd_available,
                         @Param("minimum_age") Integer minimum_age);
+
+    @Query(value = "SELECT * FROM movies_without_genre", nativeQuery = true)
+    List<Movie> findMoviesWithoutGenre();
 }

@@ -4,11 +4,12 @@ import com.example.netflix.service.MovieService;
 import com.example.netflix.service.MoviesProfileWatchlistService;
 import com.example.netflix.service.ProfileService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/movie-watchlist")
+@RequestMapping(value = "/api/movie-watchlist", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public class MoviesProfileWatchlistController
 {
     private ProfileService profileService;

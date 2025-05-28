@@ -6,6 +6,7 @@ import com.example.netflix.entity.Series;
 import com.example.netflix.entity.UserGenreCount;
 import com.example.netflix.security.JwtUtil;
 import com.example.netflix.service.*;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/preferences")
+@RequestMapping(value = "/api/preferences", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public class PersonalizedOfferController {
     private final PersonalizedOfferService personalizedOfferService;
     private final JwtUtil jwtUtil;

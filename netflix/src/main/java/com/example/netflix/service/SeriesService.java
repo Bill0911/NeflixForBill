@@ -1,12 +1,10 @@
 package com.example.netflix.service;
 
-import com.example.netflix.entity.Movie;
 import com.example.netflix.entity.Series;
 import com.example.netflix.repository.SeriesRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SeriesService {
@@ -17,13 +15,13 @@ public class SeriesService {
         this.seriesRepository = seriesRepository;
     }
 
-    public void addSeries(Series series) {
+    public Series addSeries(Series series) {
         seriesRepository.addSeries(series.getTitle(), series.getMinimumAge());
+        return series;  // or fetch saved entity if needed
     }
 
     public Series getSeriesById(Integer id) {
-        Optional<Series> series = seriesRepository.findBySeriesId(id);
-        return series.orElse(null);
+        return seriesRepository.findBySeriesId(id).orElse(null);
     }
 
     public List<Series> getManySeries() {
@@ -34,11 +32,13 @@ public class SeriesService {
         seriesRepository.deleteBySeriesId(id);
     }
 
-    public void patchSeriesById(Integer id, Series patchData) {
+    public Series patchSeriesById(Integer id, Series patchData) {
         seriesRepository.patchBySeriesId(id, patchData.getTitle(), patchData.getMinimumAge());
+        return patchData;  // or fetch patched entity if needed
     }
 
-    public void updateSeriesById(Integer id, Series series) {
+    public Series updateSeriesById(Integer id, Series series) {
         seriesRepository.updateBySeriesId(id, series.getTitle(), series.getMinimumAge());
+        return series;  // or fetch updated entity if needed
     }
 }

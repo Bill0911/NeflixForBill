@@ -1,21 +1,24 @@
 package com.example.netflix.controller;
 
-import com.example.netflix.entity.GenreForMovie;
+import com.example.netflix.dto.GenreForMovieDTO;
 import com.example.netflix.service.GenreForMovieService;
 import com.example.netflix.service.GenreService;
 import com.example.netflix.service.MovieService;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/genre-for-movie")
+@RequestMapping(
+        value = "/api/genre-for-movie",
+        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+)
 public class GenreForMovieController {
-    private GenreService genreService;
-    private MovieService movieService;
-    private GenreForMovieService genreForMovieService;
+    private final GenreService genreService;
+    private final MovieService movieService;
+    private final GenreForMovieService genreForMovieService;
 
     public GenreForMovieController(GenreService genreService, MovieService movieService, GenreForMovieService genreForMovieService) {
         this.genreService = genreService;
@@ -23,67 +26,53 @@ public class GenreForMovieController {
         this.genreForMovieService = genreForMovieService;
     }
 
-    @PostMapping("/{id1}/{id2}")
-    public ResponseEntity<Object> addGenreForMovie(@PathVariable Integer id1, @PathVariable Integer id2) {
-        try {
-            genreService.getGenreById(id1);
-            movieService.getMovieById(id2);
-            genreForMovieService.addGenreForMovie(id1, id2);
-            return ResponseEntity.ok("Genre - Movie relation has been created");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
-        }
+    @PostMapping("/{genreId}/{movieId}")
+    public ResponseEntity<String> addGenreForMovie(@PathVariable Integer genreId, @PathVariable Integer movieId) {
+        genreService.getGenreById(genreId).orElseThrow(() -> new RuntimeException("Genre not found"));
+        movieService.getMovieById(movieId).orElseThrow(() -> new RuntimeException("Movie not found"));
+        genreForMovieService.addGenreForMovie(genreId, movieId);
+        return ResponseEntity.ok("Genre-Movie relation has been created");
     }
 
-    @GetMapping("/{id1}/{id2}")
-    public ResponseEntity<Object> getGenreForMovie(@PathVariable Integer id1, @PathVariable Integer id2) {
-        if (genreForMovieService.getGenreForMovie(id1, id2) == null) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("No such relation found");
+    @GetMapping("/{genreId}/{movieId}")
+    public ResponseEntity<GenreForMovieDTO> getGenreForMovie(@PathVariable Integer genreId, @PathVariable Integer movieId) {
+        GenreForMovieDTO dto = genreForMovieService.getGenreForMovie(genreId, movieId);
+        if (dto == null) {
+            return ResponseEntity.notFound().build();
         }
-
-        return ResponseEntity.ok("Genre " + id1 + " - Movie " + id2 + " relation exists");
+        return ResponseEntity.ok(dto);
     }
 
-    @GetMapping()
-    public ResponseEntity<Object> getManyGenreForMovie() {
+    @GetMapping
+    public ResponseEntity<List<GenreForMovieDTO>> getManyGenreForMovie() {
         return ResponseEntity.ok(genreForMovieService.getManyGenreForMovies());
     }
 
-    @DeleteMapping("/{id1}/{id2}")
-    public ResponseEntity<Object> deleteGenreForMovie(@PathVariable Integer id1, @PathVariable Integer id2) {
-        try {
-            genreForMovieService.deleteGenreForMovie(id1, id2);
-            return ResponseEntity.ok("Genre - Movie relation has been deleted");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
-        }
+    @DeleteMapping("/{genreId}/{movieId}")
+    public ResponseEntity<String> deleteGenreForMovie(@PathVariable Integer genreId, @PathVariable Integer movieId) {
+        genreForMovieService.deleteGenreForMovie(genreId, movieId);
+        return ResponseEntity.ok("Genre-Movie relation has been deleted");
     }
 
-    @PatchMapping("/{id1}/{id2}/{newId1}/{newId2}")
-    public ResponseEntity<Object> patchGenreForMovie(@PathVariable Integer id1, @PathVariable Integer id2, @PathVariable Integer newId1, @PathVariable Integer newId2) {
-        try {
-            if (newId1 == 0) {
-                newId1 = null;
-            }
-            if (newId2 == 0) {
-                newId2 = null;
-            }
-            genreForMovieService.patchGenreForMovie(id1, id2, newId1, newId2);
-            return ResponseEntity.ok(id1 + " -> " + newId1 + " | " + id2 + " -> " + newId2);
-        } catch (Exception e) {
-            System.out.println("CHECKPOINT - error1");
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
-        }
+    @PatchMapping("/{genreId}/{movieId}/{newGenreId}/{newMovieId}")
+    public ResponseEntity<GenreForMovieDTO> patchGenreForMovie(
+            @PathVariable Integer genreId,
+            @PathVariable Integer movieId,
+            @PathVariable Integer newGenreId,
+            @PathVariable Integer newMovieId
+    ) {
+        genreForMovieService.patchGenreForMovie(genreId, movieId, newGenreId, newMovieId);
+        return ResponseEntity.ok(genreForMovieService.getGenreForMovie(newGenreId, newMovieId));
     }
 
-    @PutMapping("/{id1}/{id2}/{newId1}/{newId2}")
-    public ResponseEntity<Object> putGenreForMovie(@PathVariable Integer id1, @PathVariable Integer id2, @PathVariable Integer newId1, @PathVariable Integer newId2) {
-        try {
-            genreForMovieService.updateGenreForMovie(id1, id2, newId1, newId2);
-            return ResponseEntity.ok(id1 + " -> " + newId1 + " | " + id2 + " -> " + newId2);
-        } catch (Exception e) {
-            System.out.println("CHECKPOINT - error1");
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
-        }
+    @PutMapping("/{genreId}/{movieId}/{newGenreId}/{newMovieId}")
+    public ResponseEntity<GenreForMovieDTO> putGenreForMovie(
+            @PathVariable Integer genreId,
+            @PathVariable Integer movieId,
+            @PathVariable Integer newGenreId,
+            @PathVariable Integer newMovieId
+    ) {
+        genreForMovieService.updateGenreForMovie(genreId, movieId, newGenreId, newMovieId);
+        return ResponseEntity.ok(genreForMovieService.getGenreForMovie(newGenreId, newMovieId));
     }
 }

@@ -6,11 +6,12 @@ import com.example.netflix.service.SeriesService;
 import com.example.netflix.service.SeriesViewCountService;
 import com.example.netflix.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/series-view-count")
+@RequestMapping(value = "/api/series-view-count", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public class SeriesViewCountController {
 
     private final SeriesViewCountService seriesViewCountService;
@@ -26,15 +27,6 @@ public class SeriesViewCountController {
         this.seriesService = seriesService;
         this.userService = userService;
     }
-
-//    @PostMapping("/add-to-view-count")
-//    public ResponseEntity<String> addToViewCount(@RequestParam Integer seriesId, @RequestHeader("Authorization") String token) {
-//        String jwt = token.substring(7);
-//        int id = jwtUtil.extractId(jwt);
-//
-//        seriesViewCountService.addSeriesToViewCount(id, seriesId);
-//        return ResponseEntity.ok("Series added to view count");
-//    }
 
     @PostMapping("/{accountId}/{seriesId}")
     public ResponseEntity<String> addSeriesViewCount(@PathVariable Integer accountId,  @PathVariable Integer seriesId) {

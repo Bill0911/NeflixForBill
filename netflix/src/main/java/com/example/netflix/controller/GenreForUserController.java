@@ -6,13 +6,14 @@ import com.example.netflix.service.GenreForUserService;
 import com.example.netflix.service.GenreService;
 import com.example.netflix.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/genre-for-user")
+@RequestMapping(value = "/api/genre-for-user", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public class GenreForUserController {
     private GenreService genreService;
     private UserService userService;

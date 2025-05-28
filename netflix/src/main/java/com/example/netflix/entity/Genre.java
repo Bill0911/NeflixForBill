@@ -1,9 +1,11 @@
 package com.example.netflix.entity;
 
 import jakarta.persistence.*;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.util.Set;
 
+@XmlRootElement(name = "genre")
 @Entity
 @Table(name = "genre")
 public class Genre {
