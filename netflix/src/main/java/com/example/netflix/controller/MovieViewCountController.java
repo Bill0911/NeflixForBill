@@ -6,11 +6,12 @@ import com.example.netflix.service.MovieService;
 import com.example.netflix.service.MovieViewCountService;
 import com.example.netflix.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/movie-view-count")
+@RequestMapping(value = "/api/movie/{movieId}/user", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public class MovieViewCountController {
 
     private final MovieViewCountService movieViewCountService;
@@ -23,7 +24,7 @@ public class MovieViewCountController {
         this.userService = userService;
     }
 
-    @PostMapping("/{accountId}/{movieId}")
+    @PostMapping("/{accountId}")
     public ResponseEntity<String> addMovieViewCount(@PathVariable Integer accountId,  @PathVariable Integer movieId) {
         try {
             userService.getUserById(accountId);
@@ -35,17 +36,12 @@ public class MovieViewCountController {
         }
     }
 
-    @GetMapping("/{accountId}/{movieId}")
+    @GetMapping("/{accountId}")
     public ResponseEntity<Object> getMovieViewCount(@PathVariable Integer accountId, @PathVariable Integer movieId) {
         return ResponseEntity.ok(movieViewCountService.getMovieViewCount(accountId, movieId));
     }
 
-    @GetMapping()
-    public ResponseEntity<Object> getManyMovieViewCounts() {
-        return ResponseEntity.ok(movieViewCountService.getManyMovieViewCounts());
-    }
-
-    @DeleteMapping("/{accountId}/{movieId}")
+    @DeleteMapping("/{accountId}")
     public ResponseEntity<Object> deleteMovieViewCount(@PathVariable Integer accountId, @PathVariable Integer movieId) {
         try {
             movieViewCountService.deleteMovieViewCount(accountId, movieId);
@@ -54,29 +50,4 @@ public class MovieViewCountController {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
-
-    @PatchMapping()
-    public ResponseEntity<Object> patchMovieViewCount(@RequestBody MovieViewCount movieViewCount) {
-        try {
-            System.out.println("CHECKPOINT - 1");
-            movieViewCountService.patchMovieViewCount(movieViewCount);
-            System.out.println("CHECKPOINT - 2");
-            return ResponseEntity.ok(movieViewCount);
-        } catch (Exception e) {
-            System.out.println("CHECKPOINT - error1");
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
-        }
-    }
-
-    @PutMapping()
-    public ResponseEntity<Object> putMovieViewCount(@RequestBody MovieViewCount movieViewCount) {
-        try {
-            movieViewCountService.updateMovieViewCount(movieViewCount);
-            return ResponseEntity.ok(movieViewCount);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
-        }
-    }
-
-
 }

@@ -4,11 +4,12 @@ import com.example.netflix.service.MovieService;
 import com.example.netflix.service.MoviesProfileWatchlistService;
 import com.example.netflix.service.ProfileService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/movie-watchlist")
+@RequestMapping(value = "/api/movie/{movieId}/profile", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public class MoviesProfileWatchlistController
 {
     private ProfileService profileService;
@@ -21,72 +22,39 @@ public class MoviesProfileWatchlistController
         this.moviesProfileWatchlistService = moviesProfileWatchlistService;
     }
 
-    @PostMapping("/{id1}/{id2}")
-    public ResponseEntity<Object> addMoviesProfileWatchlist(@PathVariable Integer id1, @PathVariable Integer id2) {
+    @PostMapping("/{profileId}")
+    public ResponseEntity<Object> addMoviesProfileWatchlist(@PathVariable Integer profileId, @PathVariable Integer id2) {
         try {
-            profileService.getProfileById(id1);
+            profileService.getProfileById(profileId);
             movieService.getMovieById(id2);
             
-            boolean exists = moviesProfileWatchlistService.existsByProfileIdAndMovieId(id1, id2);
+            boolean exists = moviesProfileWatchlistService.existsByProfileIdAndMovieId(profileId, id2);
             if (exists) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: The profile-movie relation already exists");
             }
 
-            moviesProfileWatchlistService.addMoviesProfileWatchlist(id1, id2);
+            moviesProfileWatchlistService.addMoviesProfileWatchlist(profileId, id2);
             return ResponseEntity.ok("Profile - Movie relation has been created");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 
-    @GetMapping("/{id1}/{id2}")
-    public ResponseEntity<Object> getMoviesProfileWatchlist(@PathVariable Integer id1, @PathVariable Integer id2) {
-        if (moviesProfileWatchlistService.getMoviesProfileWatchlist(id1, id2) == null) {
+    @GetMapping("/{profileId}")
+    public ResponseEntity<Object> getMoviesProfileWatchlist(@PathVariable Integer profileId, @PathVariable Integer id2) {
+        if (moviesProfileWatchlistService.getMoviesProfileWatchlist(profileId, id2) == null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("No such relation found");
         }
 
-        return ResponseEntity.ok("Profile " + id1 + " - Movie " + id2 + " relation exists");
+        return ResponseEntity.ok("Profile " + profileId + " - Movie " + id2 + " relation exists");
     }
 
-    @GetMapping()
-    public ResponseEntity<Object> getManyMoviesProfileWatchlists() {
-        return ResponseEntity.ok(moviesProfileWatchlistService.getManyMoviesProfileWatchlists());
-    }
-
-    @DeleteMapping("/{id1}/{id2}")
-    public ResponseEntity<Object> deleteMoviesProfileWatchlist(@PathVariable Integer id1, @PathVariable Integer id2) {
+    @DeleteMapping("/{profileId}")
+    public ResponseEntity<Object> deleteMoviesProfileWatchlist(@PathVariable Integer profileId, @PathVariable Integer id2) {
         try {
-            moviesProfileWatchlistService.deleteMoviesProfileWatchlist(id1, id2);
+            moviesProfileWatchlistService.deleteMoviesProfileWatchlist(profileId, id2);
             return ResponseEntity.ok("Profile - Movie relation has been deleted");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
-        }
-    }
-
-    @PatchMapping("/{id1}/{id2}/{newId1}/{newId2}")
-    public ResponseEntity<Object> patchMoviesProfileWatchlist(@PathVariable Integer id1, @PathVariable Integer id2, @PathVariable Integer newId1, @PathVariable Integer newId2) {
-        try {
-            if (newId1 == 0) {
-                newId1 = null;
-            }
-            if (newId2 == 0) {
-                newId2 = null;
-            }
-            moviesProfileWatchlistService.patchMoviesProfileWatchlist(id1, id2, newId1, newId2);
-            return ResponseEntity.ok(id1 + " -> " + newId1 + " | " + id2 + " -> " + newId2);
-        } catch (Exception e) {
-            System.out.println("CHECKPOINT - error1");
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
-        }
-    }
-
-    @PutMapping("/{id1}/{id2}/{newId1}/{newId2}")
-    public ResponseEntity<Object> putMoviesProfileWatchlist(@PathVariable Integer id1, @PathVariable Integer id2, @PathVariable Integer newId1, @PathVariable Integer newId2) {
-        try {
-            moviesProfileWatchlistService.updateMoviesProfileWatchlist(id1, id2, newId1, newId2);
-            return ResponseEntity.ok(id1 + " -> " + newId1 + " | " + id2 + " -> " + newId2);
-        } catch (Exception e) {
-            System.out.println("CHECKPOINT - error1");
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
