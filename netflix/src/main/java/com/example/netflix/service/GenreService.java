@@ -3,55 +3,49 @@ package com.example.netflix.service;
 import com.example.netflix.dto.GenreDTO;
 import com.example.netflix.dto.GenreViewCount;
 import com.example.netflix.entity.Genre;
-import com.example.netflix.entity.GenreWithoutMovieEntity;
+import com.example.netflix.repository.GenreDTORepository;
 import com.example.netflix.repository.GenreRepository;
-import com.example.netflix.repository.GenreWithoutMovieRepository;
 import com.example.netflix.repository.GenreViewCountRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class GenreService {
 
     private final GenreRepository genreRepository;
-    private final GenreWithoutMovieRepository genreWithoutMovieRepository;
+    private final GenreDTORepository genreDTORepository;
+
     private final GenreViewCountRepository genreViewCountRepository;
 
-    public GenreService(
-            GenreRepository genreRepository,
-            GenreWithoutMovieRepository genreWithoutMovieRepository,
-            GenreViewCountRepository genreViewCountRepository) {
+    public GenreService(GenreRepository genreRepository, GenreDTORepository genreDTORepository, GenreViewCountRepository genreViewCountRepository) {
         this.genreRepository = genreRepository;
-        this.genreWithoutMovieRepository = genreWithoutMovieRepository;
+        this.genreDTORepository = genreDTORepository;
         this.genreViewCountRepository = genreViewCountRepository;
     }
 
-    // Return DTOs for API use
-    public List<GenreDTO> getAllGenres() {
-        return genreRepository.findMany().stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+    public List<Genre> getAllGenres() {
+        return genreRepository.findMany();
     }
 
-    public Optional<GenreDTO> getGenreById(Integer id) {
-        return genreRepository.findByGenreId(id)
-                .map(this::toDTO);
+    public Optional<Genre> getGenreById(Integer id) {
+        return genreRepository.findByGenreId(id);
     }
 
     public void addGenre(String genreName) {
+        System.out.println("Genre has not been added yet");
         genreRepository.addGenre(genreName);
+        System.out.println("Genre has been added ");
     }
 
     public void updateGenre(Integer id, String genreName) {
-        genreRepository.updateById(id, genreName);
+        genreRepository.updateById(id, genreName);;
     }
 
-    // Not really needed with only one field, but included for completeness
-    public GenreDTO patchGenre(Integer id, Genre patchData) {
-        Genre genre = genreRepository.findById(id)
+    public Genre patchGenre(Integer id, Genre patchData) {
+        return genreRepository.findById(id)
                 .map(existingGenre -> {
                     if (patchData.getGenreName() != null) {
                         existingGenre.setGenreName(patchData.getGenreName());
@@ -59,7 +53,6 @@ public class GenreService {
                     return genreRepository.save(existingGenre);
                 })
                 .orElseThrow(() -> new RuntimeException("Genre not found with ID: " + id));
-        return toDTO(genre);
     }
 
     public void deleteGenre(Integer id) {
@@ -67,18 +60,10 @@ public class GenreService {
     }
 
     public List<GenreDTO> getGenresWithoutMovie() {
-        List<GenreWithoutMovieEntity> entities = genreWithoutMovieRepository.findAll();
-        return entities.stream()
-                .map(entity -> new GenreDTO(entity.getGenreId(), entity.getGenreName()))
-                .collect(Collectors.toList());
+        return  genreDTORepository.findGenresWithoutMovie();
     }
 
     public List<GenreViewCount> getViewCounts() {
-        return genreViewCountRepository.findGenreViewCounts();
-    }
-
-    // Helper to map entity to DTO
-    private GenreDTO toDTO(Genre genre) {
-        return new GenreDTO(genre.getGenreId(), genre.getGenreName());
+        return  genreViewCountRepository.findGenreViewCounts();
     }
 }

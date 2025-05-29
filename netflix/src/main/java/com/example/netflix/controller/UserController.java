@@ -15,7 +15,6 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @RestController
-@RequestMapping( value = "/api/users", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
@@ -203,7 +202,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/invite/{inviter}/{invitee}")
+    @PostMapping("/invite")
     public ResponseEntity<String> inviteUser(@PathVariable Integer inviter, @PathVariable Integer invitee) {
         try {
             userService.inviteUser(inviter, invitee);

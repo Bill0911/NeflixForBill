@@ -1,17 +1,16 @@
 package com.example.netflix.controller;
 
-import com.example.netflix.dto.EpisodeDTO;
-import com.example.netflix.dto.EpisodeListDTO;
+import com.example.netflix.entity.Episode;
+import com.example.netflix.entity.Profile;
 import com.example.netflix.service.EpisodeService;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping(
-        value = "/api/episodes",
-        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-)
+@RequestMapping("/api/episodes")
 public class EpisodeController {
 
     private final EpisodeService episodeService;
@@ -20,38 +19,53 @@ public class EpisodeController {
         this.episodeService = episodeService;
     }
 
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> addEpisode(@RequestBody EpisodeDTO episode) {
-        episodeService.addEpisode(episode);
-        return ResponseEntity.ok("Episode has been created");
+    @PostMapping()
+    public ResponseEntity<String> addEpisode(@RequestBody Episode episode) {
+        try {
+            episodeService.addEpisode(episode);
+            return ResponseEntity.ok("Episode has been created");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EpisodeDTO> getEpisodeById(@PathVariable Integer id) {
-        EpisodeDTO episode = episodeService.getEpisodeDTOById(id);
-        return ResponseEntity.ok(episode);
+    public ResponseEntity<Episode> getEpisodeById(@PathVariable Integer id) {
+        return ResponseEntity.ok(episodeService.getEpisodeById(id));
     }
 
     @GetMapping()
-    public ResponseEntity<EpisodeListDTO> getManyEpisodes() {
-        return ResponseEntity.ok(new EpisodeListDTO(episodeService.getManyEpisodeDTOs()));
+    public ResponseEntity<Object> getManyEpisodes() {
+        return ResponseEntity.ok(episodeService.getManyEpisodes());
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteEpisodeById(@PathVariable Integer id) {
-        episodeService.deleteEpisodeById(id);
-        return ResponseEntity.ok("Episode has been deleted successfully");
+    public ResponseEntity<Object> deleteEpisodeById(@PathVariable Integer id) {
+        try {
+            episodeService.deleteEpisodeById(id);
+            return ResponseEntity.ok("Episode has been deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<String> patchEpisodeById(@PathVariable Integer id, @RequestBody EpisodeDTO episode) {
-        episodeService.patchEpisodeById(id, episode);
-        return ResponseEntity.ok("Episode title has been edited to " + episode.getTitle());
+    public ResponseEntity<String> patchEpisodeById(@PathVariable Integer id, @RequestBody Episode episode) {
+        try {
+            episodeService.patchEpisodeById(id, episode);
+            return ResponseEntity.ok("Episode title has been edited to " + episode.getTitle());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<String> putEpisodeById(@PathVariable Integer id, @RequestBody EpisodeDTO episode) {
-        episodeService.updateEpisodeById(id, episode);
-        return ResponseEntity.ok("Episode has been updated successfully");
+    public ResponseEntity<String> putEpisodeById(@PathVariable Integer id, @RequestBody Episode episode) {
+        try {
+            episodeService.updateEpisodeById(id, episode);
+            return ResponseEntity.ok("Episode has been deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 }

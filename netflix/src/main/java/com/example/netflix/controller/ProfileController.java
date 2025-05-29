@@ -1,63 +1,87 @@
 package com.example.netflix.controller;
 
+import com.example.netflix.dto.MethodResponse;
 import com.example.netflix.entity.Profile;
+import com.example.netflix.security.JwtUtil;
+import com.example.netflix.service.MovieViewCountService;
 import com.example.netflix.service.ProfileService;
+import com.example.netflix.service.SeriesViewCountService;
+import com.example.netflix.service.UserService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping(
-        value = "/api/profiles",
-        consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-        produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-)
+@RequestMapping("/api/profiles")
 public class ProfileController {
-
+    private final UserService userService;
     private final ProfileService profileService;
+    private final MovieViewCountService movieViewCountService;
 
-    public ProfileController(ProfileService profileService) {
+    public ProfileController(UserService userService, ProfileService profileService, MovieViewCountService movieViewCountService) {
+        this.userService = userService;
         this.profileService = profileService;
+        this.movieViewCountService = movieViewCountService;
     }
 
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<String> addProfile(@RequestBody Profile profile) {
-        profileService.addProfile(profile);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Profile created successfully");
+        try {
+            profileService.addProfile(profile);
+            return ResponseEntity.ok("Profile has been created");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Profile> getProfileById(@PathVariable Integer id) {
-        Profile profile = profileService.getProfileById(id);
-        if (profile == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(profile);
+        return ResponseEntity.ok(profileService.getProfileById(id));
     }
 
-    @GetMapping
-    public ResponseEntity<List<Profile>> getManyProfiles() {
+    @GetMapping()
+    public ResponseEntity<Object> getManyProfiles() {
         return ResponseEntity.ok(profileService.getManyProfiles());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProfileById(@PathVariable Integer id) {
-        profileService.deleteProfileById(id);
-        return ResponseEntity.ok("Profile deleted successfully");
+    @DeleteMapping("{id}")
+    public ResponseEntity<Object> deleteProfileById(@PathVariable Integer id) {
+        try {
+            profileService.deleteProfileById(id);
+            return ResponseEntity.ok("Profile has been deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("{id}")
     public ResponseEntity<String> patchProfileById(@PathVariable Integer id, @RequestBody Profile profile) {
-        profileService.patchProfileById(id, profile);
-        return ResponseEntity.ok("Profile patched successfully");
+        try {
+            profileService.patchProfileById(id, profile);
+            return ResponseEntity.ok("Profile has been patched successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<String> putProfileById(@PathVariable Integer id, @RequestBody Profile profile) {
-        profileService.updateProfileById(id, profile);
-        return ResponseEntity.ok("Profile updated successfully");
+        try {
+            profileService.updateProfileById(id, profile);
+            return ResponseEntity.ok("Profile has been deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PatchMapping("/watch-movie")
+    public ResponseEntity<String> watchMovie(@RequestParam Integer profileId, @RequestParam Integer movieId, @RequestParam Integer accountId) {
+        if (profileService.fitsForMovieWatching(profileId, movieId, accountId))
+        {
+            movieViewCountService.addMovieViewCount(accountId, movieId);
+            return ResponseEntity.ok("Movie has been watched!");
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Movie cannot be watched");
     }
 }

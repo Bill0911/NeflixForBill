@@ -2,14 +2,14 @@ package com.example.netflix.controller;
 
 import com.example.netflix.entity.Series;
 import com.example.netflix.service.SeriesService;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/series", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+@RequestMapping("/api/series")
 public class SeriesController {
 
     private final SeriesService seriesService;
@@ -25,50 +25,42 @@ public class SeriesController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Series> getSeriesById(@PathVariable Integer id) {
-        Series series = seriesService.getSeriesById(id);
-        if (series == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(series);
+        return ResponseEntity.ok(seriesService.getSeriesById(id));
     }
 
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> addSeries(@RequestBody Series series) {
+    @PostMapping
+    public ResponseEntity<Object> addSeries(@RequestBody Series series) {
         try {
             seriesService.addSeries(series);
             return ResponseEntity.ok("Series has been created");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 
-    @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<Series> updateSeries(@PathVariable Integer id, @RequestBody Series series) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateSeries(@PathVariable Integer id, @RequestBody Series series) {
         try {
-            Series updatedSeries = seriesService.updateSeriesById(id, series);
-            return ResponseEntity.ok(updatedSeries);
+            seriesService.updateSeriesById(id, series);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok("tried");
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteSeries(@PathVariable Integer id) {
-        try {
-            seriesService.deleteSeriesById(id);
-            return ResponseEntity.ok("Series deleted successfully.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body("Series not found.");
-        }
+        seriesService.deleteSeriesById(id);
+        return ResponseEntity.ok("Series deleted successfully.");
     }
 
-    @PatchMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<Series> patchSeries(@PathVariable Integer id, @RequestBody Series series) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> patchSeries(@PathVariable Integer id, @RequestBody Series series) {
         try {
-            Series patchedSeries = seriesService.patchSeriesById(id, series);
-            return ResponseEntity.ok(patchedSeries);
+            seriesService.patchSeriesById(id, series);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok("Tried");
     }
 }

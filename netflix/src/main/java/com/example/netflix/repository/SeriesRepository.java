@@ -15,15 +15,14 @@ import java.util.Optional;
 
 @Repository
 public interface SeriesRepository extends JpaRepository<Series, Integer> {
-
     @Modifying
     @Transactional
     @Query(value = "CALL AddSeries(:title, :minimum_age)", nativeQuery = true)
     void addSeries(@Param("title") String title,
-                   @Param("minimum_age") Integer minimum_age);
+                  @Param("minimum_age") Integer minimum_age);
 
     @Query(value = "CALL GetSeriesById(:seriesId)", nativeQuery = true)
-    Optional<Series> findBySeriesId(@Param("seriesId") Integer seriesId);
+    Optional<Series> findBySeriesId(@Param("seriesId") Integer movieId);
 
     @Query(value = "CALL GetManySeries()", nativeQuery = true)
     List<Series> findMany();
@@ -31,19 +30,18 @@ public interface SeriesRepository extends JpaRepository<Series, Integer> {
     @Modifying
     @Transactional
     @Query(value = "CALL DeleteSeries(:seriesId)", nativeQuery = true)
-    void deleteBySeriesId(@Param("seriesId") Integer seriesId);
+    void deleteBySeriesId(@Param("seriesId") Integer movieId);
 
     @Modifying
     @Transactional
     @Query(value = "CALL PatchSeries(:seriesId, :title, :minimum_age)", nativeQuery = true)
-    void patchBySeriesId(@Param("seriesId") Integer seriesId,
-                         @Param("title") String title,
-                         @Param("minimum_age") Integer minimum_age);
-
+    void patchBySeriesId(@Param("seriesId") Integer movieId,
+                        @Param("title") String title,
+                        @Param("minimum_age") Integer minimum_age);
     @Modifying
     @Transactional
     @Query(value = "CALL UpdateSeries(:seriesId, :title, :minimum_age)", nativeQuery = true)
-    void updateBySeriesId(@Param("seriesId") Integer seriesId,
-                          @Param("title") String title,
-                          @Param("minimum_age") Integer minimum_age);
+    void updateBySeriesId(@Param("seriesId") Integer movieId,
+                         @Param("title") String title,
+                         @Param("minimum_age") Integer minimum_age);
 }

@@ -1,30 +1,32 @@
 package com.example.netflix.dto;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Subselect;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.io.Serializable;
 
-@XmlRootElement(name = "movie")
-public class MovieDTO implements Serializable {
+@Entity
+@Immutable
+@Table(name = "movies_without_genre")
+@Subselect("SELECT * FROM movies_without_genre")
+public class MovieDTO implements Serializable
+{
 
-    private Integer movieId;
+    @Id
+    private Long movieId;
+
     private String title;
 
-    public MovieDTO() {}
-
-    public MovieDTO(Integer movieId, String title)
+    public MovieDTO(String title)
     {
-        this.movieId = movieId;
         this.title = title;
     }
 
-    public Integer getMovieId()
-    {
-        return movieId;
-    }
+    public MovieDTO() {
 
-    public void setMovieId(Integer movieId)
-    {
-        this.movieId = movieId;
     }
 
     public String getTitle()
@@ -35,5 +37,13 @@ public class MovieDTO implements Serializable {
     public void setTitle(String title)
     {
         this.title = title;
+    }
+
+    public void setMovieId(Long movieId) {
+        this.movieId = movieId;
+    }
+
+    public Long getMovieId() {
+        return movieId;
     }
 }

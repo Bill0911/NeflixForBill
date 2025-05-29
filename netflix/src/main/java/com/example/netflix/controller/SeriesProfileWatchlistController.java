@@ -4,12 +4,11 @@ import com.example.netflix.service.SeriesService;
 import com.example.netflix.service.SeriesProfileWatchlistService;
 import com.example.netflix.service.ProfileService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api/series/{series}/profile", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+@RequestMapping("/api/series-watchlist")
 public class SeriesProfileWatchlistController {
     private ProfileService profileService;
     private SeriesService seriesService;
@@ -21,33 +20,66 @@ public class SeriesProfileWatchlistController {
         this.seriesProfileWatchlistService = seriesProfileWatchlistService;
     }
 
-    @PostMapping("/{profileId}")
-    public ResponseEntity<Object> addSeriesProfileWatchlist(@PathVariable Integer profileId, @PathVariable Integer seriesId) {
+    @PostMapping("/{id1}/{id2}")
+    public ResponseEntity<Object> addSeriesProfileWatchlist(@PathVariable Integer id1, @PathVariable Integer id2) {
         try {
-            profileService.getProfileById(profileId);
-            seriesService.getSeriesById(seriesId);
-            seriesProfileWatchlistService.addSeriesProfileWatchlist(profileId, seriesId);
+            profileService.getProfileById(id1);
+            seriesService.getSeriesById(id2);
+            seriesProfileWatchlistService.addSeriesProfileWatchlist(id1, id2);
             return ResponseEntity.ok("Profile - series relation has been created");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 
-    @GetMapping("/{profileId}")
-    public ResponseEntity<Object> getSeriesProfileWatchlist(@PathVariable Integer profileId, @PathVariable Integer seriesId) {
-        if (seriesProfileWatchlistService.getSeriesProfileWatchlist(profileId, seriesId) == null) {
+    @GetMapping("/{id1}/{id2}")
+    public ResponseEntity<Object> getSeriesProfileWatchlist(@PathVariable Integer id1, @PathVariable Integer id2) {
+        if (seriesProfileWatchlistService.getSeriesProfileWatchlist(id1, id2) == null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("No such relation found");
         }
 
-        return ResponseEntity.ok("Profile " + profileId + " - Series " + seriesId + " relation exists");
+        return ResponseEntity.ok("Profile " + id1 + " - Series " + id2 + " relation exists");
     }
 
-    @DeleteMapping("/{profileId}")
-    public ResponseEntity<Object> deleteSeriesProfileWatchlist(@PathVariable Integer profileId, @PathVariable Integer seriesId) {
+    @GetMapping()
+    public ResponseEntity<Object> getManySeriesProfileWatchlists() {
+        return ResponseEntity.ok(seriesProfileWatchlistService.getManySeriesProfileWatchlists());
+    }
+
+    @DeleteMapping("/{id1}/{id2}")
+    public ResponseEntity<Object> deleteSeriesProfileWatchlist(@PathVariable Integer id1, @PathVariable Integer id2) {
         try {
-            seriesProfileWatchlistService.deleteSeriesProfileWatchlist(profileId, seriesId);
+            seriesProfileWatchlistService.deleteSeriesProfileWatchlist(id1, id2);
             return ResponseEntity.ok("Profile - Series relation has been deleted");
         } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id1}/{id2}/{newId1}/{newId2}")
+    public ResponseEntity<Object> patchSeriesProfileWatchlist(@PathVariable Integer id1, @PathVariable Integer id2, @PathVariable Integer newId1, @PathVariable Integer newId2) {
+        try {
+            if (newId1 == 0) {
+                newId1 = null;
+            }
+            if (newId2 == 0) {
+                newId2 = null;
+            }
+            seriesProfileWatchlistService.patchSeriesProfileWatchlist(id1, id2, newId1, newId2);
+            return ResponseEntity.ok(id1 + " -> " + newId1 + " | " + id2 + " -> " + newId2);
+        } catch (Exception e) {
+            System.out.println("CHECKPOINT - error1");
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id1}/{id2}/{newId1}/{newId2}")
+    public ResponseEntity<Object> putSeriesProfileWatchlist(@PathVariable Integer id1, @PathVariable Integer id2, @PathVariable Integer newId1, @PathVariable Integer newId2) {
+        try {
+            seriesProfileWatchlistService.updateSeriesProfileWatchlist(id1, id2, newId1, newId2);
+            return ResponseEntity.ok(id1 + " -> " + newId1 + " | " + id2 + " -> " + newId2);
+        } catch (Exception e) {
+            System.out.println("CHECKPOINT - error1");
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }

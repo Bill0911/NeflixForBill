@@ -15,20 +15,20 @@ public class Episode {
     @Column(nullable = false)
     private String title;
 
-    @Column(name = "duration")
+    @Column(name = "duration", columnDefinition = "TIME DEFAULT '00:00:00'")
     private LocalTime duration;
 
-    @Column(name = "series_id", insertable = false, updatable = false)
+
+    @JoinColumn(name = "series_id", insertable = false, updatable = false)
     private Integer series;
 
     public Episode() {
         this.duration = LocalTime.of(0, 0, 0);
     }
 
-    public Episode(String title, LocalTime duration, Integer series) {
+    public Episode(String title, LocalTime duration) {
         this.title = title;
         this.duration = duration != null ? duration : LocalTime.of(0, 0, 0);
-        this.series = series;
     }
 
     public Integer getEpisodeId() {

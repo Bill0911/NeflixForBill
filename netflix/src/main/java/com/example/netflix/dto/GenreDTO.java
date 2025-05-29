@@ -1,30 +1,49 @@
 package com.example.netflix.dto;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Subselect;
 
-@XmlRootElement(name = "genre")
-public class GenreDTO {
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.io.Serializable;
 
-    private Integer genreId;
+@Entity
+@Immutable
+@Table(name = "genres_without_movie")
+@Subselect("SELECT * FROM genres_without_movie")
+public class GenreDTO implements Serializable
+{
+
+    @Id
+    private Long genreId;
+
     private String genreName;
 
-    public GenreDTO() {}
-
-    public GenreDTO(Integer genreId, String genreName) {
-        this.genreId = genreId;
+    public GenreDTO(String genreName)
+    {
         this.genreName = genreName;
     }
 
-    public Integer getGenreId() {
-        return genreId;
+    public GenreDTO() {
+
     }
-    public void setGenreId(Integer genreId) {
-        this.genreId = genreId;
-    }
-    public String getGenreName() {
+
+    public String getGenreName()
+    {
         return genreName;
     }
-    public void setGenreName(String genreName) {
+
+    public void setGenreName(String genreName)
+    {
         this.genreName = genreName;
+    }
+
+    public void setGenreId(Long genreId) {
+        this.genreId = genreId;
+    }
+
+    public Long getGenreId() {
+        return genreId;
     }
 }
