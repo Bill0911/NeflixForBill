@@ -3,9 +3,11 @@ package com.example.netflix.controller;
 import com.example.netflix.dto.GenreDTO;
 import com.example.netflix.dto.GenreListDTO;
 import com.example.netflix.service.GenreService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping(
@@ -57,11 +59,19 @@ public class GenreController {
     }
 
     @GetMapping("/without-movie")
-    public ResponseEntity<GenreListDTO> getGenresWithoutMovie() {
-        return ResponseEntity.ok(new GenreListDTO(genreService.getGenresWithoutMovie()));
+    public ResponseEntity<GenreListDTO> getGenresWithoutMovie(@RequestParam(name = "hasMovies", required = false) Boolean hasMovies) {
+        if (!hasMovies) {
+            return ResponseEntity.ok(new GenreListDTO(genreService.getGenresWithoutMovie()));
+        }
+        else {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_IMPLEMENTED,
+                    "Filtering genres with movies is not implemented"
+            );
+        }
     }
 
-    @GetMapping("/view-counts")
+    @GetMapping("/statistics/views")
     public ResponseEntity<Object> getGenresViewCounts() {
         return ResponseEntity.ok(genreService.getViewCounts());
     }

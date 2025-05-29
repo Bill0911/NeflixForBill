@@ -54,25 +54,4 @@ public class GenreForMovieController {
         return ResponseEntity.ok("Genre-Movie relation has been deleted");
     }
 
-    @PatchMapping("/{genreId}/{movieId}/{newGenreId}/{newMovieId}")
-    public ResponseEntity<GenreForMovieDTO> patchGenreForMovie(
-            @PathVariable Integer genreId,
-            @PathVariable Integer movieId,
-            @PathVariable Integer newGenreId,
-            @PathVariable Integer newMovieId
-    ) {
-        genreForMovieService.patchGenreForMovie(genreId, movieId, newGenreId, newMovieId);
-        return ResponseEntity.ok(genreForMovieService.getGenreForMovie(newGenreId, newMovieId));
-    }
-
-    @PutMapping("/{genreId}/{movieId}/{newGenreId}/{newMovieId}")
-    public ResponseEntity<GenreForMovieDTO> putGenreForMovie(
-            @PathVariable Integer genreId,
-            @PathVariable Integer movieId,
-            @PathVariable Integer newGenreId,
-            @PathVariable Integer newMovieId
-    ) {
-        genreForMovieService.updateGenreForMovie(genreId, movieId, newGenreId, newMovieId);
-        return ResponseEntity.ok(genreForMovieService.getGenreForMovie(newGenreId, newMovieId));
-    }
 }

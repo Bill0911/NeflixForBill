@@ -55,29 +55,4 @@ public class MovieViewCountController {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
-
-    @PatchMapping()
-    public ResponseEntity<Object> patchMovieViewCount(@RequestBody MovieViewCount movieViewCount) {
-        try {
-            System.out.println("CHECKPOINT - 1");
-            movieViewCountService.patchMovieViewCount(movieViewCount);
-            System.out.println("CHECKPOINT - 2");
-            return ResponseEntity.ok(movieViewCount);
-        } catch (Exception e) {
-            System.out.println("CHECKPOINT - error1");
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
-        }
-    }
-
-    @PutMapping()
-    public ResponseEntity<Object> putMovieViewCount(@RequestBody MovieViewCount movieViewCount) {
-        try {
-            movieViewCountService.updateMovieViewCount(movieViewCount);
-            return ResponseEntity.ok(movieViewCount);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
-        }
-    }
-
-
 }

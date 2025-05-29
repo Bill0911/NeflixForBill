@@ -59,27 +59,4 @@ public class SeriesViewCountController {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
-
-    @PatchMapping()
-    public ResponseEntity<Object> patchSeriesViewCount(@RequestBody SeriesViewCount seriesViewCount) {
-        try {
-            System.out.println("CHECKPOINT - 1");
-            seriesViewCountService.patchSeriesViewCount(seriesViewCount);
-            System.out.println("CHECKPOINT - 2");
-            return ResponseEntity.ok(seriesViewCount);
-        } catch (Exception e) {
-            System.out.println("CHECKPOINT - error1");
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
-        }
-    }
-
-    @PutMapping()
-    public ResponseEntity<Object> putSeriesViewCount(@RequestBody SeriesViewCount seriesViewCount) {
-        try {
-            seriesViewCountService.updateSeriesViewCount(seriesViewCount);
-            return ResponseEntity.ok(seriesViewCount);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
-        }
-    }
 }
