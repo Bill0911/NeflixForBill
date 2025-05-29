@@ -11,24 +11,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api/series-view-count", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+@RequestMapping(value = "/api/series/{seriesId}/user", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public class SeriesViewCountController {
 
     private final SeriesViewCountService seriesViewCountService;
-    private final JwtUtil jwtUtil;
 
     private final SeriesService seriesService;
 
     private final UserService userService;
 
-    public SeriesViewCountController(SeriesViewCountService seriesViewCountService, JwtUtil jwtUtil, SeriesService seriesService, UserService userService) {
+    public SeriesViewCountController(SeriesViewCountService seriesViewCountService, SeriesService seriesService, UserService userService) {
         this.seriesViewCountService = seriesViewCountService;
-        this.jwtUtil = jwtUtil;
         this.seriesService = seriesService;
         this.userService = userService;
     }
 
-    @PostMapping("/{accountId}/{seriesId}")
+    @PostMapping("/{accountId}")
     public ResponseEntity<String> addSeriesViewCount(@PathVariable Integer accountId,  @PathVariable Integer seriesId) {
         try {
             userService.getUserById(accountId);
@@ -40,17 +38,12 @@ public class SeriesViewCountController {
         }
     }
 
-    @GetMapping("/{accountId}/{seriesId}")
+    @GetMapping("/{accountId}")
     public ResponseEntity<Object> getSeriesViewCount(@PathVariable Integer accountId, @PathVariable Integer seriesId) {
         return ResponseEntity.ok(seriesViewCountService.getSeriesViewCount(accountId, seriesId));
     }
 
-    @GetMapping("/many")
-    public ResponseEntity<Object> getManySeriesViewCounts() {
-        return ResponseEntity.ok(seriesViewCountService.getManySeriesViewCounts());
-    }
-
-    @DeleteMapping("/{accountId}/{seriesId}")
+    @DeleteMapping("/{accountId}")
     public ResponseEntity<Object> deleteSeriesViewCount(@PathVariable Integer accountId, @PathVariable Integer seriesId) {
         try {
             seriesViewCountService.deleteSeriesViewCount(accountId, seriesId);

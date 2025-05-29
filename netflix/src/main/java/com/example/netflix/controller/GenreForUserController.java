@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/genre-for-user", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+@RequestMapping(value = "/api/user/{accountId}/genre", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public class GenreForUserController {
     private GenreService genreService;
     private UserService userService;
@@ -25,36 +25,31 @@ public class GenreForUserController {
         this.genreForUserService = genreForUserService;
     }
 
-    @PostMapping("/{id1}/{id2}")
-    public ResponseEntity<Object> addGenreForUser(@PathVariable Integer id1, @PathVariable Integer id2) {
+    @PostMapping("/{genreId}")
+    public ResponseEntity<Object> addGenreForUser(@PathVariable Integer genreId, @PathVariable Integer accountId) {
         try {
-            genreService.getGenreById(id1);
-            userService.getUserById(id2);
-            genreForUserService.addGenreForUser(id1, id2);
+            genreService.getGenreById(genreId);
+            userService.getUserById(accountId);
+            genreForUserService.addGenreForUser(genreId, accountId);
             return ResponseEntity.ok("Genre - User relation has been created");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 
-    @GetMapping("/{id1}/{id2}")
-    public ResponseEntity<Object> getGenreForUser(@PathVariable Integer id1, @PathVariable Integer id2) {
-        if (genreForUserService.getGenreForUser(id1, id2) == null) {
+    @GetMapping("/{genreId}")
+    public ResponseEntity<Object> getGenreForUser(@PathVariable Integer genreId, @PathVariable Integer accountId) {
+        if (genreForUserService.getGenreForUser(genreId, accountId) == null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("No such relation found");
         }
 
-        return ResponseEntity.ok("Genre " + id1 + " - User " + id2 + " relation exists");
+        return ResponseEntity.ok("Genre " + genreId + " - User " + accountId + " relation exists");
     }
 
-    @GetMapping()
-    public ResponseEntity<Object> getManyGenreForUser() {
-        return ResponseEntity.ok(genreForUserService.getManyGenreForUsers());
-    }
-
-    @DeleteMapping("/{id1}/{id2}")
-    public ResponseEntity<Object> deleteGenreForUser(@PathVariable Integer id1, @PathVariable Integer id2) {
+    @DeleteMapping("/{genreId}")
+    public ResponseEntity<Object> deleteGenreForUser(@PathVariable Integer genreId, @PathVariable Integer accountId) {
         try {
-            genreForUserService.deleteGenreForUser(id1, id2);
+            genreForUserService.deleteGenreForUser(genreId, accountId);
             return ResponseEntity.ok("Genre - User relation has been deleted");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());

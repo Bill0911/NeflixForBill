@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api/movie-view-count", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+@RequestMapping(value = "/api/movie/{movieId}/user", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public class MovieViewCountController {
 
     private final MovieViewCountService movieViewCountService;
@@ -24,7 +24,7 @@ public class MovieViewCountController {
         this.userService = userService;
     }
 
-    @PostMapping("/{accountId}/{movieId}")
+    @PostMapping("/{accountId}")
     public ResponseEntity<String> addMovieViewCount(@PathVariable Integer accountId,  @PathVariable Integer movieId) {
         try {
             userService.getUserById(accountId);
@@ -36,17 +36,12 @@ public class MovieViewCountController {
         }
     }
 
-    @GetMapping("/{accountId}/{movieId}")
+    @GetMapping("/{accountId}")
     public ResponseEntity<Object> getMovieViewCount(@PathVariable Integer accountId, @PathVariable Integer movieId) {
         return ResponseEntity.ok(movieViewCountService.getMovieViewCount(accountId, movieId));
     }
 
-    @GetMapping()
-    public ResponseEntity<Object> getManyMovieViewCounts() {
-        return ResponseEntity.ok(movieViewCountService.getManyMovieViewCounts());
-    }
-
-    @DeleteMapping("/{accountId}/{movieId}")
+    @DeleteMapping("/{accountId}")
     public ResponseEntity<Object> deleteMovieViewCount(@PathVariable Integer accountId, @PathVariable Integer movieId) {
         try {
             movieViewCountService.deleteMovieViewCount(accountId, movieId);

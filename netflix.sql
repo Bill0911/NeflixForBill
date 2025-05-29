@@ -670,35 +670,6 @@ CREATE PROCEDURE `PatchEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255
 END $$
 DELIMITER ;
 
-DELIMITER $$
-CREATE PROCEDURE `PatchGenreForMovie` (IN `p_old_genre_id` INT, IN `p_old_movie_id` INT, IN `p_new_genre_id` INT, IN `p_new_movie_id` INT)   BEGIN
-    UPDATE genreformovie
-    SET
-        genre_id = IFNULL(p_new_genre_id, genre_id),
-        movie_id = IFNULL(p_new_movie_id, movie_id)
-    WHERE genre_id = p_old_genre_id AND movie_id = p_old_movie_id;
-END $$
-DELIMITER ;
-
-DELIMITER $$
-CREATE PROCEDURE `PatchGenreForSeries` (IN `p_old_genre_id` INT, IN `p_old_series_id` INT, IN `p_new_genre_id` INT, IN `p_new_series_id` INT)   BEGIN
-    UPDATE genreforseries
-    SET
-        genre_id = IFNULL(p_new_genre_id, genre_id),
-        series_id = IFNULL(p_new_series_id, series_id)
-    WHERE genre_id = p_old_genre_id AND series_id = p_old_series_id;
-END $$
-DELIMITER ;
-
-DELIMITER $$
-CREATE PROCEDURE `PatchGenreForUser` (IN `p_old_user_id` INT, IN `p_old_genre_id` INT, IN `p_new_user_id` INT, IN `p_new_genre_id` INT)   BEGIN
-
-    UPDATE GenreForUser
-    SET
-        genre_id = IFNULL(p_new_genre_id, genre_id),  
-        user_id = IFNULL(p_new_user_id, user_id)     
-    WHERE user_id = p_old_user_id AND genre_id = p_old_genre_id;
-END $$
 DELIMITER ;
 
 DELIMITER $$
@@ -712,26 +683,6 @@ CREATE PROCEDURE `PatchMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255
         `uhd_available` = COALESCE(p_uhd_available, `uhd_available`),
         `minimum_age` = COALESCE(p_minimum_age, `minimum_age`)
     WHERE `movie_id` = p_movie_id;
-END $$
-DELIMITER ;
-
-DELIMITER $$
-CREATE PROCEDURE `PatchMoviesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_movie_id` INT, IN `p_new_profile_id` INT, IN `p_new_movie_id` INT)   BEGIN
-    UPDATE moviesprofilewatchlist
-    SET
-        profile_id = IFNULL(p_new_profile_id, profile_id),
-        movie_id = IFNULL(p_new_movie_id, movie_id)
-    WHERE profile_id = p_old_profile_id AND movie_id = p_old_movie_id;
-END $$
-DELIMITER ;
-
-DELIMITER $$
-CREATE PROCEDURE `PatchMovieViewCount` (IN `p_account_id` BIGINT(20), IN `p_movie_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
-    UPDATE movieviewcount
-    SET
-        number = IFNULL(p_new_number, number),
-        last_viewed = IFNULL(p_new_last_viewed, last_viewed)
-    WHERE account_id = p_account_id AND movie_id = p_movie_id;
 END $$
 DELIMITER ;
 
@@ -754,26 +705,6 @@ CREATE PROCEDURE `PatchSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(2
         `title` = COALESCE(p_title, `title`),
         `minimum_age` = COALESCE(p_minimum_age, `minimum_age`)
     WHERE `series_id` = p_series_id;
-END $$
-DELIMITER ;
-
-DELIMITER $$
-CREATE PROCEDURE `PatchSeriesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_series_id` INT, IN `p_new_profile_id` INT, IN `p_new_series_id` INT)   BEGIN
-    UPDATE seriesprofilewatchlist
-    SET
-        profile_id = IFNULL(p_new_profile_id, profile_id),
-        series_id = IFNULL(p_new_series_id, series_id)
-    WHERE profile_id = p_old_profile_id AND series_id = p_old_series_id;
-END $$
-DELIMITER ;
-
-DELIMITER $$
-CREATE PROCEDURE `PatchSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_series_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
-    UPDATE seriesviewcount
-    SET
-        number = IFNULL(p_new_number, number),
-        last_viewed = IFNULL(p_new_last_viewed, last_viewed)
-    WHERE account_id = p_account_id AND series_id = p_series_id;
 END $$
 DELIMITER ;
 
@@ -837,37 +768,6 @@ END $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `UpdateGenreForMovie` (IN `p_old_genre_id` INT, IN `p_old_movie_id` INT, IN `p_new_genre_id` INT, IN `p_new_movie_id` INT)   BEGIN
-    UPDATE genreformovie
-    SET
-        genre_id = p_new_genre_id,
-        movie_id = p_new_movie_id
-    WHERE genre_id = p_old_genre_id AND movie_id = p_old_movie_id;
-END $$
-DELIMITER ;
-
-DELIMITER $$
-CREATE PROCEDURE `UpdateGenreForSeries` (IN `p_old_genre_id` INT, IN `p_old_series_id` INT, IN `p_new_genre_id` INT, IN `p_new_series_id` INT)   BEGIN
-    UPDATE genreforseries
-    SET
-        genre_id = p_new_genre_id,
-        series_id = p_new_series_id
-    WHERE genre_id = p_old_genre_id AND series_id = p_old_series_id;
-END $$
-DELIMITER ;
-
-DELIMITER $$
-CREATE PROCEDURE `UpdateGenreForUser` (IN `p_old_user_id` INT, IN `p_old_genre_id` INT, IN `p_new_user_id` INT, IN `p_new_genre_id` INT)   BEGIN
-
-    UPDATE GenreForUser
-    SET
-        genre_id = p_new_genre_id,  
-        user_id = p_new_user_id     
-    WHERE user_id = p_old_user_id AND genre_id = p_old_genre_id;
-END $$
-DELIMITER ;
-
-DELIMITER $$
 CREATE PROCEDURE `UpdateLanguage` (IN `p_language_id` INT(11), IN `p_name` VARCHAR(255))   BEGIN
     UPDATE `language`
     SET `name` = p_name
@@ -890,26 +790,6 @@ END $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE `UpdateMovieProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_movie_id` INT, IN `p_new_profile_id` INT, IN `p_new_movie_id` INT)   BEGIN
-    UPDATE movieprofilewatchlist
-    SET
-        profile_id = p_new_profile_id,
-        movie_id = p_new_movie_id
-    WHERE profile_id = p_old_profile_id AND movie_id = p_old_movie_id;
-END $$
-DELIMITER ;
-
-DELIMITER $$
-CREATE PROCEDURE `UpdateMovieViewCount` (IN `p_account_id` BIGINT(20), IN `p_movie_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
-    UPDATE movieviewcount
-    SET
-        number = p_new_number,
-        last_viewed = p_new_last_viewed
-    WHERE account_id = p_account_id AND movie_id = p_movie_id;
-END $$
-DELIMITER ;
-
-DELIMITER $$
 CREATE PROCEDURE `UpdateProfile` (IN `p_profile_id` INT(11), IN `p_accountId` INT(11), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
     UPDATE `profile`
     SET 
@@ -928,26 +808,6 @@ CREATE PROCEDURE `UpdateSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(
         `title` = p_title,
         `minimum_age` = p_minimum_age
     WHERE `series_id` = p_series_id;
-END $$
-DELIMITER ;
-
-DELIMITER $$
-CREATE PROCEDURE `UpdateSeriesProfileWatchlist` (IN `p_old_profile_id` INT, IN `p_old_series_id` INT, IN `p_new_profile_id` INT, IN `p_new_series_id` INT)   BEGIN
-    UPDATE seriesprofilewatchlist
-    SET
-        profile_id = p_new_profile_id,
-        series_id = p_new_series_id
-    WHERE profile_id = p_old_profile_id AND series_id = p_old_series_id;
-END $$
-DELIMITER ;
-
-DELIMITER $$
-CREATE PROCEDURE `UpdateSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_series_id` INT, IN `p_new_number` INT, IN `p_new_last_viewed` DATETIME)   BEGIN
-    UPDATE seriesviewcount
-    SET
-        number = p_new_number,
-        last_viewed = p_new_last_viewed
-    WHERE account_id = p_account_id AND series_id = p_series_id;
 END $$
 DELIMITER ;
 

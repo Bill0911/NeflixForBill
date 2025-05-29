@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(
-        value = "/api/genre-for-movie",
+        value = "/api/movies/{movieId}/genres",
         produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
 )
 public class GenreForMovieController {
@@ -26,7 +26,7 @@ public class GenreForMovieController {
         this.genreForMovieService = genreForMovieService;
     }
 
-    @PostMapping("/{genreId}/{movieId}")
+    @PostMapping("/{genreId}")
     public ResponseEntity<String> addGenreForMovie(@PathVariable Integer genreId, @PathVariable Integer movieId) {
         genreService.getGenreById(genreId).orElseThrow(() -> new RuntimeException("Genre not found"));
         movieService.getMovieById(movieId).orElseThrow(() -> new RuntimeException("Movie not found"));
@@ -34,7 +34,7 @@ public class GenreForMovieController {
         return ResponseEntity.ok("Genre-Movie relation has been created");
     }
 
-    @GetMapping("/{genreId}/{movieId}")
+    @GetMapping("/{genreId}")
     public ResponseEntity<GenreForMovieDTO> getGenreForMovie(@PathVariable Integer genreId, @PathVariable Integer movieId) {
         GenreForMovieDTO dto = genreForMovieService.getGenreForMovie(genreId, movieId);
         if (dto == null) {
@@ -43,12 +43,7 @@ public class GenreForMovieController {
         return ResponseEntity.ok(dto);
     }
 
-    @GetMapping
-    public ResponseEntity<List<GenreForMovieDTO>> getManyGenreForMovie() {
-        return ResponseEntity.ok(genreForMovieService.getManyGenreForMovies());
-    }
-
-    @DeleteMapping("/{genreId}/{movieId}")
+    @DeleteMapping("/{genreId}")
     public ResponseEntity<String> deleteGenreForMovie(@PathVariable Integer genreId, @PathVariable Integer movieId) {
         genreForMovieService.deleteGenreForMovie(genreId, movieId);
         return ResponseEntity.ok("Genre-Movie relation has been deleted");
