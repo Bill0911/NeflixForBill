@@ -32,20 +32,4 @@ public interface SeriesViewCountRepository extends JpaRepository<SeriesViewCount
     @Transactional
     @Query(value = "CALL DeleteSeriesViewCount(:accountId, :seriesId)", nativeQuery = true)
     void delete(@Param("accountId") Integer accountId, @Param("seriesId") Integer seriesId);
-
-    @Modifying
-    @Transactional
-    @Query(value = "CALL PatchSeriesViewCount(:accountId, :seriesId, :number, :lastViewed)", nativeQuery = true)
-    void patch(@Param("accountId") Integer accountId,
-               @Param("seriesId") Integer seriesId,
-               @Param("number") Integer number,
-               @Param("lastViewed") LocalDateTime lastViewed);
-
-    @Modifying
-    @Transactional
-    @Query(value = "CALL UpdateSeriesViewCount(:accountId, :seriesId, :number, :lastViewed)", nativeQuery = true)
-    void update(@Param("accountId") Integer accountId,
-                @Param("seriesId") Integer seriesId,
-                @Param("number") Integer number,
-                @Param("lastViewed") LocalDateTime lastViewed);
 }

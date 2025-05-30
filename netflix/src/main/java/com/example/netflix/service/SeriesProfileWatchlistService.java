@@ -32,14 +32,4 @@ public class SeriesProfileWatchlistService {
     public void deleteSeriesProfileWatchlist(Integer id1, Integer id2) {
         seriesProfileWatchlistRepository.delete(id1, id2);
     }
-
-    public void patchSeriesProfileWatchlist(Integer id1, Integer id2, Integer newId1, Integer newId2) {
-        System.out.println("CHECKPOINT - 3");
-        seriesProfileWatchlistRepository.patch(id1, id2, newId1, newId2);
-        System.out.println("CHECKPOINT - 4");
-    }
-
-    public void updateSeriesProfileWatchlist(Integer id1, Integer id2, Integer newId1, Integer newId2) {
-        seriesProfileWatchlistRepository.update(id1, id2, newId1, newId2);
-    }
 }

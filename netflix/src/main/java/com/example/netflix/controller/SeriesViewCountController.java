@@ -34,7 +34,7 @@ public class SeriesViewCountController {
             userService.getUserById(accountId);
             seriesService.getSeriesById(seriesId);
             seriesViewCountService.addSeriesViewCount(accountId, seriesId);
-            return ResponseEntity.ok("Series - User relation has been created");
+            return ResponseEntity.status(HttpStatus.CREATED).body("Series - User relation has been created");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }

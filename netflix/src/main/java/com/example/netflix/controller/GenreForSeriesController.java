@@ -27,16 +27,16 @@ public class GenreForSeriesController {
             genreService.getGenreById(genreId);
             seriesService.getSeriesById(seriesId);
             genreForSeriesService.addGenreForSeries(genreId, seriesId);
-            return ResponseEntity.ok("Genre - series relation has been created");
+            return ResponseEntity.status(HttpStatus.CREATED).body("Genre - series relation has been created");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
         }
     }
 
     @GetMapping("/{genreId}")
     public ResponseEntity<Object> getGenreForSeries(@PathVariable Integer genreId, @PathVariable Integer seriesId) {
         if (genreForSeriesService.getGenreForSeries(genreId, seriesId) == null) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("No such relation found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No such relation found");
         }
 
         return ResponseEntity.ok("Genre " + genreId + " - Series " + seriesId + " relation exists");
@@ -48,7 +48,7 @@ public class GenreForSeriesController {
             genreForSeriesService.deleteGenreForSeries(genreId, seriesId);
             return ResponseEntity.ok("Genre - Series relation has been deleted");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
         }
     }
 }

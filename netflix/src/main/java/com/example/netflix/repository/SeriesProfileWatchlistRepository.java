@@ -29,15 +29,4 @@ public interface SeriesProfileWatchlistRepository extends JpaRepository<SeriesPr
     @Query(value = "CALL DeleteSeriesProfileWatchlist(:id1, :id2)", nativeQuery = true)
     void delete(@Param("id1") Integer id1, @Param("id2") Integer id2);
 
-    @Modifying
-    @Transactional
-    @Query(value = "CALL PatchSeriesProfileWatchlist(:id1, :id2,  :newId1, :newId2)", nativeQuery = true)
-    void patch(@Param("id1") Integer id1, @Param("id2") Integer id2,
-               @Param("newId1") Integer newId1, @Param("newId2") Integer newId2);
-
-    @Modifying
-    @Transactional
-    @Query(value = "CALL UpdateSeriesProfileWatchlist(:id1, :id2, :newId1, :newId2)", nativeQuery = true)
-    void update(@Param("id1") Integer id1, @Param("id2") Integer id2,
-                @Param("newId1") Integer newId1, @Param("newId2") Integer newId2);
 }

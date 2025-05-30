@@ -33,16 +33,16 @@ public class GenreForMovieController {
             genreService.getGenreById(genreId);
             movieService.getMovieById(movieId);
             genreForMovieService.addGenreForMovie(genreId, movieId);
-            return ResponseEntity.ok("Genre - Movie relation has been created");
+            return ResponseEntity.status(HttpStatus.CREATED).body("Genre - Movie relation has been created");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
         }
     }
 
     @GetMapping("/{genreId}")
     public ResponseEntity<Object> getGenreForMovie(@PathVariable Integer genreId, @PathVariable Integer movieId) {
         if (genreForMovieService.getGenreForMovie(genreId, movieId) == null) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("No such relation found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No such relation found");
         }
 
         return ResponseEntity.ok("Genre " + genreId + " - Movie " + movieId + " relation exists");
@@ -54,7 +54,7 @@ public class GenreForMovieController {
             genreForMovieService.deleteGenreForMovie(genreId, movieId);
             return ResponseEntity.ok("Genre - Movie relation has been deleted");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
         }
     }
 }

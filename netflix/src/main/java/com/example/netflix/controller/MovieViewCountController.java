@@ -30,7 +30,7 @@ public class MovieViewCountController {
             userService.getUserById(accountId);
             movieService.getMovieById(movieId);
             movieViewCountService.addMovieViewCount(accountId, movieId);
-            return ResponseEntity.ok("Movie - User relation has been created");
+            return ResponseEntity.status(HttpStatus.CREATED).body("Movie - User relation has been created");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }

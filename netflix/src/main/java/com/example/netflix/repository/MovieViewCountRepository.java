@@ -30,19 +30,4 @@ public interface MovieViewCountRepository extends JpaRepository<MovieViewCount, 
     @Query(value = "CALL DeleteMovieViewCount(:accountId, :movieId)", nativeQuery = true)
     void delete(@Param("accountId") Integer accountId, @Param("movieId") Integer movieId);
 
-    @Modifying
-    @Transactional
-    @Query(value = "CALL PatchMovieViewCount(:accountId, :movieId, :number, :lastViewed)", nativeQuery = true)
-    void patch(@Param("accountId") Integer accountId,
-               @Param("movieId") Integer movieId,
-               @Param("number") Integer number,
-               @Param("lastViewed") LocalDateTime lastViewed);
-
-    @Modifying
-    @Transactional
-    @Query(value = "CALL UpdateMovieViewCount(:accountId, :movieId, :number, :lastViewed)", nativeQuery = true)
-    void update(@Param("accountId") Integer accountId,
-                @Param("movieId") Integer movieId,
-                @Param("number") Integer number,
-                @Param("lastViewed") LocalDateTime lastViewed);
 }

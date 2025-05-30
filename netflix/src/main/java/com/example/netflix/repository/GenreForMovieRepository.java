@@ -28,16 +28,4 @@ public interface GenreForMovieRepository extends JpaRepository<GenreForMovie, Ge
     @Transactional
     @Query(value = "CALL DeleteGenreForMovie(:id1, :id2)", nativeQuery = true)
     void delete(@Param("id1") Integer id1, @Param("id2") Integer id2);
-
-    @Modifying
-    @Transactional
-    @Query(value = "CALL PatchGenreForMovie(:id1, :id2,  :newId1, :newId2)", nativeQuery = true)
-    void patch(@Param("id1") Integer id1, @Param("id2") Integer id2,
-               @Param("newId1") Integer newId1, @Param("newId2") Integer newId2);
-
-    @Modifying
-    @Transactional
-    @Query(value = "CALL UpdateGenreForMovie(:id1, :id2, :newId1, :newId2)", nativeQuery = true)
-    void update(@Param("id1") Integer id1, @Param("id2") Integer id2,
-                @Param("newId1") Integer newId1, @Param("newId2") Integer newId2);
 }

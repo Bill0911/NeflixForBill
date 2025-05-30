@@ -27,7 +27,7 @@ public class SeriesProfileWatchlistController {
             profileService.getProfileById(profileId);
             seriesService.getSeriesById(id2);
             seriesProfileWatchlistService.addSeriesProfileWatchlist(profileId, id2);
-            return ResponseEntity.ok("Profile - series relation has been created");
+            return ResponseEntity.status(HttpStatus.CREATED).body("Profile - series relation has been created");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }

@@ -35,13 +35,4 @@ public class GenreForMovieService {
         genreForMovieRepository.delete(id1, id2);
     }
 
-    public void patchGenreForMovie(Integer id1, Integer id2, Integer newId1, Integer newId2) {
-        System.out.println("CHECKPOINT - 3");
-        genreForMovieRepository.patch(id1, id2, newId1, newId2);
-        System.out.println("CHECKPOINT - 4");
-    }
-
-    public void updateGenreForMovie(Integer id1, Integer id2, Integer newId1, Integer newId2) {
-        genreForMovieRepository.update(id1, id2, newId1, newId2);
-    }
 }

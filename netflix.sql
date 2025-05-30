@@ -45,6 +45,11 @@ DELIMITER $$
 CREATE PROCEDURE `AddEpisode` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_series_id` INT)   BEGIN
     INSERT INTO `episode` (`title`, `duration`, `series_id`)
     VALUES (p_title, p_duration, p_series_id);
+
+        IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Adding failed. Possibly duplicate relation.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -52,6 +57,11 @@ DELIMITER $$
 CREATE PROCEDURE `AddGenre` (IN `p_name` VARCHAR(255))   BEGIN
     INSERT INTO `genre` (`genre_name`)
     VALUES (p_name);
+
+        IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Adding failed. Possibly duplicate relation.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -59,6 +69,10 @@ DELIMITER $$
 CREATE PROCEDURE `AddGenreForMovie` (IN `p_genreId` INT, IN `p_movieId` INT)   BEGIN
 	INSERT INTO `genreformovie` (`genre_id`, `movie_id`)
     VALUES (p_genreId, p_movieId);
+
+        IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Adding failed. Possibly duplicate relation.';
 END $$
 DELIMITER ;
 
@@ -66,6 +80,10 @@ DELIMITER $$
 CREATE PROCEDURE `AddGenreForSeries` (IN `p_genreId` INT, IN `p_seriesId` INT)   BEGIN
 	INSERT INTO `genreforseries` (`genre_id`, `series_id`)
     VALUES (p_genreId, p_seriesId);
+
+        IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Adding failed. Possibly duplicate relation.';
 END $$
 DELIMITER ;
 
@@ -73,6 +91,10 @@ DELIMITER $$
 CREATE PROCEDURE `AddGenreForUser` (IN `p_genreId` INT, IN `p_accountId` INT)   BEGIN
 	INSERT INTO `genreforuser` (`genre_id`, `account_id`)
     VALUES (p_genreId, p_accountId);
+
+        IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Adding failed. Possibly duplicate relation.';
 END $$
 DELIMITER ;
 
@@ -80,6 +102,10 @@ DELIMITER $$
 CREATE PROCEDURE `AddLanguage` (IN `p_name` VARCHAR(255))   BEGIN
     INSERT INTO `language` (`name`)
     VALUES (p_name);
+
+        IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Adding failed. Possibly duplicate relation.';
 END $$
 DELIMITER ;
 
@@ -87,6 +113,10 @@ DELIMITER $$
 CREATE PROCEDURE `AddMovie` (IN `p_title` VARCHAR(255), IN `p_duration` TIME, IN `p_sd_available` BIT(1), IN `p_hd_available` BIT(1), IN `p_uhd_available` BIT(1), IN `p_minimum_age` INT(3))   BEGIN
     INSERT INTO `movie` (`title`, `duration`, `sd_available`, `hd_available`, `uhd_available` , `minimum_age`)
     VALUES (p_title, p_duration, p_sd_available, p_hd_available, p_uhd_available, p_minimum_age);
+
+        IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Adding failed. Possibly duplicate relation.';
 END $$
 DELIMITER ;
 
@@ -94,6 +124,10 @@ DELIMITER $$
 CREATE PROCEDURE `AddMoviesProfileWatchlist` (IN `p_profileId` INT, IN `p_movieId` INT)   BEGIN
 	INSERT INTO `moviesprofilewatchlist` (`profile_id`, `movie_id`)
     VALUES (p_profileId, p_movieId);
+
+        IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Adding failed. Possibly duplicate relation.';
 END $$
 DELIMITER ;
 
@@ -122,6 +156,10 @@ CREATE PROCEDURE `AddMovieViewCount` (IN `p_accountId` INT, IN `p_movieId` INT) 
         WHERE account_id = p_accountId
     )
     AND movie_id = p_movieId;
+
+        IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Adding failed. Possibly duplicate relation.';
 END $$
 DELIMITER ;
 
@@ -129,6 +167,10 @@ DELIMITER $$
 CREATE PROCEDURE `AddProfile` (IN `p_account_id` BIGINT(20), IN `p_profile_image` VARCHAR(255), IN `p_age` INT(3), IN `p_name` VARCHAR(255))   BEGIN
     INSERT INTO `profile` (`account_id`, `profile_image`, `age`, `name`)
     VALUES (p_account_id, p_profile_image, p_age, p_name);
+
+        IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Adding failed. Possibly duplicate relation.';
 END $$
 DELIMITER ;
 
@@ -136,6 +178,10 @@ DELIMITER $$
 CREATE PROCEDURE `AddSeries` (IN `p_title` VARCHAR(255), IN `p_minimum_age` INT(11))   BEGIN
     INSERT INTO `series` (`title`, `minimum_age`)
     VALUES (p_title, p_minimum_age);
+
+        IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Adding failed. Possibly duplicate relation.';
 END $$
 DELIMITER ;
 
@@ -143,6 +189,10 @@ DELIMITER $$
 CREATE PROCEDURE `AddSeriesProfileWatchlist` (IN `p_profileId` INT, IN `p_seriesId` INT)   BEGIN
 	INSERT INTO `seriesprofilewatchlist` (`profile_id`, `series_id`)
     VALUES (p_profileId, p_seriesId);
+
+        IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Adding failed. Possibly duplicate relation.';
 END $$
 DELIMITER ;
 
@@ -172,6 +222,10 @@ CREATE PROCEDURE a new entry with initial count = 1
         WHERE account_id = p_accountId
     )
     AND series_id = p_seriesId;
+
+        IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Adding failed. Possibly duplicate relation.';
 END $$
 DELIMITER ;
 
@@ -179,12 +233,22 @@ DELIMITER $$
 CREATE PROCEDURE `AddUser` (IN `p_email` VARCHAR(255), IN `p_password` VARCHAR(255), IN `p_payment_method` VARCHAR(255), IN `p_language_id` INT(11), IN `p_subscription` ENUM('SD','HD','UHD'))   BEGIN
     INSERT INTO `user` (`email`, `password`, `payment_method`, `language_id`, `subscription`)
     VALUES (p_email, p_password, p_payment_method, p_language_id, p_subscription);
+
+        IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Adding failed. Possibly duplicate relation.';
 END $$
 DELIMITER ;
 
 DELIMITER $$
 CREATE PROCEDURE `DeleteEpisode` (IN `p_episode_id` INT)   BEGIN
     DELETE FROM `episode` WHERE `episode_id` = p_episode_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45002'
+        SET MESSAGE_TEXT = 'Deletion failed. Item does not exist.';
+    END IF;
+
 END $$
 DELIMITER ;
 
@@ -192,6 +256,11 @@ DELIMITER $$
 CREATE PROCEDURE `DeleteGenre` (IN `p_genre_id` INT)   BEGIN
     DELETE FROM `genre`
     WHERE `genre_id` = p_genre_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45002'
+        SET MESSAGE_TEXT = 'Deletion failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -201,8 +270,8 @@ CREATE PROCEDURE `DeleteGenreForMovie` (IN `p_genre_id` INT, IN `p_movie_id` INT
     WHERE movie_id = p_movie_id AND genre_id = p_genre_id;
 
     IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'No rows could have been deleted.';
+        SIGNAL SQLSTATE '45002'
+        SET MESSAGE_TEXT = 'Deletion failed. Item does not exist.';
     END IF;
 END $$
 DELIMITER ;
@@ -213,8 +282,8 @@ CREATE PROCEDURE `DeleteGenreForSeries` (IN `p_genre_id` INT, IN `p_series_id` I
     WHERE series_id = p_series_id AND genre_id = p_genre_id;
 
     IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'No rows could have been deleted.';
+        SIGNAL SQLSTATE '45002'
+        SET MESSAGE_TEXT = 'Deletion failed. Item does not exist.';
     END IF;
 END $$
 DELIMITER ;
@@ -225,8 +294,8 @@ CREATE PROCEDURE `DeleteGenreForUser` (IN `p_genre_id` INT, IN `p_account_id` BI
     WHERE account_id = p_account_id AND genre_id = p_genre_id;
 
     IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'No rows could have been deleted.';
+        SIGNAL SQLSTATE '45002'
+        SET MESSAGE_TEXT = 'Deletion failed. Item does not exist.';
     END IF;
 END $$
 DELIMITER ;
@@ -234,6 +303,11 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE `DeleteLanguage` (IN `p_language_id` INT)   BEGIN
     DELETE FROM `language` WHERE `language_id` = p_language_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45002'
+        SET MESSAGE_TEXT = 'Deletion failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -241,6 +315,11 @@ DELIMITER $$
 CREATE PROCEDURE `DeleteMovie` (IN `p_movie_id` INT(11))   BEGIN
     DELETE FROM `movie`
     WHERE `movie_id` = p_movie_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45002'
+        SET MESSAGE_TEXT = 'Deletion failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -250,8 +329,8 @@ CREATE PROCEDURE `DeleteMoviesProfileWatchlist` (IN `p_profile_id` INT, IN `p_mo
     WHERE profile_id = p_profile_id AND movie_id = p_movie_id;
 
     IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'No rows could have been deleted.';
+        SIGNAL SQLSTATE '45002'
+        SET MESSAGE_TEXT = 'Deletion failed. Item does not exist.';
     END IF;
 END $$
 DELIMITER ;
@@ -262,8 +341,8 @@ CREATE PROCEDURE `DeleteMovieViewCount` (IN `p_account_id` BIGINT(20), IN `p_mov
     WHERE account_id = p_account_id AND movie_id = p_movie_id;
 
     IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'No rows could have been deleted.';
+        SIGNAL SQLSTATE '45002'
+        SET MESSAGE_TEXT = 'Deletion failed. Item does not exist.';
     END IF;
 END $$
 DELIMITER ;
@@ -271,12 +350,22 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE `DeleteProfile` (IN `p_profile_id` INT)   BEGIN
     DELETE FROM `profile` WHERE `profile_id` = p_profile_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45002'
+        SET MESSAGE_TEXT = 'Deletion failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
 DELIMITER $$
 CREATE PROCEDURE `DeleteSeries` (IN `p_series_id` INT)   BEGIN
     DELETE FROM `series` WHERE `series_id` = p_series_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45002'
+        SET MESSAGE_TEXT = 'Deletion failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -286,8 +375,8 @@ CREATE PROCEDURE `DeleteSeriesProfileWatchlist` (IN `p_profile_id` INT, IN `p_se
     WHERE profile_id = p_profile_id AND series_id = p_series_id;
 
     IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'No rows could have been deleted.';
+        SIGNAL SQLSTATE '45002'
+        SET MESSAGE_TEXT = 'Deletion failed. Item does not exist.';
     END IF;
 END $$
 DELIMITER ;
@@ -298,8 +387,8 @@ CREATE PROCEDURE `DeleteSeriesViewCount` (IN `p_account_id` BIGINT(20), IN `p_se
     WHERE account_id = p_account_id AND series_id = p_series_id;
 
     IF ROW_COUNT() = 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'No rows could have been deleted.';
+        SIGNAL SQLSTATE '45002'
+        SET MESSAGE_TEXT = 'Deletion failed. Item does not exist.';
     END IF;
 END $$
 DELIMITER ;
@@ -307,6 +396,11 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE `DeleteUser` (IN `p_account_id` BIGINT(20))   BEGIN
     DELETE FROM `user` WHERE `account_id` = p_account_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45002'
+        SET MESSAGE_TEXT = 'Deletion failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -667,6 +761,11 @@ CREATE PROCEDURE `PatchEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(255
         `duration` = COALESCE(p_duration, `duration`),
         `series_id` = COALESCE(p_series_id, `series_id`)
     WHERE `episode_id` = p_episode_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45003'
+        SET MESSAGE_TEXT = 'Patch or update failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -683,6 +782,11 @@ CREATE PROCEDURE `PatchMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(255
         `uhd_available` = COALESCE(p_uhd_available, `uhd_available`),
         `minimum_age` = COALESCE(p_minimum_age, `minimum_age`)
     WHERE `movie_id` = p_movie_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45003'
+        SET MESSAGE_TEXT = 'Patch or update failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -695,6 +799,11 @@ CREATE PROCEDURE `PatchProfile` (IN `p_profile_id` INT(11), IN `p_account_id` BI
         `age` = COALESCE(p_age, `age`),
         `name` = COALESCE(p_name, `name`)
     WHERE `profile_id` = p_profile_id;
+    
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45003'
+        SET MESSAGE_TEXT = 'Patch or update failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -705,6 +814,11 @@ CREATE PROCEDURE `PatchSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(2
         `title` = COALESCE(p_title, `title`),
         `minimum_age` = COALESCE(p_minimum_age, `minimum_age`)
     WHERE `series_id` = p_series_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45003'
+        SET MESSAGE_TEXT = 'Patch or update failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -725,6 +839,11 @@ CREATE PROCEDURE `PatchUser` (IN `p_account_id` BIGINT(20), IN `p_password` VARC
         `lock_time` = COALESCE(p_lock_time, `lock_time`), 
         `discount` = COALESCE(p_discount, `discount`)
     WHERE `account_id` = p_account_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45003'
+        SET MESSAGE_TEXT = 'Patch or update failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -756,6 +875,11 @@ CREATE PROCEDURE `UpdateEpisode` (IN `p_episode_id` INT, IN `p_title` VARCHAR(25
         `duration` = IFNULL(p_duration, '00:00:00'),
         `series_id` = p_series_id
     WHERE `episode_id` = p_episode_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45003'
+        SET MESSAGE_TEXT = 'Patch or update failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -764,6 +888,11 @@ CREATE PROCEDURE `UpdateGenre` (IN `p_genre_id` INT, IN `p_genre_name` VARCHAR(2
     UPDATE `genre`
     SET `genre_name` = p_genre_name
     WHERE `genre_id` = p_genre_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45003'
+        SET MESSAGE_TEXT = 'Patch or update failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -772,6 +901,11 @@ CREATE PROCEDURE `UpdateLanguage` (IN `p_language_id` INT(11), IN `p_name` VARCH
     UPDATE `language`
     SET `name` = p_name
     WHERE `language_id` = p_language_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45003'
+        SET MESSAGE_TEXT = 'Patch or update failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -786,6 +920,11 @@ CREATE PROCEDURE `UpdateMovie` (IN `p_movie_id` INT(11), IN `p_title` VARCHAR(25
         `uhd_available` = p_uhd_available,
         `minimum_age` = p_minimum_age
     WHERE `movie_id` = p_movie_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45003'
+        SET MESSAGE_TEXT = 'Patch or update failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -798,6 +937,11 @@ CREATE PROCEDURE `UpdateProfile` (IN `p_profile_id` INT(11), IN `p_accountId` IN
         `age` = p_age, 
         `name` = p_name 
     WHERE `profile_id` = p_profile_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45003'
+        SET MESSAGE_TEXT = 'Patch or update failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -808,6 +952,11 @@ CREATE PROCEDURE `UpdateSeries` (IN `p_series_id` INT(11), IN `p_title` VARCHAR(
         `title` = p_title,
         `minimum_age` = p_minimum_age
     WHERE `series_id` = p_series_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45003'
+        SET MESSAGE_TEXT = 'Patch or update failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -828,6 +977,11 @@ CREATE PROCEDURE `UpdateUser` (IN `p_account_id` BIGINT(20), IN `p_password` VAR
         `lock_time` = p_lock_time, 
         `discount` = p_discount
     WHERE `account_id` = p_account_id;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45003'
+        SET MESSAGE_TEXT = 'Patch or update failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 

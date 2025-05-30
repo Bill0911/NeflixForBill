@@ -3,33 +3,32 @@ package com.example.netflix.controller;
 import com.example.netflix.entity.Payment;
 import com.example.netflix.entity.SubscriptionType;
 import com.example.netflix.service.PaymentService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/payments")
 public class PaymentController {
-    private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
 
     @Autowired
     private PaymentService paymentService;
 
     @PostMapping
-    public Payment processPayment(@RequestParam Integer userId, @RequestParam SubscriptionType subscriptionType, @RequestParam boolean discountApplied)
-    {
-        logger.info("Processing payment for userId: {}, subscriptionType: {}, discountApplied: {}", userId, subscriptionType, discountApplied);
-        try
-        {
+    public ResponseEntity<Object> processPayment(
+            @RequestParam Integer userId,
+            @RequestParam SubscriptionType subscriptionType,
+            @RequestParam boolean discountApplied) {
+
+        try {
             Payment payment = paymentService.processPayment(userId, subscriptionType, discountApplied);
-            logger.info("Payment processed successfully for userId: {}", userId);
-            return payment;
-        }
-        catch (Exception e)
-        {
-            logger.error("Error processing payment for userId: {}", userId, e);
-            throw e;
+            return ResponseEntity.status(HttpStatus.CREATED).body(payment);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input: " + e.getMessage());
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
     }
 }

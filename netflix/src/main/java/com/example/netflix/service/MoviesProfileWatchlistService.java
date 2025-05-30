@@ -37,13 +37,4 @@ public class MoviesProfileWatchlistService {
         return moviesProfileWatchlistRepository.existsByProfileIdAndMovieId(profileId, movieId);
     }
 
-    public void patchMoviesProfileWatchlist(Integer id1, Integer id2, Integer newId1, Integer newId2) {
-        System.out.println("CHECKPOINT - 3");
-        moviesProfileWatchlistRepository.patch(id1, id2, newId1, newId2);
-        System.out.println("CHECKPOINT - 4");
-    }
-
-    public void updateMoviesProfileWatchlist(Integer id1, Integer id2, Integer newId1, Integer newId2) {
-        moviesProfileWatchlistRepository.update(id1, id2, newId1, newId2);
-    }
 }

@@ -35,13 +35,4 @@ public class GenreForUserService {
         genreForUserRepository.delete(id1, id2);
     }
 
-    public void patchGenreForUser(Integer id1, Integer id2, Integer newId1, Integer newId2) {
-        System.out.println("CHECKPOINT - 3");
-        genreForUserRepository.patch(id1, id2, newId1, newId2);
-        System.out.println("CHECKPOINT - 4");
-    }
-
-    public void updateGenreForUser(Integer id1, Integer id2, Integer newId1, Integer newId2) {
-        genreForUserRepository.update(id1, id2, newId1, newId2);
-    }
 }

@@ -34,7 +34,7 @@ public class MoviesProfileWatchlistController
             }
 
             moviesProfileWatchlistService.addMoviesProfileWatchlist(profileId, id2);
-            return ResponseEntity.ok("Profile - Movie relation has been created");
+            return ResponseEntity.status(HttpStatus.CREATED).body("Profile - Movie relation has been created");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }

@@ -16,10 +16,6 @@ public class LanguageService {
         this.languageRepository = languageRepository;
     }
 
-//    public List<Language> getAllLanguages() {
-//        return languageRepository.findAll();
-//    }
-
     public List<Language> getManyLanguages() {
         return languageRepository.findMany();
     }
