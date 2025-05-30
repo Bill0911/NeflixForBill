@@ -74,7 +74,7 @@ public class ProfileController {
         }
     }
 
-    @PatchMapping("/watch-movie")
+    @PatchMapping("/movie-watching")
     public ResponseEntity<String> watchMovie(@RequestParam Integer profileId, @RequestParam Integer movieId, @RequestParam Integer accountId) {
         if (profileService.fitsForMovieWatching(profileId, movieId, accountId))
         {
@@ -82,6 +82,6 @@ public class ProfileController {
             return ResponseEntity.ok("Movie has been watched!");
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Movie cannot be watched");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Movie cannot be watched");
     }
 }

@@ -71,12 +71,17 @@ public class GenreController {
         }
     }
 
-    @GetMapping("without-movie")
-    public ResponseEntity<Object> getGenresWithoutMovie() {
-        return ResponseEntity.ok(genreService.getGenresWithoutMovie());
+    @GetMapping("/filtering")
+    public ResponseEntity<Object> getGenresWithoutMovie(@RequestParam boolean hasMovie) {
+        if (!hasMovie) {
+            return ResponseEntity.ok(genreService.getGenresWithoutMovie());
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("return for 'hasMovie=true' not implemented");
+        }
     }
 
-    @GetMapping("view-counts")
+    @GetMapping("/statistics/views")
     public ResponseEntity<Object> getGenresViewCounts() {
         return ResponseEntity.ok(genreService.getViewCounts());
     }
