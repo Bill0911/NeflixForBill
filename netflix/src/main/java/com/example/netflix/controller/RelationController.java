@@ -9,7 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/relations")
+@RequestMapping(value = "/api/relations", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public class RelationController {
     private final GenreForMovieService genreForMovieService;
     private final GenreForSeriesService genreForSeriesService;

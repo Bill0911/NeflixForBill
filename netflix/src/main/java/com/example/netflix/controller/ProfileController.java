@@ -1,27 +1,28 @@
 package com.example.netflix.controller;
 
+import com.example.netflix.dto.InviteUserRequest;
 import com.example.netflix.dto.MethodResponse;
 import com.example.netflix.entity.Profile;
 import com.example.netflix.security.JwtUtil;
-import com.example.netflix.service.MovieViewCountService;
-import com.example.netflix.service.ProfileService;
-import com.example.netflix.service.SeriesViewCountService;
-import com.example.netflix.service.UserService;
+import com.example.netflix.service.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/profiles")
+@RequestMapping(value = "/api/profiles", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public class ProfileController {
     private final UserService userService;
     private final ProfileService profileService;
     private final MovieViewCountService movieViewCountService;
+    private final InviteService inviteService;
 
-    public ProfileController(UserService userService, ProfileService profileService, MovieViewCountService movieViewCountService) {
+    public ProfileController(UserService userService, ProfileService profileService, MovieViewCountService movieViewCountService, InviteService inviteService) {
         this.userService = userService;
         this.profileService = profileService;
         this.movieViewCountService = movieViewCountService;
+        this.inviteService = inviteService;
     }
 
     @PostMapping()
@@ -83,5 +84,24 @@ public class ProfileController {
         }
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Movie cannot be watched");
+    }
+
+    @GetMapping("/invites/by-inviter")
+    public ResponseEntity<Object> getInvitesByInviter(@RequestParam String inviterEmail) {
+        try {
+            return ResponseEntity.ok(inviteService.getInvitesByInviterEmail(inviterEmail));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/invite")
+    public ResponseEntity<Object> sendInvite(@RequestBody InviteUserRequest request) {
+        try {
+            inviteService.createInviteByEmail(request.getInviterEmail(), request.getInviteeEmail());
+            return ResponseEntity.ok("Invite sent!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
     }
 }

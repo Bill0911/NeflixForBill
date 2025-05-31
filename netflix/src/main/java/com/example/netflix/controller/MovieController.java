@@ -3,13 +3,14 @@ package com.example.netflix.controller;
 import com.example.netflix.entity.Movie;
 import com.example.netflix.service.MovieService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/movies")
+@RequestMapping(value = "/api/movies", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 public class MovieController {
 
     private final MovieService movieService;
