@@ -104,4 +104,27 @@ public class ProfileController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
+
+    @PutMapping("/invites/{invitationId}")
+    public ResponseEntity<Object> updateInvite(
+            @PathVariable Long invitationId,
+            @RequestParam Long newInviteeId) {
+        try {
+            inviteService.updateInvitation(invitationId, newInviteeId);
+            return ResponseEntity.ok("Invite updated!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
+    }
+
+    // Delete an invite
+    @DeleteMapping("/invites/{invitationId}")
+    public ResponseEntity<Object> deleteInvite(@PathVariable Long invitationId) {
+        try {
+            inviteService.deleteInvitation(invitationId);
+            return ResponseEntity.ok("Invite deleted!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+        }
+    }
 }
