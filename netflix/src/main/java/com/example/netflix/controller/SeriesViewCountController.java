@@ -1,5 +1,6 @@
 package com.example.netflix.controller;
 
+import com.example.netflix.entity.ResponseItem;
 import com.example.netflix.entity.SeriesViewCount;
 import com.example.netflix.security.JwtUtil;
 import com.example.netflix.service.SeriesService;
@@ -29,12 +30,10 @@ public class SeriesViewCountController {
     }
     
     @PostMapping("/{accountId}")
-    public ResponseEntity<String> addSeriesViewCount(@PathVariable Integer accountId,  @PathVariable Integer seriesId) {
+    public ResponseEntity<Object> addSeriesViewCount(@PathVariable Integer accountId,  @PathVariable Integer seriesId) {
         try {
-            userService.getUserById(accountId);
-            seriesService.getSeriesById(seriesId);
             seriesViewCountService.addSeriesViewCount(accountId, seriesId);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Series - User relation has been created");
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseItem("Relation has been created", HttpStatus.CREATED));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
@@ -49,9 +48,12 @@ public class SeriesViewCountController {
     public ResponseEntity<Object> deleteSeriesViewCount(@PathVariable Integer accountId, @PathVariable Integer seriesId) {
         try {
             seriesViewCountService.deleteSeriesViewCount(accountId, seriesId);
-            return ResponseEntity.ok("Series - User relation has been deleted");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("Deletion success", HttpStatus.ACCEPTED));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
+            if (e.getMessage().contains("Deletion failed. Item does not exist")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom error: Deletion failed. Item does not exist", HttpStatus.NOT_FOUND));
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to delete: " + e.getMessage());
         }
     }
 }

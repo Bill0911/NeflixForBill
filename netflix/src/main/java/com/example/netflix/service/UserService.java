@@ -196,7 +196,7 @@ public class UserService {
         throwErrorIfUsersDontExists(inviterId, inviteeId);
 
         if (this.getUserById(inviterId) == this.getUserById(inviteeId) || this.getUserById(inviterId).isDiscount() || this.getUserById(inviteeId).isDiscount()) {
-            throw new IllegalArgumentException("User cannot perform this invitation");
+            throw new IllegalArgumentException("At least one of the user already has discount");
         }
 
         userRepository.patchByAccountId(inviterId, null, null, null, null, null, null, null, null, null, null, null, true);

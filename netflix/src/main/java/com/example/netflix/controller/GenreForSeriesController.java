@@ -1,5 +1,6 @@
 package com.example.netflix.controller;
 
+import com.example.netflix.entity.ResponseItem;
 import com.example.netflix.service.SeriesService;
 import com.example.netflix.service.GenreForSeriesService;
 import com.example.netflix.service.GenreService;
@@ -24,12 +25,16 @@ public class GenreForSeriesController {
     @PostMapping("/{genreId}")
     public ResponseEntity<Object> addGenreForSeries(@PathVariable Integer genreId, @PathVariable Integer seriesId) {
         try {
-            genreService.getGenreById(genreId);
-            seriesService.getSeriesById(seriesId);
             genreForSeriesService.addGenreForSeries(genreId, seriesId);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Genre - series relation has been created");
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseItem("Relation has been created", HttpStatus.CREATED));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
+            if (e.getMessage().contains("Duplicate")) {
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ResponseItem("Custom error: This relation already exists", HttpStatus.NOT_ACCEPTABLE));
+            }
+            else if (e.getMessage().contains("foreign key constraint fails")) {
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ResponseItem("Custom error: At least one of the IDs does not exist", HttpStatus.NOT_ACCEPTABLE));
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to delete: " + e.getMessage());
         }
     }
 
@@ -38,7 +43,6 @@ public class GenreForSeriesController {
         if (genreForSeriesService.getGenreForSeries(genreId, seriesId) == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No such relation found");
         }
-
         return ResponseEntity.ok("Genre " + genreId + " - Series " + seriesId + " relation exists");
     }
 
@@ -46,9 +50,9 @@ public class GenreForSeriesController {
     public ResponseEntity<Object> deleteGenreForSeries(@PathVariable Integer genreId, @PathVariable Integer seriesId) {
         try {
             genreForSeriesService.deleteGenreForSeries(genreId, seriesId);
-            return ResponseEntity.ok("Genre - Series relation has been deleted");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("Deletion success", HttpStatus.ACCEPTED));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
+            return ResponseItem.errorCheckForRelationItemsPOST(e.getMessage());
         }
     }
 }

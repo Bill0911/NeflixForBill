@@ -1,5 +1,6 @@
 package com.example.netflix.controller;
 
+import com.example.netflix.entity.ResponseItem;
 import com.example.netflix.service.MovieService;
 import com.example.netflix.service.MoviesProfileWatchlistService;
 import com.example.netflix.service.ProfileService;
@@ -23,39 +24,34 @@ public class MoviesProfileWatchlistController
     }
 
     @PostMapping("/{profileId}")
-    public ResponseEntity<Object> addMoviesProfileWatchlist(@PathVariable Integer profileId, @PathVariable Integer id2) {
+    public ResponseEntity<Object> addMoviesProfileWatchlist(@PathVariable Integer profileId, @PathVariable Integer movieId) {
         try {
-            profileService.getProfileById(profileId);
-            movieService.getMovieById(id2);
-            
-            boolean exists = moviesProfileWatchlistService.existsByProfileIdAndMovieId(profileId, id2);
-            if (exists) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: The profile-movie relation already exists");
-            }
-
-            moviesProfileWatchlistService.addMoviesProfileWatchlist(profileId, id2);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Profile - Movie relation has been created");
+            moviesProfileWatchlistService.addMoviesProfileWatchlist(profileId, movieId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseItem("Relation has been created", HttpStatus.CREATED));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
+            return ResponseItem.errorCheckForRelationItemsPOST(e.getMessage());
         }
     }
 
     @GetMapping("/{profileId}")
-    public ResponseEntity<Object> getMoviesProfileWatchlist(@PathVariable Integer profileId, @PathVariable Integer id2) {
-        if (moviesProfileWatchlistService.getMoviesProfileWatchlist(profileId, id2) == null) {
+    public ResponseEntity<Object> getMoviesProfileWatchlist(@PathVariable Integer profileId, @PathVariable Integer movieId) {
+        if (moviesProfileWatchlistService.getMoviesProfileWatchlist(profileId, movieId) == null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("No such relation found");
         }
 
-        return ResponseEntity.ok("Profile " + profileId + " - Movie " + id2 + " relation exists");
+        return ResponseEntity.ok("Profile " + profileId + " - Movie " + movieId + " relation exists");
     }
 
     @DeleteMapping("/{profileId}")
-    public ResponseEntity<Object> deleteMoviesProfileWatchlist(@PathVariable Integer profileId, @PathVariable Integer id2) {
+    public ResponseEntity<Object> deleteMoviesProfileWatchlist(@PathVariable Integer profileId, @PathVariable Integer movieId) {
         try {
-            moviesProfileWatchlistService.deleteMoviesProfileWatchlist(profileId, id2);
-            return ResponseEntity.ok("Profile - Movie relation has been deleted");
+            moviesProfileWatchlistService.deleteMoviesProfileWatchlist(profileId, movieId);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("Deletion success", HttpStatus.ACCEPTED));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
+            if (e.getMessage().contains("Deletion failed. Item does not exist")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom error: Deletion failed. Item does not exist", HttpStatus.NOT_FOUND));
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to delete: " + e.getMessage());
         }
     }
 }

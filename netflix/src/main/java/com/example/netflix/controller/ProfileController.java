@@ -3,6 +3,7 @@ package com.example.netflix.controller;
 import com.example.netflix.dto.InviteUserRequest;
 import com.example.netflix.dto.MethodResponse;
 import com.example.netflix.entity.Profile;
+import com.example.netflix.entity.ResponseItem;
 import com.example.netflix.security.JwtUtil;
 import com.example.netflix.service.*;
 import org.springframework.http.HttpStatus;
@@ -26,10 +27,10 @@ public class ProfileController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> addProfile(@RequestBody Profile profile) {
+    public ResponseEntity<Object> addProfile(@RequestBody Profile profile) {
         try {
             profileService.addProfile(profile);
-            return ResponseEntity.ok("Profile has been created");
+            return ResponseEntity.ok(new ResponseItem("New movie inserted/added", HttpStatus.CREATED));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
@@ -49,29 +50,38 @@ public class ProfileController {
     public ResponseEntity<Object> deleteProfileById(@PathVariable Integer id) {
         try {
             profileService.deleteProfileById(id);
-            return ResponseEntity.ok("Profile has been deleted successfully");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("Deletion success", HttpStatus.ACCEPTED));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            if (e.getMessage().contains("Deletion failed. Item does not exist")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom error: Deletion failed. Item does not exist", HttpStatus.NOT_FOUND));
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to delete: " + e.getMessage());
         }
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<String> patchProfileById(@PathVariable Integer id, @RequestBody Profile profile) {
+    public ResponseEntity<Object> patchProfileById(@PathVariable Integer id, @RequestBody Profile profile) {
         try {
             profileService.patchProfileById(id, profile);
-            return ResponseEntity.ok("Profile has been patched successfully");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("PATCH/PUT successful", HttpStatus.ACCEPTED));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            if (e.getMessage().contains("Item does not exist.")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom patch/update error: Item does not exist", HttpStatus.NOT_FOUND));
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to patch/update: " + e.getMessage());
         }
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<String> putProfileById(@PathVariable Integer id, @RequestBody Profile profile) {
+    public ResponseEntity<Object> putProfileById(@PathVariable Integer id, @RequestBody Profile profile) {
         try {
             profileService.updateProfileById(id, profile);
-            return ResponseEntity.ok("Profile has been deleted successfully");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("PATCH/PUT successful", HttpStatus.ACCEPTED));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            if (e.getMessage().contains("Item does not exist.")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom patch/update error: Item does not exist", HttpStatus.NOT_FOUND));
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to patch/update: " + e.getMessage());
         }
     }
 
@@ -91,17 +101,17 @@ public class ProfileController {
         try {
             return ResponseEntity.ok(inviteService.getInvitesByInviterEmail(inviterEmail));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 
-    @PostMapping("/invite")
+    @PostMapping("/invites")
     public ResponseEntity<Object> sendInvite(@RequestBody InviteUserRequest request) {
         try {
             inviteService.createInviteByEmail(request.getInviterEmail(), request.getInviteeEmail());
             return ResponseEntity.ok("Invite sent!");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 
@@ -113,18 +123,17 @@ public class ProfileController {
             inviteService.updateInvitation(invitationId, newInviteeId);
             return ResponseEntity.ok("Invite updated!");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 
-    // Delete an invite
     @DeleteMapping("/invites/{invitationId}")
     public ResponseEntity<Object> deleteInvite(@PathVariable Long invitationId) {
         try {
             inviteService.deleteInvitation(invitationId);
             return ResponseEntity.ok("Invite deleted!");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 }

@@ -2,16 +2,16 @@ package com.example.netflix.controller;
 
 import com.example.netflix.entity.Language;
 import com.example.netflix.entity.Movie;
+import com.example.netflix.entity.ResponseItem;
 import com.example.netflix.service.LanguageService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/languages", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+@RequestMapping("/api/languages")
 public class LanguageController {
 
     private final LanguageService languageService;
@@ -34,19 +34,22 @@ public class LanguageController {
     public ResponseEntity<Object> addLanguage(@RequestBody String name) {
         try {
             languageService.addLanguage(name);
-            return ResponseEntity.ok("Language has been created");
+            return ResponseEntity.status(HttpStatus.CREATED).body( new ResponseItem("New language inserted/added", HttpStatus.CREATED));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteLanguageById(@PathVariable Integer id) {
+    public ResponseEntity<Object> deleteLanguageById(@PathVariable Integer id) {
         try {
             languageService.deleteLanguageById(id);
-            return ResponseEntity.ok("Language deleted successfully");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("Deletion success", HttpStatus.ACCEPTED));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            if (e.getMessage().contains("Deletion failed. Item does not exist")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom error: Deletion failed. Item does not exist", HttpStatus.NOT_FOUND));
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to delete: " + e.getMessage());
         }
     }
 
@@ -54,9 +57,12 @@ public class LanguageController {
     public ResponseEntity<Object> patchLanguageById(@PathVariable Integer id, @RequestBody Language patchLanguage) {
         try {
             languageService.patchLanguageById(id, patchLanguage);
-            return ResponseEntity.ok("Language has been patched successfully");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("PATCH/PUT successful", HttpStatus.ACCEPTED));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            if (e.getMessage().contains("Item does not exist.")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom patch/update error: Item does not exist", HttpStatus.NOT_FOUND));
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to patch/update: " + e.getMessage());
         }
     }
 
@@ -64,9 +70,12 @@ public class LanguageController {
     public ResponseEntity<Object> putLanguageById(@PathVariable Integer id, @RequestBody Language updatedLanguage) {
         try {
             languageService.updateLanguageById(id, updatedLanguage);
-            return ResponseEntity.ok("Language has been updated successfully");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("PATCH/PUT successful", HttpStatus.ACCEPTED));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            if (e.getMessage().contains("Item does not exist.")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom patch/update error: Item does not exist", HttpStatus.NOT_FOUND));
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to patch/update: " + e.getMessage());
         }
     }
 }

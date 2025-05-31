@@ -2,16 +2,16 @@ package com.example.netflix.controller;
 
 import com.example.netflix.dto.GenreDTO;
 import com.example.netflix.entity.Genre;
+import com.example.netflix.entity.ResponseItem;
 import com.example.netflix.service.GenreService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/genres", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+@RequestMapping("/api/genres")
 public class GenreController {
 
     private final GenreService genreService;
@@ -33,42 +33,48 @@ public class GenreController {
     }
 
     @PostMapping
-    public ResponseEntity<String> addGenre(@RequestBody GenreDTO genre) {
+    public ResponseEntity<Object> addGenre(@RequestBody GenreDTO genre) {
         genreService.addGenre(genre.getGenreName());
-        return ResponseEntity.ok("New genre '"+ genre.getGenreName() +"' added");
+        return ResponseEntity.ok(new ResponseItem("New genre inserted/added", HttpStatus.CREATED));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateGenre(@PathVariable Integer id, @RequestBody GenreDTO genre) {
+    public ResponseEntity<Object> updateGenre(@PathVariable Integer id, @RequestBody GenreDTO genre) {
         try {
             genreService.updateGenre(id, genre.getGenreName());
-            return ResponseEntity.ok("Genre id " + id + " has been renamed to " + genre.getGenreName());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Failed to update genre with ID" + id + ": " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("PATCH/PUT successful", HttpStatus.ACCEPTED));
+        } catch (Exception e) {
+            if (e.getMessage().contains("Item does not exist.")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom patch/update error: Item does not exist", HttpStatus.NOT_FOUND));
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to patch/update: " + e.getMessage());
         }
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<String> patchGenre(@PathVariable Integer id, @RequestBody GenreDTO genre) {
+    public ResponseEntity<Object> patchGenre(@PathVariable Integer id, @RequestBody GenreDTO genre) {
         try {
             genreService.updateGenre(id, genre.getGenreName());
-            return ResponseEntity.ok("Genre " + id + " has been renamed to " + genre.getGenreName());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Failed to patch genre with ID" + id + ": " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("PATCH/PUT successful", HttpStatus.ACCEPTED));
+        } catch (Exception e) {
+            if (e.getMessage().contains("Item does not exist.")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom patch/update error: Item does not exist", HttpStatus.NOT_FOUND));
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to patch/update: " + e.getMessage());
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteGenre(@PathVariable Integer id) {
+    public ResponseEntity<Object> deleteGenre(@PathVariable Integer id) {
         try {
             genreService.deleteGenre(id);
-            return ResponseEntity.ok("Genre deleted successfully.");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("Deletion success", HttpStatus.ACCEPTED));
         }
-        catch (RuntimeException e) {
-            if (e.getMessage().contains("foreign key constraint")) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("This genres' id is mention in other table's rows as foreign key");
+        catch (Exception e) {
+            if (e.getMessage().contains("Deletion failed. Item does not exist")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom error: Deletion failed. Item does not exist", HttpStatus.NOT_FOUND));
             }
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Deletion failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to delete: " + e.getMessage());
         }
     }
 
@@ -78,7 +84,8 @@ public class GenreController {
             return ResponseEntity.ok(genreService.getGenresWithoutMovie());
         }
         else {
-            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("return for 'hasMovie=true' not implemented");
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).
+                    body(new ResponseItem("return for 'hasMovie=true' not implemented", HttpStatus.NOT_IMPLEMENTED));
         }
     }
 
