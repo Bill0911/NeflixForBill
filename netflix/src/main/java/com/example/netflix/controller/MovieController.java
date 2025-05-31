@@ -1,12 +1,11 @@
 package com.example.netflix.controller;
 
 import com.example.netflix.entity.Movie;
+import com.example.netflix.entity.ResponseItem;
 import com.example.netflix.service.MovieService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/movies")
@@ -69,8 +68,15 @@ public class MovieController {
         }
     }
 
-    @GetMapping("without-genre")
-    public ResponseEntity<Object> getMoviesWithoutGenre() {
-        return ResponseEntity.ok(movieService.getMoviesWithoutGenre());
+    @GetMapping("filtering")
+    public ResponseEntity<Object> getMoviesWithoutGenre(@RequestParam boolean hasGenre) {
+        if (!hasGenre) {
+            return ResponseEntity.ok(movieService.getMoviesWithoutGenre());
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).
+                    body(new ResponseItem("return for 'hasGenre=true' not implemented", HttpStatus.NOT_IMPLEMENTED));
+        }
+
     }
 }

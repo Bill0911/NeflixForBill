@@ -2,6 +2,7 @@ package com.example.netflix.controller;
 
 import com.example.netflix.dto.GenreDTO;
 import com.example.netflix.entity.Genre;
+import com.example.netflix.entity.ResponseItem;
 import com.example.netflix.service.GenreService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -77,7 +78,8 @@ public class GenreController {
             return ResponseEntity.ok(genreService.getGenresWithoutMovie());
         }
         else {
-            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("return for 'hasMovie=true' not implemented");
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).
+                    body(new ResponseItem("return for 'hasMovie=true' not implemented", HttpStatus.NOT_IMPLEMENTED));
         }
     }
 
