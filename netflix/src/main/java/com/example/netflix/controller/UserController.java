@@ -4,10 +4,7 @@ import com.example.netflix.dto.InviteUserRequest;
 import com.example.netflix.dto.LoginRequest;
 import com.example.netflix.dto.ProfileRequest;
 import com.example.netflix.dto.SubscriptionOverview;
-import com.example.netflix.entity.Profile;
-import com.example.netflix.entity.Role;
-import com.example.netflix.entity.SubscriptionType;
-import com.example.netflix.entity.User;
+import com.example.netflix.entity.*;
 import com.example.netflix.exception.AccessDeniedException;
 import com.example.netflix.security.JwtUtil;
 import com.example.netflix.service.UserService;
@@ -15,7 +12,6 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @RestController
-@RequestMapping(value = "/api/users", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
@@ -122,7 +118,7 @@ public class UserController {
     public ResponseEntity<Object> addUser(@RequestBody User user) {
         try {
             userService.addUser(user);
-            return ResponseEntity.ok("User has been created");
+            return ResponseEntity.ok(new ResponseItem("New user inserted/added", HttpStatus.CREATED));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
@@ -147,25 +143,40 @@ public class UserController {
     public ResponseEntity<Object> deleteUserById(@PathVariable Integer id) throws Exception {
         try {
             userService.deleteUserById(id);
-            return ResponseEntity.ok("User has been deleted successfully");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("Deletion success", HttpStatus.ACCEPTED));
+        } catch (Exception e) {
+            if (e.getMessage().contains("Deletion failed. Item does not exist")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom error: Deletion failed. Item does not exist", HttpStatus.NOT_FOUND));
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to delete: " + e.getMessage());
         }
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<String> patchUserById(@PathVariable Integer id, @RequestBody User user) throws Exception {
-//        userService.enforceRoleRestriction(token, Role.SENIOR);
-        System.out.println("role:" + user.getRole() + " and subs:" + user.getSubscription());
-        userService.patchUserById(id, user);
-        return ResponseEntity.ok("User has been updated successfully. Subscription should be set to ");
+    public ResponseEntity<Object> patchUserById(@PathVariable Integer id, @RequestBody User user) throws Exception {
+        try {
+            userService.patchUserById(id, user);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("PATCH/PUT successful", HttpStatus.ACCEPTED));
+        } catch (Exception e) {
+            if (e.getMessage().contains("Item does not exist.")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom patch/update error: Item does not exist", HttpStatus.NOT_FOUND));
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to patch/update: " + e.getMessage());
+        }
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<String> putUserById(@PathVariable Integer id, @RequestBody User user) throws Exception {
-//        userService.enforceRoleRestriction(token, Role.SENIOR);
-        userService.updateUserById(id, user);
-        return ResponseEntity.ok("User has been updated successfully");
+    public ResponseEntity<Object> putUserById(@PathVariable Integer id, @RequestBody User user) throws Exception {
+        try {
+            userService.updateUserById(id, user);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("PATCH/PUT successful", HttpStatus.ACCEPTED));
+        } catch (Exception e) {
+            if (e.getMessage().contains("Item does not exist.")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom patch/update error: Item does not exist", HttpStatus.NOT_FOUND));
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to patch/update: " + e.getMessage());
+        }
+
     }
 
     @PostMapping("/request-password-reset")
@@ -179,9 +190,9 @@ public class UserController {
             System.out.println("Password reset token: " + token);
             return ResponseEntity.ok(token);
         }
-        catch (RuntimeException e)
+        catch (Exception e)
         {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 
@@ -197,18 +208,18 @@ public class UserController {
             userService.resetPassword(email, newPassword);
             return ResponseEntity.ok("Password reset successfully.");
         }
-        catch (RuntimeException e)
+        catch (Exception e)
         {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
         }
     }
 
-    @PostMapping("/invite")
+    @PostMapping("/invite/{inviter}/{invitee}")
     public ResponseEntity<String> inviteUser(@PathVariable Integer inviter, @PathVariable Integer invitee) {
         try {
             userService.inviteUser(inviter, invitee);
             return ResponseEntity.ok("Invitation sent successfully");
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

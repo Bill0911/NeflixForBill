@@ -1,6 +1,7 @@
 package com.example.netflix.controller;
 
 import com.example.netflix.entity.Payment;
+import com.example.netflix.entity.ResponseItem;
 import com.example.netflix.entity.SubscriptionType;
 import com.example.netflix.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +30,13 @@ public class PaymentController {
         try {
             Payment payment = paymentService.processPayment(userId, subscriptionType, discountApplied);
             return ResponseEntity.status(HttpStatus.CREATED).body(payment);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input: " + e.getMessage());
-        } catch (AccessDeniedException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (Exception e) {
+            if (e.getMessage().contains("command denied to user")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseItem("Custom error: this endpoint is not allowed for the user", HttpStatus.FORBIDDEN));
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: "+ e.getMessage());
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package com.example.netflix.controller;
 
+import com.example.netflix.entity.ResponseItem;
 import com.example.netflix.service.MovieService;
 import com.example.netflix.service.MoviesProfileWatchlistService;
 import com.example.netflix.service.ProfileService;
@@ -53,9 +54,12 @@ public class MoviesProfileWatchlistController
     public ResponseEntity<Object> deleteMoviesProfileWatchlist(@PathVariable Integer profileId, @PathVariable Integer id2) {
         try {
             moviesProfileWatchlistService.deleteMoviesProfileWatchlist(profileId, id2);
-            return ResponseEntity.ok("Profile - Movie relation has been deleted");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("Deletion success", HttpStatus.ACCEPTED));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Error: " + e.getMessage());
+            if (e.getMessage().contains("Deletion failed. Item does not exist")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom error: Deletion failed. Item does not exist", HttpStatus.NOT_FOUND));
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Failed to delete: " + e.getMessage());
         }
     }
 }
