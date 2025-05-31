@@ -9,6 +9,11 @@ CREATE PROCEDURE AddInvitation(IN p_inviterId BIGINT, IN p_inviteeId BIGINT)
 BEGIN
     INSERT INTO invitation (inviter_id, invitee_id, created_at)
     VALUES (p_inviterId, p_inviteeId, NOW());
+
+        IF ROW_COUNT() = 0 THEN
+            SIGNAL SQLSTATE '45001'
+            SET MESSAGE_TEXT = 'Adding failed. Possibly duplicate relation.';
+        END IF;
 END $$
 DELIMITER ;
 
@@ -27,6 +32,11 @@ CREATE PROCEDURE DeleteInvitation(IN p_invitationId BIGINT)
 BEGIN
     DELETE FROM invitation 
     WHERE id = p_invitationId;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45002'
+        SET MESSAGE_TEXT = 'Deletion failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 
@@ -37,6 +47,11 @@ BEGIN
     UPDATE invitation 
     SET invitee_id = p_newInviteeId
     WHERE id = p_invitationId;
+
+    IF ROW_COUNT() = 0 THEN
+        SIGNAL SQLSTATE '45003'
+        SET MESSAGE_TEXT = 'Patch or update failed. Item does not exist.';
+    END IF;
 END $$
 DELIMITER ;
 

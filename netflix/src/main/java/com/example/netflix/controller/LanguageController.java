@@ -36,6 +36,9 @@ public class LanguageController {
             languageService.addLanguage(name);
             return ResponseEntity.status(HttpStatus.CREATED).body( new ResponseItem("New language inserted/added", HttpStatus.CREATED));
         } catch (Exception e) {
+            if (e.getMessage().contains("command denied to user")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseItem("Custom error: this endpoint is not allowed for the user", HttpStatus.FORBIDDEN));
+            }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
@@ -46,6 +49,9 @@ public class LanguageController {
             languageService.deleteLanguageById(id);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseItem("Deletion success", HttpStatus.ACCEPTED));
         } catch (Exception e) {
+            if (e.getMessage().contains("command denied to user")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseItem("Custom error: this endpoint is not allowed for the user", HttpStatus.FORBIDDEN));
+            }
             if (e.getMessage().contains("Deletion failed. Item does not exist")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseItem("Custom error: Deletion failed. Item does not exist", HttpStatus.NOT_FOUND));
             }

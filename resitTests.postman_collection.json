@@ -166,8 +166,7 @@
 					{
 						"key": "Content-Type",
 						"value": "application/xml",
-						"type": "text",
-						"disabled": true
+						"type": "text"
 					},
 					{
 						"key": "Accept",
@@ -194,10 +193,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"genreName\": \"bebra\"\r\n}",
+					"raw": "<item>\r\n   <genreName>somegenre</genreName>\r\n</item>",
 					"options": {
 						"raw": {
-							"language": "json"
+							"language": "xml"
 						}
 					}
 				},
@@ -359,7 +358,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "<item>\r\n    <title>fast XXX</title>\r\n    <duration>02:25:00</duration>\r\n    <sdAvailable>true</sdAvailable>\r\n    <hdAvailable>true</hdAvailable>\r\n    <uhdAvailable>false</uhdAvailable>\r\n    <minimumAge>16</minimumAge>\r\n</item>",
+					"raw": "<item>\r\n    <title>fast</title>\r\n    <duration>02:25:10</duration>\r\n    <sdAvailable>true</sdAvailable>\r\n    <hdAvailable>true</hdAvailable>\r\n    <uhdAvailable>false</uhdAvailable>\r\n    <minimumAge>6</minimumAge>\r\n</item>",
 					"options": {
 						"raw": {
 							"language": "xml"
@@ -426,6 +425,12 @@
 					{
 						"key": "Content-Type",
 						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Accept",
+						"value": "application/xml",
 						"type": "text"
 					}
 				],
@@ -439,7 +444,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8081/api/movie/1/profile/5",
+					"raw": "http://localhost:8081/api/movie/1/profile/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -450,7 +455,7 @@
 						"movie",
 						"1",
 						"profile",
-						"5"
+						"1"
 					]
 				}
 			},
@@ -716,7 +721,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"episodeId\": 2,\r\n    \"title\": \"Dom is vanished\",\r\n    \"duration\": \"00:23:00\",\r\n    \"seriesId\": 1\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1525,7 +1530,13 @@
 			],
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "http://localhost:8081/api/movie/1/user/2",
 					"protocol": "http",
@@ -1889,6 +1900,65 @@
 			"response": []
 		},
 		{
+			"name": "genres with movie (not implemented)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains genre data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    if (jsonData.length > 0) {\r",
+							"        pm.expect(jsonData[0]).to.have.property('genreId');\r",
+							"        pm.expect(jsonData[0]).to.have.property('genreName');\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"console.log(pm.response.json());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/genres/filtering?hasMovie=false",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"genres",
+						"filtering"
+					],
+					"query": [
+						{
+							"key": "hasMovie",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "genres - view counts",
 			"event": [
 				{
@@ -1990,7 +2060,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8081/api/movies/filtering?hasGenre=false",
+					"raw": "http://localhost:8081/api/movies/filtering?hasGenre=true",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -2004,7 +2074,7 @@
 					"query": [
 						{
 							"key": "hasGenre",
-							"value": "false"
+							"value": "true"
 						}
 					]
 				}
@@ -2755,9 +2825,24 @@
 			],
 			"request": {
 				"method": "DELETE",
-				"header": [],
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:8081/api/movies/{movieId}/genres/{genreId}",
+					"raw": "http://localhost:8081/api/movies/1/genres/3",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -2766,9 +2851,9 @@
 					"path": [
 						"api",
 						"movies",
-						"{movieId}",
+						"1",
 						"genres",
-						"{genreId}"
+						"3"
 					]
 				}
 			},
@@ -2808,7 +2893,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8081/api/series/1/genres/5",
+					"raw": "http://localhost:8081/api/series/2/genres/3",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -2817,9 +2902,9 @@
 					"path": [
 						"api",
 						"series",
-						"1",
+						"2",
 						"genres",
-						"5"
+						"3"
 					]
 				}
 			},
